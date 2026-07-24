@@ -1,0 +1,21 @@
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# Environment Variables (Secrets)
+.env
+
+# Media uploads & Static files
+media/
+staticfiles/
+
+# IDE files
+.vscode/
+.idea/
+.DS_Store
