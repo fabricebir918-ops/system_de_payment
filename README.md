@@ -7,7 +7,7 @@ Backend application built with Django, Django REST Framework, and PostgreSQL for
 ## Setup Instructions for Local Development
 
 ### 1. Clone the Repository
-git clone <YOUR_GIT_REPO_URL>
+git clone (https://github.com/fabricebir918-ops/system_de_payment)
 cd system_de_payment
 
 ### 2. Create and Activate Virtual Environment
