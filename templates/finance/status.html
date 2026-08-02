@@ -1,0 +1,88 @@
+<!-- Search Form with Live Dropdown Container -->
+<div style="position: relative;">
+    <form method="GET" action="">
+        <input type="text" id="live-search-input" name="q" value="{{ search_query }}" placeholder="Search by name, username, or reg #..." autocomplete="off">
+        <button type="submit">Search Student</button>
+    </form>
+    
+    <!-- Autocomplete Results Dropdown -->
+    <div id="search-results-dropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ccc; z-index: 1000; max-height: 250px; overflow-y: auto; display: none;"></div>
+</div>
+
+{% if student %}
+    <div class="result-card">
+        <!-- Student Profile Picture using your model property -->
+        <div class="student-avatar-container">
+            <img src="{{ student.get_avatar_url }}" alt="Photo of {{ student.get_full_name }}" class="student-img" style="width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 3px solid #ccc;">
+        </div>
+
+        <h3>{{ student.get_full_name }}</h3>
+        <p><strong>Reg Number:</strong> {{ student.registration_num }}</p>
+        <p><strong>Username:</strong> {{ student.username }}</p>
+        <p>Total Paid: ${{ total_paid }} / ${{ threshold }}</p>
+        
+        {% if is_allowed %}
+            <span style="color: green; font-weight: bold; font-size: 1.2em;">Status: ALLOWED to sit for exam</span>
+        {% else %}
+            <span style="color: red; font-weight: bold; font-size: 1.2em;">Status: DENIED (Insufficient balance)</span>
+        {% endif %}
+    </div>
+{% elif search_query %}
+    <p>No student found matching "{{ search_query }}".</p>
+{% endif %}
+
+<!-- JavaScript for Live Filtering -->
+<script>
+const input = document.getElementById('live-search-input');
+const dropdown = document.getElementById('search-results-dropdown');
+
+input.addEventListener('input', function() {
+    const query = this.value.trim();
+
+    if (query.length < 2) {
+        dropdown.style.display = 'none';
+        return;
+    }
+
+    // Fetches matching records from your Django search API endpoint
+    fetch(`{% url 'student_search_api' %}?q=${encodeURIComponent(query)}`)
+        .then(response => response.json())
+        .then(data => {
+            dropdown.innerHTML = '';
+            if (data.results.length > 0) {
+                data.results.forEach(student => {
+                    const item = document.createElement('a');
+                    item.href = student.url;
+                    item.style.display = 'flex';
+                    item.style.alignItems = 'center';
+                    item.style.padding = '8px 12px';
+                    item.style.textDecoration = 'none';
+                    item.style.color = '#333';
+                    item.style.borderBottom = '1px solid #eee';
+
+                    item.innerHTML = `
+                        <img src="${student.avatar_url}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; margin-right: 10px;">
+                        <div>
+                            <strong>${student.name}</strong><br>
+                            <small style="color: #666;">${student.registration_num}</small>
+                        </div>
+                    `;
+                    dropdown.appendChild(item);
+                });
+                dropdown.style.display = 'block';
+            } else {
+                dropdown.style.display = 'none';
+            }
+        });
+});
+
+// Hide dropdown if user clicks anywhere outside
+document.addEventListener('click', function(e) {
+    if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.style.display = 'none';
+    }
+});
+</script>
+
+
+

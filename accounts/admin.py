@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.html import format_html
-from .models import User, Payment, VerificationLog
+from .models import User, Payment, VerificationLog, BankTransaction, PaymentClaim
 
 
 @admin.register(User)
@@ -50,3 +50,26 @@ class VerificationLogAdmin(admin.ModelAdmin):
     list_filter = ('method', 'verified_at')
     search_fields = ('staff__username', 'student__registration_num', 'student__first_name', 'student__last_name')
     ordering = ('-verified_at',)
+
+
+# ... (keep your existing CustomUserAdmin, PaymentAdmin, and VerificationLogAdmin above) ...
+
+
+@admin.register(BankTransaction)
+class BankTransactionAdmin(admin.ModelAdmin):
+    list_display = ('transaction_reference', 'amount', 'payment_date', 'created_at')
+    search_fields = ('transaction_reference',)
+    list_filter = ('payment_date', 'created_at')
+    ordering = ('-payment_date',)
+
+
+@admin.register(PaymentClaim)
+class PaymentClaimAdmin(admin.ModelAdmin):
+    list_display = ('submitted_reference', 'student_info', 'status', 'bank_transaction', 'created_at')
+    list_filter = ('status', 'created_at')
+    search_fields = ('submitted_reference', 'student__registration_num', 'student__username', 'student__first_name', 'student__last_name')
+    ordering = ('-created_at',)
+
+    def student_info(self, obj):
+        return f"{obj.student.get_full_name() or obj.student.username} ({obj.student.registration_num})"
+    student_info.short_description = 'Étudiant'

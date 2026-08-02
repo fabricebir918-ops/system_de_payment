@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+    <h2>Please Log In</h2>
+
+    <!-- Form errors -->
+    {% if form.errors %}
+        <p style="color: red;">Your username and password didn't match. Please try again.</p>
+    {% endif %}
+
+   <form method="post">
+    {% csrf_token %}
+    
+    <!-- Fully custom label text and styling -->
+    <div class="my-custom-wrapper">
+        <label for="id_username" class="my-custom-label-class">
+            Email or Registration Number:
+        </label>
+        
+        <!-- Fully custom input with your own CSS classes and placeholder -->
+        <input 
+            type="text" 
+            name="username" 
+            id="id_username" 
+            class="my-custom-input-class" 
+            placeholder="Enter your registration code..."
+            required
+        >
+    </div>
+
+    <div class="my-custom-wrapper">
+        <label for="id_password" class="my-custom-label-class">
+            Your Secret Password:
+        </label>
+        
+        <input 
+            type="password" 
+            name="password" 
+            id="id_password" 
+            class="my-custom-input-class" 
+            placeholder="••••••••"
+            required
+        >
+    </div>
+
+    <button type="submit" class="my-custom-button-class">
+        Log In Now
+    </button>
+</form>
+
+</body>
+</html>

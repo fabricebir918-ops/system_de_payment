@@ -94,3 +94,41 @@ class VerificationLog(models.Model):
 
     def __str__(self):
         return f"Contrôle par {self.staff.username} sur {self.student.registration_num}"
+
+
+
+# 4. Bank Transaction Model (Cloned directly from the bank's extrait bancaire)
+class BankTransaction(models.Model):
+    transaction_reference = models.CharField(max_length=100, unique=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_date = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.transaction_reference} - ${self.amount} ({self.payment_date.strftime('%Y-%m-%d')})"
+
+
+# 5. Payment Claim / Staging Model (Student submissions waiting for verification)
+class PaymentClaim(models.Model):
+    class ClaimStatus(models.TextChoices):
+        PENDING = 'PENDING', 'En attente'
+        APPROVED = 'APPROVED', 'Approuvé'
+        REJECTED = 'REJECTED', 'Rejeté'
+
+    student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='payment_claims')
+    submitted_reference = models.CharField(max_length=100)
+    bank_transaction = models.OneToOneField(
+        BankTransaction, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True, 
+        related_name='claim'
+    )
+    status = models.CharField(max_length=20, choices=ClaimStatus.choices, default=ClaimStatus.PENDING)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Claim: {self.student.registration_num} - {self.submitted_reference} [{self.status}]"
+
+
+
