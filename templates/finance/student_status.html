@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Portail Étudiant</title>
+</head>
+<body>
+
+    <h1>Portail Étudiant - Statut Financier</h1>
+
+    <!-- 1. Profile Section -->
+    <div class="profile-section">
+        <img src="{{ student.get_avatar_url }}" alt="Avatar" width="80" height="80">
+        <h2>{{ student.first_name }} {{ student.last_name }}</h2>
+        <p><strong>Matricule :</strong> {{ student.registration_num|default:"Non assigné" }}</p>
+        <p><strong>Email :</strong> {{ student.email }}</p>
+    </div>
+
+    <hr>
+
+    <!-- 2. Financial & Exam Clearance Status -->
+    <div class="status-section">
+        <h3>Statut pour les Examens</h3>
+        <p>Année académique : {{ academic_year }} | Semestre : {{ semester }}</p>
+        <p>Total payé : ${{ total_paid }} / ${{ threshold }} requis</p>
+
+        {% if is_allowed %}
+            <p style="color: green; font-weight: bold;">[AUTORISÉ] Vos frais sont réglés. Vous pouvez vous présenter aux examens.</p>
+            <!-- Download Button (Placeholder) -->
+            <a href="{% url 'download_student_fiche' %}" style="text-decoration: none;">
+                <button type="button">Télécharger ma Fiche / QR Code</button>
+            </a>
+
+        {% else %}
+            <p style="color: red; font-weight: bold;">[NON AUTORISÉ] Solde insuffisant pour obtenir l'autorisation d'examen.</p>
+        {% endif %}
+    </div>
+
+    <hr>
+
+    <!-- 3. Recent Payment Claims -->
+    <div class="claims-section">
+        <h3>Historique de mes Bordereaux (Claims)</h3>
+        
+        {% if recent_claims %}
+            <table border="1" cellpadding="8" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Référence</th>
+                        <th>Date de soumission</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for claim in recent_claims %}
+                    <tr>
+                        <td>{{ claim.submitted_reference }}</td>
+                        <td>{{ claim.created_at|date:"Y-m-d H:i" }}</td>
+                        <td>{{ claim.get_status_display }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Aucun bordereau soumis pour le moment.</p>
+        {% endif %}
+
+        <br>
+        <!-- Make Claim Button (Placeholder) -->
+        <a href="{% url 'submit_claim' %}"><button>Soumettre un nouveau bordereau</button></a>
+    </div>
+
+    <hr>
+
+    <!-- Logout -->
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Se déconnecter</button>
+    </form>
+
+</body>
+</html>
+
+
+<script>
+    // Detects if the user navigated back via browser history (performance.navigation.type === 2)
+    window.addEventListener("pageshow", function (event) {
+        if (event.persisted || (window.performance && window.performance.getEntriesByType("navigation")[0]?.type === "back_forward")) {
+            // Force a full reload so Django's @login_required catches the logged-out state
+            window.location.reload();
+        }
+    });
+</script>

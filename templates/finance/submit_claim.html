@@ -1,0 +1,41 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Soumettre un bordereau</title>
+</head>
+<body>
+
+    <h1>Soumettre un nouveau bordereau de paiement</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        
+        <div>
+            <label for="id_submitted_reference">Référence du bordereau :</label>
+            <br>
+            <!-- Completely manual input field -->
+            <input type="text" name="submitted_reference" id="id_submitted_reference" value="{{ form.submitted_reference.value|default_if_none:'' }}" placeholder="Entrez la référence...">
+            
+            <!-- Display field errors if validation fails -->
+            {% if form.submitted_reference.errors %}
+                <div style="color: red; margin-top: 5px;">
+                    {{ form.submitted_reference.errors }}
+                </div>
+            {% endif %}
+        </div>
+
+        <br>
+        
+        <button type="submit">Envoyer le claim</button>
+    </form>
+
+    <br>
+
+    <a href="{% url 'finance_status' %}">
+        <button type="button">Annuler / Quitter</button>
+    </a>
+
+</body>
+</html>

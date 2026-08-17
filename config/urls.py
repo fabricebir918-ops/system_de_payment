@@ -18,13 +18,29 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path
 from accounts import views 
+from accounts.forms import EmailUsernameRegAuthForm
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('finance/status/', views.finance_status_view, name='finance_status'),
-    path('accounts/login/', auth_views.LoginView.as_view(template_name='accounts/login.html'), name='login'),
-    path('finance/search-api/', views.student_search_api, name='student_search_api')
+    path('accounts/login/', auth_views.LoginView.as_view(
+            template_name='accounts/login.html',
+            authentication_form=EmailUsernameRegAuthForm
+        ), name='login'),
+    path('finance/search-api/', views.student_search_api, name='student_search_api'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+    path('finance/submit-claim/', views.submit_claim_view, name='submit_claim'),
+    path('student/download-fiche/', views.download_student_fiche_view, name='download_student_fiche'),
+
+
+
+
 
 
 ]
 
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
