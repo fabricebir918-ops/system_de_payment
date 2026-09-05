@@ -1,0 +1,1100 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Mon compte | AcademicPay</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    >
+
+    <!-- CSS de la page -->
+    <link rel="stylesheet" href="{% static 'css/espace_supervisor/supervisor-profile.css' %}">
+</head>
+
+<body>
+
+<div class="d-flex min-vh-100">
+
+    <!-- =====================================================
+         SIDEBAR DESKTOP
+    ====================================================== -->
+    <aside
+        class="supervisor-sidebar d-none d-lg-flex flex-column
+               justify-content-between position-fixed top-0 start-0"
+    >
+
+        <div>
+
+            <!-- Logo -->
+            <a
+                href="{% url 'supervisor_dashboard' %}"
+                class="sidebar-logo d-flex align-items-center
+                       justify-content-center text-decoration-none"
+                aria-label="Accueil"
+            >
+                <i class="bi bi-mortarboard-fill"></i>
+            </a>
+
+            <!-- Navigation -->
+            <nav class="nav flex-column align-items-center gap-3 mt-4">
+
+                <!-- Accueil -->
+                <a
+                    href="{% url 'supervisor_dashboard' %}"
+                    class="sidebar-icon"
+                    title="Accueil"
+                    aria-label="Accueil"
+                >
+                    <i class="bi bi-house-door-fill"></i>
+                </a>
+
+                <!-- Vérifier -->
+                <a
+                    href="{% url 'supervisor_verification' %}"
+                    class="sidebar-icon"
+                    title="Vérifier un étudiant"
+                    aria-label="Vérifier un étudiant"
+                >
+                    <i class="bi bi-person-check"></i>
+                </a>
+
+                <!-- Historique -->
+                <a
+                    href="{% url 'supervisor_history' %}"
+                    class="sidebar-icon"
+                    title="Historique des vérifications"
+                    aria-label="Historique des vérifications"
+                >
+                    <i class="bi bi-clock-history"></i>
+                </a>
+
+            </nav>
+
+        </div>
+
+        <!-- Bas de la sidebar -->
+        <div>
+
+            <!-- Thème -->
+            <div class="d-flex justify-content-center py-3">
+
+                <button
+                    class="sidebar-icon border-0"
+                    type="button"
+                    id="themeToggle"
+                    title="Thème"
+                    aria-label="Changer le thème"
+                >
+                    <i class="bi bi-moon-stars"></i>
+                </button>
+
+            </div>
+
+            <!-- Utilisateur -->
+            <div class="sidebar-user d-flex justify-content-center py-4">
+
+                <div class="dropdown">
+
+                    <button
+                        class="supervisor-avatar active-avatar border-0 rounded-circle
+                               d-flex align-items-center justify-content-center"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        aria-label="Menu utilisateur"
+                    >
+                        {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" alt="{{ user.full_congolese_name }}" class="rounded-circle" width="40" height="40">
+                        {% else %}
+                        <i class="bi bi-person-fill"></i>
+                        {% endif %}
+                    </button>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+
+                        <li>
+                            <a
+                                class="dropdown-item active-menu-item"
+                                href="{% url 'supervisor_profile' %}"
+                            >
+                                <i class="bi bi-person me-2"></i>
+                                Mon compte
+                            </a>
+                        </li>
+
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <a
+                                class="dropdown-item"
+                                href="{% url 'logout' %}"
+                            >
+                                <i class="bi bi-box-arrow-right me-2"></i>
+                                Déconnexion
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         CONTENU PRINCIPAL
+    ====================================================== -->
+    <main class="supervisor-main flex-grow-1">
+
+        <div class="container-fluid profile-container">
+
+            <!-- =================================================
+                 HEADER MOBILE
+            ================================================== -->
+            <header
+                class="d-flex d-lg-none justify-content-between
+                       align-items-center mb-4"
+            >
+
+                <a
+                    href="{% url 'supervisor_dashboard' %}"
+                    class="mobile-logo d-flex align-items-center
+                           justify-content-center text-decoration-none"
+                    aria-label="Accueil"
+                >
+                    <i class="bi bi-mortarboard-fill"></i>
+                </a>
+
+                <button
+                    class="btn mobile-menu-btn"
+                    type="button"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#supervisorMobileMenu"
+                    aria-controls="supervisorMobileMenu"
+                    aria-label="Ouvrir le menu"
+                >
+                    <i class="bi bi-list"></i>
+                </button>
+
+            </header>
+
+
+            <!-- =================================================
+                 MESSAGES
+            ================================================== -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+
+            <!-- =================================================
+                 TITRE
+            ================================================== -->
+            <header class="page-header">
+
+                <span class="page-eyebrow">
+                    Espace surveillant
+                </span>
+
+                <h1>
+                    Mon compte
+                </h1>
+
+                <p>
+                    Consultez les informations associées à votre compte
+                    AcademicPay.
+                </p>
+
+            </header>
+
+
+            <!-- =================================================
+                 PROFIL PRINCIPAL
+            ================================================== -->
+            <section class="profile-hero">
+
+                <div class="profile-identity">
+
+                    <div class="profile-avatar">
+                        {{ initials }}
+                    </div>
+
+                    <div>
+
+                        <span class="profile-label">
+                            Surveillant
+                        </span>
+
+                        <h2>
+                            {{ full_name }}
+                        </h2>
+
+                        <p>
+                            Compte {% if is_active %}actif{% else %}inactif{% endif %}
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <span class="account-status">
+                    <i class="bi bi-check-circle-fill"></i>
+                    {% if is_active %}Actif{% else %}Inactif{% endif %}
+                </span>
+
+            </section>
+
+
+            <!-- =================================================
+                 CONTENU
+            ================================================== -->
+            <div class="row g-4">
+
+                <!-- =============================================
+                     COLONNE PRINCIPALE
+                ============================================== -->
+                <div class="col-12 col-xl-8">
+
+                    <!-- =========================================
+                         INFORMATIONS DU COMPTE
+                    ========================================== -->
+                    <section class="profile-card">
+
+                        <div class="card-heading">
+
+                            <div class="heading-icon">
+                                <i class="bi bi-person-vcard"></i>
+                            </div>
+
+                            <div>
+
+                                <span class="section-eyebrow">
+                                    Identité
+                                </span>
+
+                                <h2>
+                                    Informations du compte
+                                </h2>
+
+                            </div>
+
+                        </div>
+
+                        <div class="information-grid">
+
+                            <!-- Nom -->
+                            <div class="information-item">
+
+                                <span>
+                                    Nom complet
+                                </span>
+
+                                <strong>
+                                    {{ full_name }}
+                                </strong>
+
+                            </div>
+
+                            <!-- Identifiant -->
+                            <div class="information-item">
+
+                                <span>
+                                    Identifiant
+                                </span>
+
+                                <strong>
+                                    {{ supervisor_id }}
+                                </strong>
+
+                            </div>
+
+                            <!-- Rôle -->
+                            <div class="information-item">
+
+                                <span>
+                                    Rôle
+                                </span>
+
+                                <strong>
+                                    {{ role_display }}
+                                </strong>
+
+                            </div>
+
+                            <!-- Email -->
+                            <div class="information-item">
+
+                                <span>
+                                    Adresse e-mail
+                                </span>
+
+                                <strong>
+                                    {{ email }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =========================================
+                         AFFECTATION
+                    ========================================== -->
+                    <section class="profile-card">
+
+                        <div class="card-heading">
+
+                            <div class="heading-icon">
+                                <i class="bi bi-building"></i>
+                            </div>
+
+                            <div>
+
+                                <span class="section-eyebrow">
+                                    Administration
+                                </span>
+
+                                <h2>
+                                    Affectation
+                                </h2>
+
+                            </div>
+
+                        </div>
+
+                        <div class="information-grid">
+
+                            <div class="information-item">
+
+                                <span>
+                                    Établissement
+                                </span>
+
+                                <strong>
+                                    Université Catholique de Bukavu
+                                </strong>
+
+                            </div>
+
+                            <div class="information-item">
+
+                                <span>
+                                    Année académique
+                                </span>
+
+                                <strong>
+                                    {{ current_academic_year }}
+                                </strong>
+
+                            </div>
+
+                            <div class="information-item">
+
+                                <span>
+                                    Type d'accès
+                                </span>
+
+                                <strong>
+                                    Contrôle des évaluations
+                                </strong>
+
+                            </div>
+
+                            <div class="information-item">
+
+                                <span>
+                                    Niveau d'accès
+                                </span>
+
+                                <strong class="read-only-value">
+                                    <i class="bi bi-eye me-1"></i>
+                                    Lecture seule
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                        <div class="access-notice">
+
+                            <i class="bi bi-info-circle"></i>
+
+                            <p>
+                                Les informations d'affectation et les droits
+                                d'accès sont définis par l'administration.
+                                Ils ne peuvent pas être modifiés depuis
+                                cet espace.
+                            </p>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =========================================
+                         SÉCURITÉ
+                    ========================================== -->
+                    <section class="profile-card">
+
+                        <div class="card-heading">
+
+                            <div class="heading-icon">
+                                <i class="bi bi-shield-lock"></i>
+                            </div>
+
+                            <div>
+
+                                <span class="section-eyebrow">
+                                    Sécurité
+                                </span>
+
+                                <h2>
+                                    Accès au compte
+                                </h2>
+
+                            </div>
+
+                        </div>
+
+                        <div class="security-row">
+
+                            <div class="security-information">
+
+                                <div class="security-icon">
+                                    <i class="bi bi-key"></i>
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        Mot de passe
+                                    </strong>
+
+                                    <span>
+                                        Protégez votre compte avec un
+                                        mot de passe personnel.
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                            <button
+                                class="btn secondary-btn"
+                                type="button"
+                                data-bs-toggle="modal"
+                                data-bs-target="#passwordModal"
+                            >
+                                Modifier
+                            </button>
+
+                        </div>
+
+                        <div class="security-row">
+
+                            <div class="security-information">
+
+                                <div class="security-icon">
+                                    <i class="bi bi-clock-history"></i>
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        Dernière connexion
+                                    </strong>
+
+                                    <span>
+                                        {{ last_login }}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                            <span class="security-status">
+                                <i class="bi bi-check-circle-fill"></i>
+                                Session active
+                            </span>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+
+                <!-- =============================================
+                     COLONNE LATÉRALE
+                ============================================== -->
+                <div class="col-12 col-xl-4">
+
+                    <!-- =========================================
+                         DROITS
+                    ========================================== -->
+                    <section class="side-card">
+
+                        <div class="side-card-icon">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+
+                        <h2>
+                            Vos autorisations
+                        </h2>
+
+                        <p>
+                            Votre compte est limité aux fonctions nécessaires
+                            au contrôle des étudiants.
+                        </p>
+
+                        <ul class="permission-list">
+
+                            <li>
+                                <i class="bi bi-check-lg"></i>
+                                Rechercher un étudiant
+                            </li>
+
+                            <li>
+                                <i class="bi bi-check-lg"></i>
+                                Consulter son statut d'éligibilité
+                            </li>
+
+                            <li>
+                                <i class="bi bi-check-lg"></i>
+                                Consulter les informations financières utiles
+                            </li>
+
+                            <li>
+                                <i class="bi bi-check-lg"></i>
+                                Consulter l'historique des vérifications
+                            </li>
+
+                        </ul>
+
+                        <div class="restriction-box">
+
+                            <i class="bi bi-lock"></i>
+
+                            <span>
+                                Aucune modification des paiements
+                                n'est autorisée.
+                            </span>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =========================================
+                         RACCOURCI
+                    ========================================== -->
+                    <section class="side-card">
+
+                        <span class="section-eyebrow">
+                            Action rapide
+                        </span>
+
+                        <h2>
+                            Contrôler un étudiant
+                        </h2>
+
+                        <p>
+                            Accédez directement à la recherche par matricule.
+                        </p>
+
+                        <a
+                            href="{% url 'supervisor_verification' %}"
+                            class="btn primary-btn w-100"
+                        >
+                            <i class="bi bi-search me-2"></i>
+                            Vérifier un étudiant
+                        </a>
+
+                    </section>
+
+
+                    <!-- =========================================
+                         DÉCONNEXION
+                    ========================================== -->
+                    <section class="side-card">
+
+                        <span class="section-eyebrow">
+                            Session
+                        </span>
+
+                        <h2>
+                            Déconnexion
+                        </h2>
+
+                        <p>
+                            Fermez votre session lorsque vous avez terminé
+                            les contrôles.
+                        </p>
+
+                        <a
+                            href="{% url 'logout' %}"
+                            class="btn logout-btn w-100"
+                        >
+                            <i class="bi bi-box-arrow-right me-2"></i>
+                            Se déconnecter
+                        </a>
+
+                    </section>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- =========================================================
+     MENU MOBILE
+========================================================= -->
+<div
+    class="offcanvas offcanvas-start supervisor-offcanvas"
+    tabindex="-1"
+    id="supervisorMobileMenu"
+    aria-labelledby="supervisorMobileMenuLabel"
+>
+
+    <div class="offcanvas-header">
+
+        <div class="d-flex align-items-center gap-3">
+
+            <div class="offcanvas-brand">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+            <div>
+
+                <strong id="supervisorMobileMenuLabel">
+                    AcademicPay
+                </strong>
+
+                <span>
+                    Espace surveillant
+                </span>
+
+            </div>
+
+        </div>
+
+        <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="offcanvas"
+            aria-label="Fermer"
+        ></button>
+
+    </div>
+
+    <div class="offcanvas-body">
+
+        <nav class="nav flex-column gap-1">
+
+            <!-- Accueil -->
+            <a
+                href="{% url 'supervisor_dashboard' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-house-door-fill"></i>
+                <span>Accueil</span>
+            </a>
+
+            <!-- Vérification -->
+            <a
+                href="{% url 'supervisor_verification' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-person-check"></i>
+                <span>Vérifier un étudiant</span>
+            </a>
+
+            <!-- Historique -->
+            <a
+                href="{% url 'supervisor_history' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-clock-history"></i>
+                <span>Historique</span>
+            </a>
+
+            <hr>
+
+            <!-- Mon compte -->
+            <a
+                href="{% url 'supervisor_profile' %}"
+                class="mobile-nav-link active"
+                aria-current="page"
+            >
+                <i class="bi bi-person"></i>
+                <span>Mon compte</span>
+            </a>
+
+            <!-- Déconnexion -->
+            <a
+                href="{% url 'logout' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Déconnexion</span>
+            </a>
+
+        </nav>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     MODAL CHANGEMENT MOT DE PASSE
+========================================================= -->
+<div
+    class="modal fade"
+    id="passwordModal"
+    tabindex="-1"
+    aria-labelledby="passwordModalLabel"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content password-modal">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="section-eyebrow">
+                        Sécurité
+                    </span>
+
+                    <h2
+                        class="modal-title"
+                        id="passwordModalLabel"
+                    >
+                        Modifier le mot de passe
+                    </h2>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal"
+                    aria-label="Fermer"
+                ></button>
+
+            </div>
+
+            <form id="passwordForm">
+
+                <div class="modal-body">
+
+                    <!-- Ancien mot de passe -->
+                    <div class="mb-3">
+
+                        <label
+                            for="currentPassword"
+                            class="form-label"
+                        >
+                            Mot de passe actuel
+                        </label>
+
+                        <div class="password-field">
+
+                            <i class="bi bi-lock"></i>
+
+                            <input
+                                type="password"
+                                class="form-control"
+                                id="currentPassword"
+                                name="current_password"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+                    <!-- Nouveau -->
+                    <div class="mb-3">
+
+                        <label
+                            for="newPassword"
+                            class="form-label"
+                        >
+                            Nouveau mot de passe
+                        </label>
+
+                        <div class="password-field">
+
+                            <i class="bi bi-key"></i>
+
+                            <input
+                                type="password"
+                                class="form-control"
+                                id="newPassword"
+                                name="new_password"
+                                minlength="8"
+                                required
+                            >
+
+                        </div>
+
+                        <span class="field-help">
+                            Utilisez au minimum 8 caractères.
+                        </span>
+
+                    </div>
+
+                    <!-- Confirmation -->
+                    <div>
+
+                        <label
+                            for="confirmPassword"
+                            class="form-label"
+                        >
+                            Confirmer le nouveau mot de passe
+                        </label>
+
+                        <div class="password-field">
+
+                            <i class="bi bi-shield-check"></i>
+
+                            <input
+                                type="password"
+                                class="form-control"
+                                id="confirmPassword"
+                                name="confirm_password"
+                                minlength="8"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+                    <!-- Message -->
+                    <div
+                        class="password-message"
+                        id="passwordMessage"
+                        hidden
+                    ></div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn secondary-btn"
+                        data-bs-dismiss="modal"
+                    >
+                        Annuler
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn primary-btn"
+                        id="changePasswordBtn"
+                    >
+                        Enregistrer
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Bootstrap -->
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+></script>
+
+<!-- Theme Toggle -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('dark-theme');
+                const icon = this.querySelector('i');
+                if (document.body.classList.contains('dark-theme')) {
+                    icon.className = 'bi bi-sun-fill';
+                } else {
+                    icon.className = 'bi bi-moon-stars';
+                }
+            });
+        }
+    });
+</script>
+
+
+<!-- =========================================================
+     JS - CHANGEMENT MOT DE PASSE (AJAX)
+========================================================= -->
+<script>
+
+    const passwordForm = document.getElementById("passwordForm");
+    const passwordMessage = document.getElementById("passwordMessage");
+    const changePasswordBtn = document.getElementById("changePasswordBtn");
+
+    // Get CSRF token from cookie
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    passwordForm.addEventListener("submit", function (event) {
+
+        event.preventDefault();
+
+        const currentPassword = document.getElementById("currentPassword").value;
+        const newPassword = document.getElementById("newPassword").value;
+        const confirmPassword = document.getElementById("confirmPassword").value;
+
+        passwordMessage.hidden = false;
+        passwordMessage.className = "password-message";
+        passwordMessage.textContent = "";
+
+        // Frontend validation
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            passwordMessage.className = "password-message error";
+            passwordMessage.textContent = "Veuillez remplir tous les champs.";
+            return;
+        }
+
+        if (newPassword.length < 8) {
+            passwordMessage.className = "password-message error";
+            passwordMessage.textContent = "Le nouveau mot de passe doit contenir au moins 8 caractères.";
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            passwordMessage.className = "password-message error";
+            passwordMessage.textContent = "La confirmation ne correspond pas au nouveau mot de passe.";
+            return;
+        }
+
+        if (currentPassword === newPassword) {
+            passwordMessage.className = "password-message error";
+            passwordMessage.textContent = "Le nouveau mot de passe doit être différent du mot de passe actuel.";
+            return;
+        }
+
+        // Send AJAX request
+        const formData = new FormData();
+        formData.append('action', 'change_password');
+        formData.append('current_password', currentPassword);
+        formData.append('new_password', newPassword);
+        formData.append('confirm_password', confirmPassword);
+
+        const csrftoken = getCookie('csrftoken');
+
+        // Show loading state
+        changePasswordBtn.disabled = true;
+        changePasswordBtn.innerHTML = `
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Modification...
+        `;
+
+        fetch(window.location.href, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': csrftoken,
+            },
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Reset button
+            changePasswordBtn.disabled = false;
+            changePasswordBtn.innerHTML = 'Enregistrer';
+
+            if (data.success) {
+                passwordMessage.className = "password-message success";
+                passwordMessage.textContent = data.message;
+                passwordForm.reset();
+
+                // Close modal after 2 seconds
+                setTimeout(() => {
+                    const modal = bootstrap.Modal.getInstance(
+                        document.getElementById('passwordModal')
+                    );
+                    if (modal) modal.hide();
+                    passwordMessage.hidden = true;
+                }, 2000);
+            } else {
+                if (data.errors && data.errors.length > 0) {
+                    passwordMessage.className = "password-message error";
+                    passwordMessage.textContent = data.errors[0];
+                } else {
+                    passwordMessage.className = "password-message error";
+                    passwordMessage.textContent = "Une erreur est survenue.";
+                }
+            }
+        })
+        .catch(() => {
+            changePasswordBtn.disabled = false;
+            changePasswordBtn.innerHTML = 'Enregistrer';
+            passwordMessage.className = "password-message error";
+            passwordMessage.textContent = "Une erreur est survenue. Veuillez réessayer.";
+        });
+
+    });
+
+</script>
+
+</body>
+
+</html>

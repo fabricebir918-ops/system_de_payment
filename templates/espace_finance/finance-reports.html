@@ -1,0 +1,1209 @@
+{% load static %}
+
+<!doctype html>
+<html lang="fr" data-theme="dark">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Rapports | AcademicPay</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    >
+
+    <!-- CSS global Finance -->
+    <link rel="stylesheet" href="{% static 'css/espace_finance/finance-dashboard.css' %}">
+
+    <!-- CSS spécifique Rapports -->
+    <link rel="stylesheet" href="{% static 'css/espace_finance/finance-reports.css' %}">
+</head>
+
+
+<body>
+
+<div class="finance-layout">
+
+    <!-- =====================================================
+         SIDEBAR DESKTOP
+    ====================================================== -->
+
+    <aside class="finance-sidebar d-none d-xl-flex">
+
+        <a href="{% url 'finance_dashboard' %}" class="sidebar-brand">
+
+            <div class="brand-icon">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+            <div>
+                <strong>AcademicPay</strong>
+                <span>FINANCE</span>
+            </div>
+
+        </a>
+
+
+        <nav class="sidebar-nav">
+
+            <div class="nav-section-label">
+                PRINCIPAL
+            </div>
+
+            <a href="{% url 'finance_dashboard' %}" class="sidebar-link">
+                <i class="bi bi-house-door"></i>
+                <span>ACCUEIL</span>
+            </a>
+
+            <a href="{% url 'finance_payments' %}" class="sidebar-link">
+                <i class="bi bi-credit-card-fill"></i>
+                <span>PAIEMENTS</span>
+            </a>
+
+            <a href="{% url 'finance_statements' %}" class="sidebar-link">
+                <i class="bi bi-bank"></i>
+                <span>EXTRAITS BANCAIRES</span>
+            </a>
+
+            <a href="{% url 'finance_schedule' %}" class="sidebar-link">
+                <i class="bi bi-calendar3"></i>
+                <span>ÉCHÉANCIER</span>
+            </a>
+
+
+            <div class="nav-section-label">
+                SUIVI FINANCIER
+            </div>
+
+            <a href="{% url 'finance_students' %}" class="sidebar-link">
+                <i class="bi bi-people"></i>
+                <span>SITUATIONS FINANCIÈRES</span>
+            </a>
+
+            <a href="{% url 'finance_reconciliation' %}" class="sidebar-link">
+                <i class="bi bi-arrow-left-right"></i>
+                <span>RAPPROCHEMENT GLOBAL</span>
+            </a>
+
+            <a href="{% url 'finance_anomalies' %}" class="sidebar-link">
+
+                <i class="bi bi-exclamation-triangle"></i>
+
+                <span>ANOMALIES</span>
+
+                <span
+                    class="nav-badge"
+                    id="sidebarAnomalyCount"
+                >
+                    {{ pending_anomalies }}
+                </span>
+
+            </a>
+
+
+            <div class="nav-section-label">
+                ANALYSE
+            </div>
+
+            <a
+                href="{% url 'finance_reports' %}"
+                class="sidebar-link active"
+                aria-current="page"
+            >
+                <i class="bi bi-bar-chart-line"></i>
+                <span>RAPPORTS</span>
+            </a>
+
+            <a href="{% url 'finance_history' %}" class="sidebar-link">
+                <i class="bi bi-clock-history"></i>
+                <span>HISTORIQUE</span>
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a href="{% url 'finance_profile' %}" class="finance-user">
+
+                <div class="user-avatar">
+                    {% with initials=user.full_congolese_name|slice:":2" %}
+                        {{ initials|upper }}
+                    {% endwith %}
+                </div>
+
+                <div class="user-information">
+                    <strong>{{ user.full_congolese_name }}</strong>
+                    <span>{{ user.get_staff_role_display|default:"Responsable financier" }}</span>
+                </div>
+
+                <i class="bi bi-chevron-right"></i>
+
+            </a>
+
+
+            <div class="sidebar-actions">
+
+                <button
+                    type="button"
+                    class="sidebar-action-btn"
+                    id="themeButton"
+                    title="Changer de thème"
+                >
+                    <i class="bi bi-sun"></i>
+                </button>
+
+                <a
+                    href="{% url 'finance_profile' %}"
+                    class="sidebar-action-btn"
+                    title="Paramètres"
+                >
+                    <i class="bi bi-gear"></i>
+                </a>
+
+                <a
+                    href="{% url 'logout' %}"
+                    class="sidebar-action-btn"
+                    title="Déconnexion"
+                >
+                    <i class="bi bi-box-arrow-right"></i>
+                </a>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         CONTENU PRINCIPAL
+    ====================================================== -->
+
+    <main class="finance-main">
+
+
+        <!-- =================================================
+             HEADER MOBILE
+        ================================================== -->
+
+        <div class="mobile-header d-xl-none">
+
+            <button
+                class="mobile-menu-button"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#financeMobileMenu"
+                aria-label="Ouvrir le menu"
+            >
+                <i class="bi bi-list"></i>
+            </button>
+
+            <div class="mobile-brand">
+                <strong>AcademicPay</strong>
+                <span>FINANCE</span>
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             HEADER PAGE
+        ================================================== -->
+
+        <header class="reports-header">
+
+            <div>
+
+                <span class="page-eyebrow">
+                    ANALYSE FINANCIÈRE
+                </span>
+
+                <h1>Rapports</h1>
+
+                <p>
+                    Analysez les encaissements, le niveau de paiement
+                    des étudiants, les performances des banques
+                    partenaires et la qualité du rapprochement.
+                </p>
+
+            </div>
+
+
+            <div class="reports-header-actions">
+
+                <button
+                    type="button"
+                    class="report-action-button"
+                    id="printReportButton"
+                >
+                    <i class="bi bi-printer"></i>
+                    Imprimer
+                </button>
+
+                <button
+                    type="button"
+                    class="report-action-button primary"
+                    id="exportReportButton"
+                >
+                    <i class="bi bi-download"></i>
+                    Exporter CSV
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             FILTRES
+        ================================================== -->
+
+        <section class="reports-filters">
+
+
+            <!-- ANNÉE ACADÉMIQUE -->
+
+            <div class="report-filter">
+
+                <label for="academicYearFilter">
+                    Année académique
+                </label>
+
+                <select id="academicYearFilter">
+                    {% for year_value, year_label in academic_years %}
+                    <option value="{{ year_value }}" {% if academic_year == year_value %}selected{% endif %}>
+                        {{ year_label }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+            </div>
+
+
+            <!-- PÉRIODE -->
+
+            <div class="report-filter">
+
+                <label for="periodFilter">
+                    Période
+                </label>
+
+                <select id="periodFilter">
+
+                    <option value="year" {% if period_filter == 'year' %}selected{% endif %}>
+                        Toute l'année
+                    </option>
+
+                    <option value="semester1" {% if period_filter == 'semester1' %}selected{% endif %}>
+                        Premier semestre
+                    </option>
+
+                    <option value="semester2" {% if period_filter == 'semester2' %}selected{% endif %}>
+                        Deuxième semestre
+                    </option>
+
+                    <option value="month" {% if period_filter == 'month' %}selected{% endif %}>
+                        Ce mois
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- BANQUE -->
+
+            <div class="report-filter">
+
+                <label for="bankFilter">
+                    Banque
+                </label>
+
+                <select id="bankFilter">
+
+                    <option value="" {% if not bank_filter %}selected{% endif %}>
+                        Toutes les banques
+                    </option>
+
+                    {% for bank in banks %}
+                    <option value="{{ bank.code|lower }}" {% if bank_filter == bank.code|lower %}selected{% endif %}>
+                        {{ bank.name }}
+                    </option>
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- FACULTÉ -->
+
+            <div class="report-filter">
+
+                <label for="facultyFilter">
+                    Faculté
+                </label>
+
+                <select id="facultyFilter">
+
+                    <option value="" {% if not faculty_filter %}selected{% endif %}>
+                        Toutes les facultés
+                    </option>
+
+                    {% for faculty in faculties %}
+                    <option value="{{ faculty.code }}" {% if faculty_filter == faculty.code %}selected{% endif %}>
+                        {{ faculty.name }}
+                    </option>
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- DÉPARTEMENT -->
+
+            <div class="report-filter">
+
+                <label for="departmentFilter">
+                    Département
+                </label>
+
+                <select
+                    id="departmentFilter"
+                    disabled
+                >
+                    <option value="">
+                        Tous les départements
+                    </option>
+                </select>
+
+            </div>
+
+
+            <!-- PARCOURS / SPÉCIALISATION -->
+
+            <div class="report-filter">
+
+                <label for="programFilter">
+                    Parcours / Spécialisation
+                </label>
+
+                <select
+                    id="programFilter"
+                    disabled
+                >
+                    <option value="">
+                        Tous les parcours
+                    </option>
+                </select>
+
+            </div>
+
+
+            <!-- NIVEAU ACADÉMIQUE -->
+
+            <div class="report-filter">
+
+                <label for="levelFilter">
+                    Niveau académique
+                </label>
+
+                <select
+                    id="levelFilter"
+                    disabled
+                >
+                    <option value="">
+                        Tous les niveaux
+                    </option>
+                </select>
+
+            </div>
+
+
+            <!-- RESET -->
+
+            <button
+                type="button"
+                class="reset-report-filters"
+                id="resetReportFilters"
+            >
+                <i class="bi bi-arrow-counterclockwise"></i>
+                Réinitialiser
+            </button>
+
+        </section>
+
+
+        <!-- =================================================
+             RÉSUMÉ DES FILTRES ACTIFS
+        ================================================== -->
+
+        <section
+            class="active-report-context"
+            id="activeReportContext"
+            aria-live="polite"
+        >
+
+            <div class="active-report-context-icon">
+                <i class="bi bi-funnel"></i>
+            </div>
+
+            <div>
+
+                <span class="active-report-context-label">
+                    Périmètre du rapport
+                </span>
+
+                <p id="activeReportContextText">
+                    {% if faculty_filter %}
+                        {% for faculty in faculties %}
+                            {% if faculty.code == faculty_filter %}
+                                {{ faculty.name }}
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        Toutes les facultés
+                    {% endif %}
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             KPI
+        ================================================== -->
+
+        <section class="report-kpi-grid">
+
+            <article class="report-kpi">
+
+                <div class="report-kpi-icon">
+                    <i class="bi bi-wallet2"></i>
+                </div>
+
+                <div>
+
+                    <span>TOTAL ENCAISSÉ</span>
+
+                    <strong id="totalCollectedKpi">
+                        {{ total_collected|floatformat:2 }} $
+                    </strong>
+
+                    <small>
+                        Paiements étudiants enregistrés
+                    </small>
+
+                </div>
+
+            </article>
+
+
+            <article class="report-kpi">
+
+                <div class="report-kpi-icon success">
+                    <i class="bi bi-check2-circle"></i>
+                </div>
+
+                <div>
+
+                    <span>TAUX DE RECOUVREMENT</span>
+
+                    <strong id="recoveryRateKpi">
+                        {{ recovery_rate|floatformat:1 }} %
+                    </strong>
+
+                    <small>
+                        Par rapport au montant attendu
+                    </small>
+
+                </div>
+
+            </article>
+
+
+            <article class="report-kpi">
+
+                <div class="report-kpi-icon accent">
+                    <i class="bi bi-arrow-left-right"></i>
+                </div>
+
+                <div>
+
+                    <span>RAPPROCHEMENT</span>
+
+                    <strong id="reconciliationRateKpi">
+                        {{ reconciliation_rate|floatformat:1 }} %
+                    </strong>
+
+                    <small>
+                        Transactions rapprochées
+                    </small>
+
+                </div>
+
+            </article>
+
+
+            <article class="report-kpi">
+
+                <div class="report-kpi-icon warning">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+
+                <div>
+
+                    <span>ANOMALIES OUVERTES</span>
+
+                    <strong id="openAnomaliesKpi">
+                        {{ open_anomalies }}
+                    </strong>
+
+                    <small>
+                        Cas restant à traiter
+                    </small>
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- =================================================
+             GRAPHIQUES PRINCIPAUX
+        ================================================== -->
+
+        <section class="report-main-grid">
+
+
+            <!-- ÉVOLUTION DES RECETTES -->
+
+            <article class="report-card revenue-chart-card">
+
+                <div class="report-card-header">
+
+                    <div>
+
+                        <span class="card-eyebrow">
+                            ENCAISSEMENTS
+                        </span>
+
+                        <h2>
+                            Évolution des recettes
+                        </h2>
+
+                        <p>
+                            Montants encaissés par mois
+                        </p>
+
+                    </div>
+
+
+                    <div class="report-chart-legend">
+
+                        <span>
+                            <i class="legend-dot collected"></i>
+                            Encaissé
+                        </span>
+
+                        <span>
+                            <i class="legend-dot expected"></i>
+                            Attendu
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="report-chart-wrapper large">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+
+            </article>
+
+
+            <!-- RÉPARTITION PAR BANQUE -->
+
+            <article class="report-card bank-chart-card">
+
+                <div class="report-card-header">
+
+                    <div>
+
+                        <span class="card-eyebrow">
+                            BANQUES
+                        </span>
+
+                        <h2>
+                            Répartition par banque
+                        </h2>
+
+                        <p>
+                            Part des encaissements
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="report-chart-wrapper doughnut">
+                    <canvas id="bankDistributionChart"></canvas>
+                </div>
+
+
+                <div class="bank-report-legend">
+
+                    {% for bank in bank_distribution %}
+                    <div>
+
+                        <span class="bank-report-dot {{ bank.code|lower }}"></span>
+
+                        <div>
+                            <strong>{{ bank.name }}</strong>
+                            <small>{{ bank.collected|floatformat:2 }} $</small>
+                        </div>
+
+                    </div>
+                    {% endfor %}
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- =================================================
+             GRAPHIQUES SECONDAIRES
+        ================================================== -->
+
+        <section class="report-secondary-grid">
+
+
+            <!-- FACULTÉS -->
+
+            <article class="report-card">
+
+                <div class="report-card-header">
+
+                    <div>
+
+                        <span class="card-eyebrow">
+                            FACULTÉS
+                        </span>
+
+                        <h2>
+                            Recouvrement par faculté
+                        </h2>
+
+                        <p>
+                            Pourcentage des frais déjà payés
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="report-chart-wrapper">
+                    <canvas id="facultyChart"></canvas>
+                </div>
+
+            </article>
+
+
+            <!-- RAPPROCHEMENT -->
+
+            <article class="report-card">
+
+                <div class="report-card-header">
+
+                    <div>
+
+                        <span class="card-eyebrow">
+                            CONTRÔLE
+                        </span>
+
+                        <h2>
+                            Qualité du rapprochement
+                        </h2>
+
+                        <p>
+                            Répartition des transactions
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="reconciliation-report-content">
+
+                    <div class="report-rate-circle">
+
+                        <strong id="reconciliationCircleRate">
+                            {{ reconciliation_rate|floatformat:1 }} %
+                        </strong>
+
+                        <span>
+                            rapprochées
+                        </span>
+
+                    </div>
+
+
+                    <div class="reconciliation-report-stats">
+
+                        <div>
+
+                            <span>
+                                Transactions rapprochées
+                            </span>
+
+                            <strong id="matchedTransactionsCount">
+                                {{ matched_claims }}
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Non attribuées
+                            </span>
+
+                            <strong id="unassignedTransactionsCount">
+                                {{ unassigned_claims }}
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Références introuvables
+                            </span>
+
+                            <strong id="missingReferencesCount">
+                                {{ missing_references }}
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Montants incohérents
+                            </span>
+
+                            <strong id="amountMismatchCount">
+                                {{ amount_mismatches }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- =================================================
+             PERFORMANCE DES BANQUES
+        ================================================== -->
+
+        <section class="report-card bank-performance-card">
+
+            <div class="report-card-header">
+
+                <div>
+
+                    <span class="card-eyebrow">
+                        SYNTHÈSE BANCAIRE
+                    </span>
+
+                    <h2>
+                        Performance des banques partenaires
+                    </h2>
+
+                    <p>
+                        Comparaison entre extraits bancaires et
+                        paiements enregistrés dans AcademicPay
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="report-table-wrapper">
+
+                <table class="report-table">
+
+                    <thead>
+
+                    <tr>
+                        <th>Banque</th>
+                        <th>Extraits bancaires</th>
+                        <th>AcademicPay</th>
+                        <th>Écart</th>
+                        <th>Transactions</th>
+                        <th>Anomalies</th>
+                        <th>Rapprochement</th>
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody id="bankPerformanceBody">
+
+                    {% for bank in bank_performance %}
+                    <tr data-bank="{{ bank.code|lower }}">
+
+                        <td>
+
+                            <div class="report-bank">
+
+                                <div class="report-bank-icon">
+                                    <i class="bi bi-bank"></i>
+                                </div>
+
+                                <div>
+                                    <strong>{{ bank.name }}</strong>
+                                    <small>Banque partenaire</small>
+                                </div>
+
+                            </div>
+
+                        </td>
+
+                        <td>{{ bank.statement_amount|floatformat:2 }} $</td>
+
+                        <td>{{ bank.system_amount|floatformat:2 }} $</td>
+
+                        <td>
+                            <span class="report-difference">
+                                {{ bank.difference|floatformat:2 }} $
+                            </span>
+                        </td>
+
+                        <td>{{ bank.transactions }}</td>
+
+                        <td>
+                            <span class="report-anomaly-count {% if bank.anomalies > 10 %}danger{% endif %}">
+                                {{ bank.anomalies }}
+                            </span>
+                        </td>
+
+                        <td>
+
+                            <div class="report-progress">
+
+                                <div>
+                                    <span style="width: {{ bank.reconciliation|floatformat:0 }}%;"></span>
+                                </div>
+
+                                <small>
+                                    {{ bank.reconciliation|floatformat:1 }} %
+                                </small>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             SITUATION FINANCIÈRE PAR FACULTÉ
+        ================================================== -->
+
+        <section class="report-card faculty-report-card">
+
+            <div class="report-card-header">
+
+                <div>
+
+                    <span class="card-eyebrow">
+                        SITUATION ACADÉMIQUE
+                    </span>
+
+                    <h2>
+                        Situation financière par faculté
+                    </h2>
+
+                    <p>
+                        Vue synthétique des obligations et paiements
+                        des étudiants
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="report-table-wrapper">
+
+                <table class="report-table faculty-table">
+
+                    <thead>
+
+                    <tr>
+                        <th>Faculté</th>
+                        <th>Étudiants</th>
+                        <th>Montant attendu</th>
+                        <th>Montant payé</th>
+                        <th>Reste</th>
+                        <th>Recouvrement</th>
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody id="facultyReportBody">
+
+                    {% for faculty in faculty_recovery %}
+                    <tr data-faculty="{{ faculty.code }}">
+
+                        <td>
+                            <strong>
+                                {{ faculty.name }}
+                            </strong>
+                        </td>
+
+                        <td>{{ faculty.students }}</td>
+
+                        <td>{{ faculty.expected|floatformat:2 }} $</td>
+
+                        <td>{{ faculty.collected|floatformat:2 }} $</td>
+
+                        <td>{{ faculty.remaining|floatformat:2 }} $</td>
+
+                        <td>
+
+                            <div class="report-progress">
+
+                                <div>
+                                    <span style="width: {{ faculty.recovery_rate|floatformat:0 }}%;"></span>
+                                </div>
+
+                                <small>
+                                    {{ faculty.recovery_rate|floatformat:1 }} %
+                                </small>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+</div>
+
+
+<!-- =========================================================
+     OFFCANVAS MOBILE
+========================================================= -->
+
+<div
+    class="offcanvas offcanvas-start finance-offcanvas"
+    tabindex="-1"
+    id="financeMobileMenu"
+>
+
+    <div class="offcanvas-header">
+
+        <div class="sidebar-brand">
+
+            <div class="brand-icon">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+            <div>
+                <strong>AcademicPay</strong>
+                <span>FINANCE</span>
+            </div>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="offcanvas"
+            aria-label="Fermer"
+        ></button>
+
+    </div>
+
+
+    <div class="offcanvas-body">
+
+        <nav class="mobile-navigation">
+
+            <a href="{% url 'finance_dashboard' %}" class="mobile-nav-link">
+                <i class="bi bi-house-door"></i>
+                Accueil
+            </a>
+
+            <a href="{% url 'finance_payments' %}" class="mobile-nav-link">
+                <i class="bi bi-credit-card-fill"></i>
+                Paiements
+            </a>
+
+            <a href="{% url 'finance_statements' %}" class="mobile-nav-link">
+                <i class="bi bi-bank"></i>
+                Extraits bancaires
+            </a>
+
+            <a href="{% url 'finance_schedule' %}" class="mobile-nav-link">
+                <i class="bi bi-calendar3"></i>
+                Échéancier
+            </a>
+
+            <a href="{% url 'finance_students' %}" class="mobile-nav-link">
+                <i class="bi bi-people"></i>
+                Situations financières
+            </a>
+
+            <a href="{% url 'finance_reconciliation' %}" class="mobile-nav-link">
+                <i class="bi bi-arrow-left-right"></i>
+                Rapprochement global
+            </a>
+
+            <a href="{% url 'finance_anomalies' %}" class="mobile-nav-link">
+                <i class="bi bi-exclamation-triangle"></i>
+                Anomalies
+            </a>
+
+            <a
+                href="{% url 'finance_reports' %}"
+                class="mobile-nav-link active"
+                aria-current="page"
+            >
+                <i class="bi bi-bar-chart-line"></i>
+                Rapports
+            </a>
+
+            <a href="{% url 'finance_history' %}" class="mobile-nav-link">
+                <i class="bi bi-clock-history"></i>
+                Historique
+            </a>
+
+
+            <hr>
+
+
+            <a href="{% url 'finance_profile' %}" class="mobile-nav-link">
+                <i class="bi bi-person"></i>
+                Mon compte
+            </a>
+
+            <a
+                href="{% url 'logout' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-box-arrow-right"></i>
+                Déconnexion
+            </a>
+
+        </nav>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     TOAST
+========================================================= -->
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+
+    <div
+        id="financeToast"
+        class="toast finance-toast"
+        role="alert"
+        aria-live="polite"
+    >
+
+        <div class="toast-body">
+
+            <i class="bi bi-check-circle-fill"></i>
+
+            <span id="toastMessage">
+                Opération effectuée.
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     REPORT DATA FOR JAVASCRIPT
+========================================================= -->
+
+<script id="report-data" type="application/json">
+    {{ report_data_json|safe }}
+</script>
+
+
+<!-- Bootstrap -->
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js">
+</script>
+
+<!-- Chart.js -->
+<script
+    src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.min.js">
+</script>
+
+<!-- JS Rapports -->
+<script src="{% static 'js/espace_finance/finance-reports.js' %}"></script>
+
+</body>
+</html>

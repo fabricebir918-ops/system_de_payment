@@ -1,0 +1,1477 @@
+{% load static %}
+
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Paiements | AcademicPay</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    >
+
+    <!-- CSS GLOBAL FINANCE -->
+    <link rel="stylesheet" href="{% static 'css/espace_finance/finance-dashboard.css' %}">
+
+    <!-- CSS PAIEMENTS -->
+    <link rel="stylesheet" href="{% static 'css/espace_finance/finance-payments.css' %}">
+</head>
+
+<body>
+
+<div class="finance-layout">
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside class="finance-sidebar d-none d-xl-flex">
+
+        <a href="{% url 'finance_dashboard' %}" class="sidebar-brand">
+
+            <div class="brand-icon">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+            <div>
+                <strong>AcademicPay</strong>
+                <span>FINANCE</span>
+            </div>
+
+        </a>
+
+        <nav class="sidebar-nav">
+
+            <div class="nav-section-label">
+                PRINCIPAL
+            </div>
+
+            <a
+                href="{% url 'finance_dashboard' %}"
+                class="sidebar-link"
+            >
+                <i class="bi bi-house-door"></i>
+                <span>ACCUEIL</span>
+            </a>
+
+            <a
+                href="{% url 'finance_payments' %}"
+                class="sidebar-link active"
+            >
+                <i class="bi bi-credit-card-fill"></i>
+                <span>PAIEMENTS</span>
+            </a>
+
+            <a
+                href="{% url 'finance_statements' %}"
+                class="sidebar-link"
+            >
+                <i class="bi bi-bank"></i>
+                <span>EXTRAITS BANCAIRES</span>
+            </a>
+
+            <a
+                href="{% url 'finance_schedule' %}"
+                class="sidebar-link"
+            >
+                <i class="bi bi-calendar3"></i>
+                <span>ÉCHÉANCIER</span>
+            </a>
+
+            <div class="nav-section-label">
+                SUIVI FINANCIER
+            </div>
+
+            <a
+                href="{% url 'finance_students' %}"
+                class="sidebar-link"
+            >
+                <i class="bi bi-people"></i>
+                <span>SITUATIONS FINANCIÈRES</span>
+            </a>
+
+            <a
+                href="{% url 'finance_reconciliation' %}"
+                class="sidebar-link"
+            >
+                <i class="bi bi-arrow-left-right"></i>
+                <span>RAPPROCHEMENT GLOBAL</span>
+            </a>
+
+            <a
+                href="{% url 'finance_anomalies' %}"
+                class="sidebar-link"
+            >
+                <i class="bi bi-exclamation-triangle"></i>
+                <span>ANOMALIES</span>
+
+                <span class="nav-badge">
+                    {{ pending_anomalies }}
+                </span>
+            </a>
+
+            <div class="nav-section-label">
+                ANALYSE
+            </div>
+
+            <a
+                href="{% url 'finance_reports' %}"
+                class="sidebar-link"
+            >
+                <i class="bi bi-bar-chart-line"></i>
+                <span>RAPPORTS</span>
+            </a>
+
+            <a
+                href="{% url 'finance_history' %}"
+                class="sidebar-link"
+            >
+                <i class="bi bi-clock-history"></i>
+                <span>HISTORIQUE</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <a
+                href="{% url 'finance_profile' %}"
+                class="finance-user"
+            >
+
+                <div class="user-avatar">
+                    {% with initials=user.full_congolese_name|slice:":2" %}
+                        {{ initials|upper }}
+                    {% endwith %}
+                </div>
+
+                <div class="user-information">
+
+                    <strong>
+                        {{ user.full_congolese_name }}
+                    </strong>
+
+                    <span>
+                        {{ user.get_staff_role_display|default:"Responsable financier" }}
+                    </span>
+
+                </div>
+
+                <i class="bi bi-chevron-right"></i>
+
+            </a>
+
+            <div class="sidebar-actions">
+
+                <button
+                    type="button"
+                    class="sidebar-action-btn"
+                    id="themeButton"
+                    title="Changer de thème"
+                >
+                    <i class="bi bi-sun"></i>
+                </button>
+
+                <a
+                    href="{% url 'finance_profile' %}"
+                    class="sidebar-action-btn"
+                    title="Paramètres"
+                >
+                    <i class="bi bi-gear"></i>
+                </a>
+
+                <a
+                    href="{% url 'logout' %}"
+                    class="sidebar-action-btn"
+                    title="Déconnexion"
+                >
+                    <i class="bi bi-box-arrow-right"></i>
+                </a>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+    <!-- =====================================================
+         CONTENU PRINCIPAL
+    ====================================================== -->
+
+    <main class="finance-main">
+
+        <!-- MOBILE HEADER -->
+
+        <div class="mobile-header d-xl-none">
+
+            <button
+                class="mobile-menu-button"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#financeMobileMenu"
+                aria-label="Ouvrir le menu"
+            >
+                <i class="bi bi-list"></i>
+            </button>
+
+            <div class="mobile-brand">
+                <strong>AcademicPay</strong>
+                <span>FINANCE</span>
+            </div>
+
+        </div>
+
+        <!-- HEADER -->
+
+        <header class="payments-header">
+
+            <div>
+
+                <span class="page-eyebrow">
+                    GESTION FINANCIÈRE
+                </span>
+
+                <h1>
+                    Paiements
+                </h1>
+
+                <p>
+                    Consultez et analysez les déclarations de paiement
+                    ainsi que leur état de rapprochement bancaire.
+                </p>
+
+            </div>
+
+            <div class="payments-header-actions">
+
+                <div class="filter-control">
+
+                    <i class="bi bi-calendar3"></i>
+
+                    <select id="academicYearFilter" aria-label="Année académique">
+                        {% for year in academic_years %}
+                        <option value="{{ year.value }}" {% if forloop.first %}selected{% endif %}>
+                            {{ year.label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+
+                </div>
+
+            </div>
+
+        </header>
+
+        <!-- =================================================
+             INDICATEURS
+        ================================================== -->
+
+        <section class="payments-kpi-grid">
+
+            <article class="payment-kpi">
+
+                <div class="payment-kpi-top">
+
+                    <span class="payment-kpi-icon">
+                        <i class="bi bi-cash-stack"></i>
+                    </span>
+
+                    <span class="payment-kpi-label">
+                        TOTAL ENCAISSÉ
+                    </span>
+
+                </div>
+
+                <strong id="totalCollected">
+                    {{ total_collected|floatformat:2 }} $
+                </strong>
+
+                <small id="totalCollectedInfo">
+                    Paiements validés
+                </small>
+
+            </article>
+
+            <article class="payment-kpi">
+
+                <div class="payment-kpi-top">
+
+                    <span class="payment-kpi-icon">
+                        <i class="bi bi-receipt"></i>
+                    </span>
+
+                    <span class="payment-kpi-label">
+                        DÉCLARATIONS
+                    </span>
+
+                </div>
+
+                <strong id="totalPayments">
+                    {{ total_payments }}
+                </strong>
+
+                <small>
+                    Déclarations enregistrées
+                </small>
+
+            </article>
+
+            <article class="payment-kpi">
+
+                <div class="payment-kpi-top">
+
+                    <span class="payment-kpi-icon success">
+                        <i class="bi bi-check2-circle"></i>
+                    </span>
+
+                    <span class="payment-kpi-label">
+                        APPROUVÉES
+                    </span>
+
+                </div>
+
+                <strong id="paidPayments">
+                    {{ approved_payments }}
+                </strong>
+
+                <small id="paidRate">
+                    {{ approval_rate }} % des déclarations
+                </small>
+
+            </article>
+
+            <article class="payment-kpi">
+
+                <div class="payment-kpi-top">
+
+                    <span class="payment-kpi-icon danger">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </span>
+
+                    <span class="payment-kpi-label">
+                        ANOMALIES
+                    </span>
+
+                </div>
+
+                <strong
+                    id="anomalyPayments"
+                    class="danger-text"
+                >
+                    {{ anomaly_count }}
+                </strong>
+
+                <small>
+                    Nécessitent une vérification
+                </small>
+
+            </article>
+
+        </section>
+<!-- =================================================
+     RÉPARTITION PAR BANQUE
+================================================== -->
+
+<section class="bank-summary">
+
+    <div class="bank-summary-header">
+
+        <div>
+
+            <span class="card-eyebrow">
+                BANQUES PARTENAIRES
+            </span>
+
+            <h2>
+                Répartition des encaissements
+            </h2>
+
+        </div>
+
+        <button
+            type="button"
+            class="reset-bank-filter"
+            id="showAllBanks"
+        >
+            Toutes les banques
+        </button>
+
+    </div>
+
+    <div class="bank-cards">
+        {% for bank in bank_summary %}
+        <button
+            type="button"
+            class="bank-card"
+            data-bank="{{ bank.code }}"
+        >
+            <div class="bank-card-heading">
+                <div class="bank-logo">
+                    {{ bank.code|slice:":2"|upper }}
+                </div>
+                <div>
+                    <strong>{{ bank.name }}</strong>
+                    <span>Banque partenaire</span>
+                </div>
+            </div>
+            <div class="bank-card-value">
+                <strong id="{{ bank.code }}Amount">
+                    {{ bank.total|floatformat:2 }} $
+                </strong>
+                <span id="{{ bank.code }}Count">
+                    {{ bank.count }} paiement{{ bank.count|pluralize }}
+                </span>
+            </div>
+            <div class="bank-progress">
+                <span
+                    id="{{ bank.code }}Progress"
+                    style="width: {{ bank.percentage }}%"
+                ></span>
+            </div>
+        </button>
+        {% endfor %}
+    </div>
+
+</section>
+
+        <!-- =================================================
+             FILTRES
+        ================================================== -->
+
+        <section class="payments-filter-card">
+
+            <!-- RECHERCHE -->
+
+            <div class="payment-search">
+
+                <i class="bi bi-search"></i>
+
+                <input
+                    type="search"
+                    id="paymentSearch"
+                    placeholder="Rechercher étudiant, matricule ou référence..."
+                    autocomplete="off"
+                    value="{{ search_query }}"
+                >
+
+                <button
+                    type="button"
+                    id="clearSearch"
+                    title="Effacer la recherche"
+                    aria-label="Effacer la recherche"
+                >
+                    <i class="bi bi-x-lg"></i>
+                </button>
+
+            </div>
+
+            <!-- BANQUE -->
+
+            <div class="payment-filter">
+
+                <label for="bankFilter">
+                    Banque
+                </label>
+
+                <select id="bankFilter">
+
+                    <option value="">
+                        Toutes
+                    </option>
+
+                    {% for bank in bank_summary %}
+                    <option value="{{ bank.code }}">
+                        {{ bank.name }}
+                    </option>
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <!-- FACULTÉ -->
+
+            <div class="payment-filter">
+
+                <label for="facultyFilter">
+                    Faculté
+                </label>
+
+                <select id="facultyFilter">
+
+                    <option value="">
+                        Toutes
+                    </option>
+
+                    {% for faculty in faculties %}
+                    <option value="{{ faculty.id }}" {% if faculty_filter == faculty.id|stringformat:"s" %}selected{% endif %}>
+                        {{ faculty.name }}
+                    </option>
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <!-- DÉPARTEMENT -->
+
+            <div class="payment-filter">
+
+                <label for="departmentFilter">
+                    Département
+                </label>
+
+                <select id="departmentFilter">
+                    <option value="">
+                        Tous les départements
+                    </option>
+                </select>
+
+            </div>
+
+            <!-- SPÉCIALISATION -->
+
+            <div class="payment-filter">
+
+                <label for="programFilter">
+                    Spécialisation
+                </label>
+
+                <select id="programFilter">
+                    <option value="">
+                        Toutes les spécialisations
+                    </option>
+                </select>
+
+            </div>
+
+            <!-- PROMOTION : indépendante -->
+
+            <div class="payment-filter">
+
+                <label for="promotionFilter">
+                    Promotion
+                </label>
+
+                <select id="promotionFilter">
+
+                    <option value="">
+                        Toutes
+                    </option>
+
+                    <option value="BAC1" {% if promotion_filter == 'BAC1' %}selected{% endif %}>
+                        BAC1
+                    </option>
+
+                    <option value="BAC2" {% if promotion_filter == 'BAC2' %}selected{% endif %}>
+                        BAC2
+                    </option>
+
+                    <option value="BAC3" {% if promotion_filter == 'BAC3' %}selected{% endif %}>
+                        BAC3
+                    </option>
+
+                    <option value="M1" {% if promotion_filter == 'M1' %}selected{% endif %}>
+                        Master 1
+                    </option>
+
+                    <option value="M2" {% if promotion_filter == 'M2' %}selected{% endif %}>
+                        Master 2
+                    </option>
+
+                </select>
+
+            </div>
+
+            <!-- SEMESTRE -->
+
+            <div class="payment-filter">
+
+                <label for="semesterFilter">
+                    Semestre
+                </label>
+
+                <select id="semesterFilter">
+
+                    <option value="">
+                        Tous
+                    </option>
+
+                    <option value="S1" {% if semester_filter == 'S1' %}selected{% endif %}>
+                        Semestre 1
+                    </option>
+
+                    <option value="S2" {% if semester_filter == 'S2' %}selected{% endif %}>
+                        Semestre 2
+                    </option>
+
+                </select>
+
+            </div>
+
+            <!-- STATUT -->
+
+            <div class="payment-filter">
+
+                <label for="statusFilter">
+                    Statut
+                </label>
+
+                <select id="statusFilter">
+
+                    <option value="">
+                        Tous
+                    </option>
+
+                    <option value="APPROVED" {% if status_filter == 'APPROVED' %}selected{% endif %}>
+                        Approuvé
+                    </option>
+
+                    <option value="PENDING" {% if status_filter == 'PENDING' %}selected{% endif %}>
+                        En attente
+                    </option>
+
+                    <option value="ANOMALY" {% if status_filter == 'ANOMALY' %}selected{% endif %}>
+                        Anomalie
+                    </option>
+
+                </select>
+
+            </div>
+
+            <!-- PÉRIODE -->
+
+            <button
+                type="button"
+                class="date-filter-button"
+                data-bs-toggle="modal"
+                data-bs-target="#paymentPeriodModal"
+            >
+
+                <i class="bi bi-calendar-range"></i>
+
+                <span id="paymentPeriodText">
+                    {% if start_date and end_date %}
+                        {{ start_date|date:"d/m/Y" }} - {{ end_date|date:"d/m/Y" }}
+                    {% else %}
+                        Toutes les dates
+                    {% endif %}
+                </span>
+
+            </button>
+
+            <!-- RÉINITIALISER -->
+
+            <button
+                type="button"
+                class="reset-filters-button"
+                id="resetFilters"
+            >
+
+                <i class="bi bi-arrow-counterclockwise"></i>
+
+                Réinitialiser
+
+            </button>
+
+        </section>
+
+        <!-- =================================================
+             TABLEAU
+        ================================================== -->
+
+        <section class="payments-table-card">
+
+            <div class="payments-table-header">
+
+                <div>
+
+                    <span class="card-eyebrow">
+                        DÉCLARATIONS
+                    </span>
+
+                    <h2>
+                        Liste des paiements
+                    </h2>
+
+                </div>
+
+                <div class="result-counter">
+
+                    <strong id="visiblePaymentCount">
+                        {{ payments|length }}
+                    </strong>
+
+                    <span>
+                        résultat(s)
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="payments-table-wrapper">
+
+                <table class="payments-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>Étudiant</th>
+                            <th>Matricule</th>
+                            <th>Référence</th>
+                            <th>Banque</th>
+                            <th>Faculté</th>
+                            <th>Promotion</th>
+                            <th>Montant</th>
+                            <th>Date</th>
+                            <th>Statut</th>
+                            <th></th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="paymentsTableBody">
+                        {% for payment in payments %}
+                        <tr
+                            data-id="{{ payment.id }}"
+                            data-reference="{{ payment.reference }}"
+                            data-status="{{ payment.status }}"
+                            data-bank="{{ payment.bank_code }}"
+                            data-semester="{{ payment.semester }}"
+                            data-year="{{ payment.academic_year }}"
+                        >
+                            <td>
+                                <div class="student-cell">
+                                    <span class="student-avatar">
+                                        {% with initials=payment.student_name|slice:":2" %}
+                                            {{ initials|upper }}
+                                        {% endwith %}
+                                    </span>
+                                    {{ payment.student_name }}
+                                </div>
+                            </td>
+                            <td>{{ payment.student_registration }}</td>
+                            <td>{{ payment.reference }}</td>
+                            <td>{{ payment.bank_name }}</td>
+                            <td>{{ payment.faculty }}</td>
+                            <td>{{ payment.promotion }}</td>
+                            <td><strong>{{ payment.amount|floatformat:2 }} $</strong></td>
+                            <td>{{ payment.date|date:"d/m/Y" }}</td>
+                            <td>
+                                <span class="payment-status {{ payment.status|lower }}">
+                                    <i class="bi bi-circle-fill"></i>
+                                    {{ payment.status_display }}
+                                </span>
+                            </td>
+                            <td>
+                                <button
+                                    type="button"
+                                    class="payment-detail-button"
+                                    data-payment-id="{{ payment.id }}"
+                                    title="Voir le détail"
+                                    aria-label="Voir le détail"
+                                >
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </td>
+                    
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="10" class="text-center py-4 text-muted">
+                                <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                                Aucun paiement trouvé
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+
+                <!-- AUCUN RÉSULTAT -->
+
+                <div
+                    class="payments-empty"
+                    id="paymentsEmpty"
+                    hidden
+                >
+
+                    <div class="empty-icon">
+                        <i class="bi bi-search"></i>
+                    </div>
+
+                    <strong>
+                        Aucun paiement trouvé
+                    </strong>
+
+                    <p>
+                        Modifiez les critères de recherche
+                        ou réinitialisez les filtres.
+                    </p>
+
+                    <button
+                        type="button"
+                        id="emptyResetButton"
+                    >
+                        Réinitialiser les filtres
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- PAGINATION -->
+
+            <div class="payments-table-footer">
+
+                <div class="pagination-information">
+
+                    Affichage
+
+                    <strong id="paginationStart">
+                        {{ page_start }}
+                    </strong>
+
+                    à
+
+                    <strong id="paginationEnd">
+                        {{ page_end }}
+                    </strong>
+
+                    sur
+
+                    <strong id="paginationTotal">
+                        {{ total_count }}
+                    </strong>
+
+                </div>
+
+                <div class="payment-pagination">
+
+                    <button
+                        type="button"
+                        id="previousPage"
+                        title="Page précédente"
+                        aria-label="Page précédente"
+                        {% if not payments.has_previous %}disabled{% endif %}
+                    >
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+
+                    <div id="paginationPages">
+                        {% for num in payments.paginator.page_range %}
+                            {% if payments.number == num %}
+                                <button class="active" data-page="{{ num }}">{{ num }}</button>
+                            {% elif num > payments.number|add:'-3' and num < payments.number|add:'3' %}
+                                <button data-page="{{ num }}">{{ num }}</button>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <button
+                        type="button"
+                        id="nextPage"
+                        title="Page suivante"
+                        aria-label="Page suivante"
+                        {% if not payments.has_next %}disabled{% endif %}
+                    >
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- =========================================================
+     MENU MOBILE
+========================================================= -->
+
+<div
+    class="offcanvas offcanvas-start finance-offcanvas"
+    tabindex="-1"
+    id="financeMobileMenu"
+>
+
+    <div class="offcanvas-header">
+
+        <div class="sidebar-brand">
+
+            <div class="brand-icon">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+            <div>
+                <strong>AcademicPay</strong>
+                <span>FINANCE</span>
+            </div>
+
+        </div>
+
+        <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="offcanvas"
+            aria-label="Fermer"
+        ></button>
+
+    </div>
+
+    <div class="offcanvas-body">
+
+        <nav class="mobile-navigation">
+
+            <a
+                href="{% url 'finance_dashboard' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-house-door"></i>
+                Accueil
+            </a>
+
+            <a
+                href="{% url 'finance_payments' %}"
+                class="mobile-nav-link active"
+            >
+                <i class="bi bi-credit-card-fill"></i>
+                Paiements
+            </a>
+
+            <a
+                href="{% url 'finance_statements' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-bank"></i>
+                Extraits bancaires
+            </a>
+
+            <a
+                href="{% url 'finance_schedule' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-calendar3"></i>
+                Échéancier
+            </a>
+
+            <a
+                href="{% url 'finance_students' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-people"></i>
+                Situations financières
+            </a>
+
+            <a
+                href="{% url 'finance_reconciliation' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-arrow-left-right"></i>
+                Rapprochement global
+            </a>
+
+            <a
+                href="{% url 'finance_anomalies' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-exclamation-triangle"></i>
+                Anomalies
+
+                <span class="mobile-badge">
+                    {{ pending_anomalies }}
+                </span>
+            </a>
+
+            <a
+                href="{% url 'finance_reports' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-bar-chart-line"></i>
+                Rapports
+            </a>
+
+            <a
+                href="{% url 'finance_history' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-clock-history"></i>
+                Historique
+            </a>
+
+            <hr>
+
+            <a
+                href="{% url 'finance_profile' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-person"></i>
+                Mon compte
+            </a>
+
+            <a
+                href="{% url 'logout' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-box-arrow-right"></i>
+                Déconnexion
+            </a>
+
+        </nav>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     MODALE PÉRIODE
+========================================================= -->
+
+<div
+    class="modal fade"
+    id="paymentPeriodModal"
+    tabindex="-1"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content finance-modal">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span>
+                        FILTRAGE
+                    </span>
+
+                    <h2>
+                        Période des paiements
+                    </h2>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal"
+                    aria-label="Fermer"
+                ></button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row g-3">
+
+                    <div class="col-sm-6">
+
+                        <label
+                            class="form-label"
+                            for="paymentStartDate"
+                        >
+                            Date de début
+                        </label>
+
+                        <input
+                            type="date"
+                            class="form-control finance-input"
+                            id="paymentStartDate"
+                            value="{{ start_date|date:'Y-m-d' }}"
+                        >
+
+                    </div>
+
+                    <div class="col-sm-6">
+
+                        <label
+                            class="form-label"
+                            for="paymentEndDate"
+                        >
+                            Date de fin
+                        </label>
+
+                        <input
+                            type="date"
+                            class="form-control finance-input"
+                            id="paymentEndDate"
+                            value="{{ end_date|date:'Y-m-d' }}"
+                        >
+
+                    </div>
+
+                </div>
+
+                <div
+                    class="period-error"
+                    id="paymentPeriodError"
+                ></div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn modal-cancel"
+                    id="clearPaymentPeriod"
+                >
+                    Effacer la période
+                </button>
+
+                <button
+                    type="button"
+                    class="btn modal-confirm"
+                    id="applyPaymentPeriod"
+                >
+                    Appliquer
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     MODALE DÉTAIL DÉCLARATION / PAIEMENT
+========================================================= -->
+
+<div
+    class="modal fade"
+    id="paymentDetailModal"
+    tabindex="-1"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+
+        <div class="modal-content finance-modal">
+
+            <!-- HEADER -->
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span>
+                        DÉCLARATION
+                    </span>
+
+                    <h2>
+                        Détail du paiement
+                    </h2>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal"
+                    aria-label="Fermer"
+                ></button>
+
+            </div>
+
+            <!-- BODY -->
+
+            <div class="modal-body">
+
+                <!-- ÉTUDIANT -->
+
+                <div class="payment-detail-section">
+
+                    <div class="detail-section-title">
+                        Étudiant
+                    </div>
+
+                    <div class="payment-detail-grid">
+
+                        <div>
+
+                            <span>
+                                Nom
+                            </span>
+
+                            <strong id="detailStudent">
+                                —
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Matricule
+                            </span>
+
+                            <strong id="detailMatricule">
+                                —
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Faculté
+                            </span>
+
+                            <strong id="detailFaculty">
+                                —
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Département
+                            </span>
+
+                            <strong id="detailDepartment">
+                                —
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Spécialisation
+                            </span>
+
+                            <strong id="detailProgram">
+                                —
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Promotion
+                            </span>
+
+                            <strong id="detailPromotion">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- DÉCLARATION -->
+
+                <div class="payment-detail-section">
+
+                    <div class="detail-section-title">
+                        Déclaration de paiement
+                    </div>
+
+                    <div class="payment-detail-grid">
+
+                        <div>
+
+                            <span>
+                                Référence bancaire
+                            </span>
+
+                            <strong
+                                id="detailReference"
+                                class="detail-reference"
+                            >
+                                —
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Banque
+                            </span>
+
+                            <strong id="detailBank">
+                                —
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Montant
+                            </span>
+
+                            <strong id="detailAmount">
+                                —
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Date
+                            </span>
+
+                            <strong id="detailDate">
+                                —
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Statut
+                            </span>
+
+                            <strong id="detailStatus">
+                                —
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Semestre
+                            </span>
+
+                            <strong id="detailSemester">
+                                —
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Année académique
+                            </span>
+
+                            <strong id="detailYear">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- RAPPROCHEMENT -->
+
+                <div class="payment-detail-section">
+
+                    <div class="detail-section-title">
+                        Rapprochement bancaire
+                    </div>
+
+                    <div
+                        class="payment-reconciliation-status"
+                        id="detailReconciliation"
+                    >
+
+                        <i class="bi bi-clock-history"></i>
+
+                        <div>
+
+                            <strong>
+                                État du rapprochement
+                            </strong>
+
+                            <span>
+                                Les informations du rapprochement
+                                apparaîtront ici.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- FOOTER -->
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn modal-cancel"
+                    data-bs-dismiss="modal"
+                >
+                    Fermer
+                </button>
+
+                <a
+                    href="{% url 'finance_reconciliation' %}"
+                    class="btn modal-confirm"
+                    id="openPaymentReconciliation"
+                >
+                    <i class="bi bi-arrow-left-right"></i>
+                    Voir le rapprochement
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     BOOTSTRAP JS
+========================================================= -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+<!-- =========================================================
+     DONNÉES INJECTÉES PAR DJANGO
+========================================================= -->
+
+<script>
+    const payments_data = {{ payments_data|safe }};
+</script>
+
+
+<!-- =========================================================
+     JS PAIEMENTS
+========================================================= -->
+
+<script src="{% static 'js/espace_finance/finance-payments.js' %}"></script>
+
+</body>
+</html>

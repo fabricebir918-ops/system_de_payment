@@ -1,56 +1,756 @@
-<!DOCTYPE html>
-<html lang="en">
+{% load static %}
+
+<!doctype html>
+<html lang="fr">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Login</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Connexion | Gestion des frais académiques</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    >
+
+    <!-- CSS global -->
+    <link rel="stylesheet" href="{% static 'css/accounts/style.css' %}">
 </head>
+
+
 <body>
-    <h2>Please Log In</h2>
 
-    <!-- Form errors -->
-    {% if form.errors %}
-        <p style="color: red;">Your username and password didn't match. Please try again.</p>
-    {% endif %}
+    <!-- =====================================================
+         CONTENU PRINCIPAL
+    ====================================================== -->
 
-   <form method="post">
-    {% csrf_token %}
-    
-    <!-- Fully custom label text and styling -->
-    <div class="my-custom-wrapper">
-        <label for="id_username" class="my-custom-label-class">
-            Email or Registration Number:
-        </label>
-        
-        <!-- Fully custom input with your own CSS classes and placeholder -->
-        <input 
-            type="text" 
-            name="username" 
-            id="id_username" 
-            class="my-custom-input-class" 
-            placeholder="Enter your registration code..."
-            required
-        >
-    </div>
+    <main class="container-fluid p-0">
 
-    <div class="my-custom-wrapper">
-        <label for="id_password" class="my-custom-label-class">
-            Your Secret Password:
-        </label>
-        
-        <input 
-            type="password" 
-            name="password" 
-            id="id_password" 
-            class="my-custom-input-class" 
-            placeholder="••••••••"
-            required
-        >
-    </div>
+        <div class="row g-0 min-vh-100">
 
-    <button type="submit" class="my-custom-button-class">
-        Log In Now
-    </button>
-</form>
+
+            <!-- =================================================
+                 PRÉSENTATION
+            ================================================== -->
+
+            <section
+                class="col-12 col-lg-6
+                       order-2 order-lg-1
+                       brand-section
+                       d-flex align-items-center"
+            >
+
+                <div class="container-fluid px-4 px-sm-5 py-5">
+
+                    <div class="login-brand-content mx-auto">
+
+
+                        <!-- Marque -->
+
+                        <div class="d-flex align-items-center gap-3 mb-4 mb-lg-5">
+
+                            <div
+                                class="brand-icon rounded-circle
+                                       d-flex align-items-center
+                                       justify-content-center
+                                       flex-shrink-0"
+                            >
+
+                                <i class="bi bi-mortarboard-fill fs-4"></i>
+
+                            </div>
+
+
+                            <div class="min-width-0">
+
+                                <h4 class="fw-bold mb-0">
+                                    AcademicPay
+                                </h4>
+
+                                <small class="text-secondary">
+                                    Gestion des frais académiques
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Présentation -->
+
+                        <div class="mb-4 mb-lg-5">
+
+                            <span class="text-accent fw-semibold small">
+                                GESTION ACADÉMIQUE
+                            </span>
+
+
+                            <h1 class="login-heading fw-bold mt-3 mb-3">
+
+                                Gérez vos frais académiques
+
+                                <span class="text-accent">
+                                    simplement.
+                                </span>
+
+                            </h1>
+
+
+                            <p class="login-description text-secondary mb-0">
+
+                                Une plateforme centralisée pour le suivi,
+                                la validation et le contrôle des paiements
+                                académiques.
+
+                            </p>
+
+                        </div>
+
+
+                        <!-- Fonctionnalités -->
+
+                        <div class="row g-4">
+
+
+                            <!-- Sécurité -->
+
+                            <div class="col-12 col-md-4 col-lg-12">
+
+                                <div class="d-flex align-items-start gap-3">
+
+                                    <div
+                                        class="feature-icon rounded-circle
+                                               d-flex align-items-center
+                                               justify-content-center
+                                               flex-shrink-0"
+                                    >
+
+                                        <i class="bi bi-shield-check"></i>
+
+                                    </div>
+
+
+                                    <div class="min-width-0">
+
+                                        <h6 class="fw-bold mb-1">
+                                            Sécurisé
+                                        </h6>
+
+                                        <p class="text-secondary small mb-0">
+                                            Accès contrôlé selon le profil
+                                            de chaque utilisateur.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Automatisation -->
+
+                            <div class="col-12 col-md-4 col-lg-12">
+
+                                <div class="d-flex align-items-start gap-3">
+
+                                    <div
+                                        class="feature-icon rounded-circle
+                                               d-flex align-items-center
+                                               justify-content-center
+                                               flex-shrink-0"
+                                    >
+
+                                        <i class="bi bi-arrow-repeat"></i>
+
+                                    </div>
+
+
+                                    <div class="min-width-0">
+
+                                        <h6 class="fw-bold mb-1">
+                                            Automatisé
+                                        </h6>
+
+                                        <p class="text-secondary small mb-0">
+                                            Rapprochement et validation
+                                            simplifiés des paiements.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Traçabilité -->
+
+                            <div class="col-12 col-md-4 col-lg-12">
+
+                                <div class="d-flex align-items-start gap-3">
+
+                                    <div
+                                        class="feature-icon rounded-circle
+                                               d-flex align-items-center
+                                               justify-content-center
+                                               flex-shrink-0"
+                                    >
+
+                                        <i class="bi bi-graph-up-arrow"></i>
+
+                                    </div>
+
+
+                                    <div class="min-width-0">
+
+                                        <h6 class="fw-bold mb-1">
+                                            Traçable
+                                        </h6>
+
+                                        <p class="text-secondary small mb-0">
+                                            Suivi de la situation financière
+                                            et des opérations effectuées.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 AUTHENTIFICATION
+            ================================================== -->
+
+            <section
+                class="col-12 col-lg-6
+                       order-1 order-lg-2
+                       d-flex align-items-center
+                       justify-content-center"
+            >
+
+                <div class="container-fluid px-3 px-sm-4 px-md-5 py-4 py-sm-5">
+
+                    <div
+                        class="login-card rounded-4
+                               p-4 p-sm-5
+                               mx-auto"
+                    >
+
+
+                        <!-- Marque mobile -->
+
+                        <div
+                            class="d-flex d-lg-none
+                                   align-items-center
+                                   justify-content-center
+                                   gap-2 mb-4"
+                        >
+
+                            <div
+                                class="brand-icon brand-icon-sm
+                                       rounded-circle
+                                       d-flex align-items-center
+                                       justify-content-center
+                                       flex-shrink-0"
+                            >
+
+                                <i class="bi bi-mortarboard-fill"></i>
+
+                            </div>
+
+                            <strong>
+                                AcademicPay
+                            </strong>
+
+                        </div>
+
+
+                        <!-- Icône / titre -->
+
+                        <div class="text-center mb-4">
+
+                            <div
+                                class="brand-icon rounded-circle
+                                       d-inline-flex
+                                       align-items-center
+                                       justify-content-center
+                                       mb-3"
+                            >
+
+                                <i class="bi bi-person-lock fs-4"></i>
+
+                            </div>
+
+
+                            <h2 class="fw-bold mb-2">
+                                Connexion
+                            </h2>
+
+
+                            <p class="text-secondary mb-0">
+                                Accédez à votre espace personnel.
+                            </p>
+
+                        </div>
+
+
+
+                        <!-- =================================================
+                             MESSAGE D'ERREUR DJANGO
+                        ================================================== -->
+
+                        {% if error %}
+
+                            <div
+                                class="alert alert-danger
+                                       d-flex align-items-center gap-2"
+                                role="alert"
+                            >
+
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+
+                                <span>
+                                    {{ error }}
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+
+
+                        <!-- =================================================
+                             FORMULAIRE
+                        ================================================== -->
+
+                        <form method="post">
+
+                            {% csrf_token %}
+
+
+                            <!-- Identifiant -->
+
+                            <div class="mb-3">
+
+                                <label
+                                    for="username"
+                                    class="form-label fw-semibold"
+                                >
+                                    Identifiant
+                                </label>
+
+
+                                <div class="input-group">
+
+                                    <span
+                                        class="input-group-text
+                                               border-end-0"
+                                    >
+
+                                        <i class="bi bi-person"></i>
+
+                                    </span>
+
+
+                                    <input
+                                        id="username"
+                                        name="username"
+                                        type="text"
+                                        class="form-control
+                                               border-start-0
+                                               py-2"
+                                        placeholder="Entrez votre identifiant"
+                                        autocomplete="username"
+                                        value="{{ identifier|default:'' }}"
+                                        required
+                                    >
+
+                                </div>
+
+                                <small class="text-secondary">
+                                    Username, adresse e-mail ou numéro
+                                    d'inscription
+                                </small>
+
+                            </div>
+
+
+                            <!-- Mot de passe -->
+
+                            <div class="mb-3">
+
+                                <label
+                                    for="password"
+                                    class="form-label fw-semibold"
+                                >
+                                    Mot de passe
+                                </label>
+
+
+                                <div class="input-group">
+
+                                    <span
+                                        class="input-group-text
+                                               border-end-0"
+                                    >
+
+                                        <i class="bi bi-lock"></i>
+
+                                    </span>
+
+
+                                    <input
+                                        id="password"
+                                        name="password"
+                                        type="password"
+                                        class="form-control
+                                               border-start-0
+                                               py-2"
+                                        placeholder="Entrez votre mot de passe"
+                                        autocomplete="current-password"
+                                        required
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Options -->
+
+                            <div class="row align-items-center g-2 mb-4">
+
+                                <div class="col-12 col-sm">
+
+                                    <div class="form-check">
+
+                                        <input
+                                            id="remember"
+                                            name="remember"
+                                            class="form-check-input"
+                                            type="checkbox"
+                                            {% if remember %}checked{% endif %}
+                                        >
+
+                                        <label
+                                            for="remember"
+                                            class="form-check-label
+                                                   text-secondary"
+                                        >
+                                            Se souvenir de moi
+                                        </label>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-12 col-sm-auto">
+
+                                    <a
+                                        href="#"
+                                        class="app-link
+                                               text-decoration-none
+                                               small"
+                                    >
+                                        Mot de passe oublié ?
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Connexion -->
+
+                            <div class="d-grid">
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-accent py-2"
+                                >
+
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>
+
+                                    Se connecter
+
+                                </button>
+
+                            </div>
+
+
+                            <!-- Séparation -->
+
+                            <div class="d-flex align-items-center gap-3 my-4">
+
+                                <hr class="flex-grow-1 footer-border">
+
+                                <span class="text-secondary small text-nowrap">
+                                    Accès sécurisé
+                                </span>
+
+                                <hr class="flex-grow-1 footer-border">
+
+                            </div>
+
+
+                            <!-- Message -->
+
+                            <p class="text-secondary text-center small mb-0">
+
+                                <i class="bi bi-shield-lock me-1"></i>
+
+                                Accès réservé aux utilisateurs autorisés
+                                de votre établissement.
+
+                            </p>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="app-footer">
+
+        <div class="container py-4 py-md-5">
+
+            <div class="row g-4">
+
+
+                <!-- AcademicPay -->
+
+                <div class="col-12 col-md-6 col-lg-5">
+
+                    <div class="d-flex align-items-center gap-2 mb-3">
+
+                        <div
+                            class="brand-icon brand-icon-sm rounded-circle
+                                   d-flex align-items-center
+                                   justify-content-center
+                                   flex-shrink-0"
+                        >
+
+                            <i class="bi bi-mortarboard-fill"></i>
+
+                        </div>
+
+
+                        <strong class="fs-5">
+                            AcademicPay
+                        </strong>
+
+                    </div>
+
+
+                    <p class="text-secondary mb-0 footer-desc">
+
+                        Une solution de gestion des paiements
+                        académiques conçue pour les établissements
+                        d'enseignement supérieur.
+
+                    </p>
+
+                </div>
+
+
+
+                <!-- Navigation -->
+
+                <div class="col-6 col-md-3 col-lg-2">
+
+                    <h6 class="fw-bold mb-3">
+                        Navigation
+                    </h6>
+
+
+                    <ul class="list-unstyled d-flex flex-column gap-2 mb-0">
+
+                        <li>
+                            <a
+                                href="{% url 'login' %}"
+                                class="footer-link text-decoration-none"
+                            >
+                                Connexion
+                            </a>
+                        </li>
+
+                        <li>
+                            <a
+                                href="#"
+                                class="footer-link text-decoration-none"
+                            >
+                                À propos
+                            </a>
+                        </li>
+
+                        <li>
+                            <a
+                                href="#"
+                                class="footer-link text-decoration-none"
+                            >
+                                Aide
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+
+                <!-- Assistance -->
+
+                <div class="col-6 col-md-3 col-lg-2">
+
+                    <h6 class="fw-bold mb-3">
+                        Assistance
+                    </h6>
+
+
+                    <ul class="list-unstyled d-flex flex-column gap-2 mb-0">
+
+                        <li>
+                            <a
+                                href="#"
+                                class="footer-link text-decoration-none"
+                            >
+                                Centre d'aide
+                            </a>
+                        </li>
+
+                        <li>
+                            <a
+                                href="{% url 'login' %}"
+                                class="footer-link text-decoration-none"
+                            >
+                                Connexion
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+
+                <!-- Informations -->
+
+                <div class="col-12 col-md-6 col-lg-3">
+
+                    <h6 class="fw-bold mb-3">
+                        Informations
+                    </h6>
+
+
+                    <ul class="list-unstyled d-flex flex-column gap-2 mb-0">
+
+                        <li>
+                            <a
+                                href="#"
+                                class="footer-link text-decoration-none"
+                            >
+                                Confidentialité
+                            </a>
+                        </li>
+
+                        <li>
+                            <a
+                                href="#"
+                                class="footer-link text-decoration-none"
+                            >
+                                Sécurité
+                            </a>
+                        </li>
+
+                        <li>
+                            <a
+                                href="#"
+                                class="footer-link text-decoration-none"
+                            >
+                                Conditions d'utilisation
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+
+            <hr class="footer-border my-4">
+
+
+            <!-- Bas du footer -->
+
+            <div
+                class="d-flex flex-column flex-md-row
+                       justify-content-between
+                       align-items-center
+                       text-center text-md-start
+                       gap-2"
+            >
+
+                <small class="text-secondary">
+                    © 2026 AcademicPay. Tous droits réservés.
+                </small>
+
+
+                <small class="text-secondary">
+
+                    <i class="bi bi-shield-check text-accent me-1"></i>
+
+                    Gestion sécurisée des paiements académiques
+
+                </small>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+
+    <!-- Bootstrap JS -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    ></script>
 
 </body>
+
 </html>

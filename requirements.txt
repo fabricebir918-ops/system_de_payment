@@ -3,7 +3,9 @@ charset-normalizer==3.5.1
 Django==6.0.7
 djangorestframework==3.17.1
 djangorestframework_simplejwt==5.5.1
+et_xmlfile==2.0.0
 numpy==2.5.1
+openpyxl==3.1.5
 pandas==3.0.5
 pillow==12.3.0
 psycopg2-binary==2.9.12
@@ -14,3 +16,4 @@ qrcode==8.2
 reportlab==5.0.0
 six==1.17.0
 sqlparse==0.5.5
+xlrd==2.0.2

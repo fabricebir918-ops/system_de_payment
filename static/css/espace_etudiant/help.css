@@ -1,0 +1,1215 @@
+/* ==========================================================
+   ACADEMICPAY — AIDE & SUPPORT
+   Dépend de :
+   - style.css
+   - dashbord.css
+========================================================== */
+
+
+/* ==========================================================
+   1. CONTENEUR
+========================================================== */
+
+.help-container {
+    max-width: 1180px;
+    padding-top: 2.4rem;
+    padding-bottom: 2rem;
+}
+
+
+/* ==========================================================
+   2. EN-TÊTE
+========================================================== */
+
+.help-page-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 2rem;
+
+    margin-bottom: 1.4rem;
+}
+
+.help-page-header h1 {
+    margin: 0 0 0.4rem;
+
+    color: var(--dash-text);
+
+    font-size: clamp(1.7rem, 2.6vw, 2.2rem);
+    font-weight: 780;
+
+    letter-spacing: -0.04em;
+}
+
+.help-page-header p {
+    max-width: 620px;
+
+    margin: 0;
+
+    color: var(--dash-muted);
+
+    font-size: 0.8rem;
+    line-height: 1.65;
+}
+
+.help-header-icon {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    color: var(--green);
+
+    background: var(--dash-green-soft);
+
+    border: 1px solid var(--dash-green-border);
+    border-radius: 13px;
+
+    font-size: 1rem;
+}
+
+
+/* ==========================================================
+   3. ACCÈS RAPIDES
+========================================================== */
+
+.help-quick-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 0.8rem;
+
+    margin-bottom: 1rem;
+}
+
+.help-quick-card {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 0.75rem;
+
+    min-height: 78px;
+
+    padding: 0.9rem 1rem;
+
+    color: var(--dash-text);
+
+    background: var(--dash-surface);
+
+    border: 1px solid var(--dash-border);
+    border-radius: 14px;
+
+    font-family: inherit;
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        background-color 0.25s ease,
+        box-shadow 0.2s ease;
+}
+
+.help-quick-card:hover {
+    color: var(--dash-text);
+
+    border-color: var(--dash-green-border);
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 10px 28px rgba(0, 0, 0, 0.08);
+}
+
+.help-quick-icon {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    color: var(--green);
+
+    background: var(--dash-green-soft);
+
+    border-radius: 10px;
+
+    font-size: 0.8rem;
+}
+
+.help-quick-card > div:nth-child(2) {
+    display: flex;
+    flex-direction: column;
+
+    gap: 0.15rem;
+
+    flex: 1;
+
+    min-width: 0;
+}
+
+.help-quick-card strong {
+    color: var(--dash-text);
+
+    font-size: 0.66rem;
+    font-weight: 750;
+}
+
+.help-quick-card span {
+    color: var(--dash-muted);
+
+    font-size: 0.57rem;
+    line-height: 1.4;
+}
+
+.help-arrow {
+    flex-shrink: 0;
+
+    color: var(--dash-muted);
+
+    font-size: 0.68rem;
+
+    transition:
+        transform 0.2s ease,
+        color 0.2s ease;
+}
+
+.help-quick-card:hover .help-arrow {
+    color: var(--green);
+
+    transform: translateX(3px);
+}
+
+
+/* ==========================================================
+   4. GRILLE PRINCIPALE
+========================================================== */
+
+.help-content-grid {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.55fr)
+        minmax(270px, 0.65fr);
+
+    gap: 1rem;
+
+    align-items: start;
+}
+
+
+/* ==========================================================
+   5. CARTE FAQ
+========================================================== */
+
+.help-card,
+.support-card,
+.support-tip-card {
+    background: var(--dash-surface);
+
+    border: 1px solid var(--dash-border);
+    border-radius: 17px;
+
+    transition:
+        background-color 0.25s ease,
+        border-color 0.25s ease,
+        color 0.25s ease;
+}
+
+.help-card {
+    overflow: hidden;
+}
+
+
+/* ==========================================================
+   6. HEADER CARTE
+========================================================== */
+
+.help-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 1rem;
+
+    padding: 1.15rem 1.25rem;
+
+    border-bottom: 1px solid var(--dash-border);
+}
+
+.help-card-header h2 {
+    margin: 0.1rem 0 0;
+
+    color: var(--dash-text);
+
+    font-size: 0.95rem;
+    font-weight: 750;
+}
+
+.help-card-icon {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    color: var(--green);
+
+    background: var(--dash-green-soft);
+
+    border-radius: 10px;
+
+    font-size: 0.8rem;
+}
+
+
+/* ==========================================================
+   7. CORPS
+========================================================== */
+
+.help-card-body {
+    padding: 1.25rem;
+}
+
+
+/* ==========================================================
+   8. RECHERCHE
+========================================================== */
+
+.help-search {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    margin-bottom: 1rem;
+}
+
+.help-search > i {
+    position: absolute;
+
+    left: 0.9rem;
+
+    z-index: 2;
+
+    color: var(--dash-muted);
+
+    font-size: 0.72rem;
+
+    pointer-events: none;
+}
+
+.help-search input {
+    width: 100%;
+    height: 44px;
+
+    padding:
+        0 1rem
+        0 2.35rem;
+
+    color: var(--dash-text);
+
+    background: var(--dash-surface-soft);
+
+    border: 1px solid var(--dash-border);
+    border-radius: 11px;
+
+    outline: none;
+
+    font-family: inherit;
+    font-size: 0.67rem;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background-color 0.25s ease;
+}
+
+.help-search input::placeholder {
+    color: var(--dash-muted);
+    opacity: 0.7;
+}
+
+.help-search input:focus {
+    border-color: var(--green);
+
+    box-shadow:
+        0 0 0 3px var(--dash-green-soft);
+}
+
+
+/* ==========================================================
+   9. ACCORDÉON FAQ
+========================================================== */
+
+.help-accordion {
+    display: flex;
+    flex-direction: column;
+
+    gap: 0.55rem;
+}
+
+.help-accordion .accordion-item {
+    overflow: hidden;
+
+    color: var(--dash-text);
+
+    background: var(--dash-surface-soft);
+
+    border: 1px solid var(--dash-border);
+    border-radius: 11px !important;
+}
+
+.help-accordion .accordion-header {
+    margin: 0;
+}
+
+.help-accordion .accordion-button {
+    min-height: 52px;
+
+    padding: 0.85rem 1rem;
+
+    color: var(--dash-text);
+
+    background: transparent;
+
+    border: 0;
+    box-shadow: none;
+
+    font-size: 0.65rem;
+    font-weight: 720;
+}
+
+.help-accordion .accordion-button:not(.collapsed) {
+    color: var(--green);
+
+    background: var(--dash-green-soft);
+
+    box-shadow: none;
+}
+
+.help-accordion .accordion-button:focus {
+    border: 0;
+    box-shadow: none;
+}
+
+
+/* ==========================================================
+   10. ICÔNE ACCORDÉON
+========================================================== */
+
+.help-accordion .accordion-button::after {
+    width: 0.75rem;
+    height: 0.75rem;
+
+    background-size: 0.75rem;
+}
+
+html[data-theme="dark"]
+.help-accordion
+.accordion-button::after {
+    filter:
+        invert(1)
+        grayscale(1);
+}
+
+html[data-theme="dark"]
+.help-accordion
+.accordion-button:not(.collapsed)::after {
+    filter:
+        invert(78%)
+        sepia(75%)
+        saturate(440%)
+        hue-rotate(28deg)
+        brightness(98%);
+}
+
+
+/* ==========================================================
+   11. CONTENU FAQ
+========================================================== */
+
+.help-accordion .accordion-body {
+    padding: 0.9rem 1rem;
+
+    color: var(--dash-muted);
+
+    background: var(--dash-surface);
+
+    border-top: 1px solid var(--dash-border);
+
+    font-size: 0.62rem;
+    line-height: 1.7;
+}
+
+.help-accordion .accordion-body strong {
+    color: var(--dash-text);
+
+    font-weight: 720;
+}
+
+
+/* ==========================================================
+   12. FAQ MASQUÉE PAR RECHERCHE
+========================================================== */
+
+.faq-item.faq-hidden {
+    display: none;
+}
+
+
+/* ==========================================================
+   13. AUCUN RÉSULTAT
+========================================================== */
+
+.faq-empty {
+    min-height: 170px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 0.35rem;
+
+    color: var(--dash-muted);
+
+    text-align: center;
+}
+
+.faq-empty i {
+    margin-bottom: 0.3rem;
+
+    color: var(--green);
+
+    font-size: 1.4rem;
+}
+
+.faq-empty strong {
+    color: var(--dash-text);
+
+    font-size: 0.7rem;
+}
+
+.faq-empty span {
+    font-size: 0.59rem;
+}
+
+
+/* ==========================================================
+   14. COLONNE DROITE
+========================================================== */
+
+.help-side-column {
+    display: flex;
+    flex-direction: column;
+
+    gap: 1rem;
+}
+
+
+/* ==========================================================
+   15. CARTE SUPPORT
+========================================================== */
+
+.support-card {
+    padding: 1.3rem;
+}
+
+.support-card-icon {
+    width: 45px;
+    height: 45px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 1rem;
+
+    color: #171b15;
+
+    background: var(--green);
+
+    border-radius: 12px;
+
+    font-size: 0.9rem;
+}
+
+.support-card h2 {
+    margin: 0.2rem 0 0.6rem;
+
+    color: var(--dash-text);
+
+    font-size: 1rem;
+    font-weight: 760;
+
+    line-height: 1.35;
+}
+
+.support-card p {
+    margin: 0 0 1.1rem;
+
+    color: var(--dash-muted);
+
+    font-size: 0.62rem;
+    line-height: 1.65;
+}
+
+
+/* ==========================================================
+   16. BOUTON SUPPORT
+========================================================== */
+
+.support-primary-button {
+    width: 100%;
+    min-height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 0.45rem;
+
+    padding: 0 1rem;
+
+    color: #171b15;
+
+    background: var(--green);
+
+    border: 1px solid var(--green);
+    border-radius: 10px;
+
+    font-family: inherit;
+    font-size: 0.64rem;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        filter 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.support-primary-button:hover {
+    transform: translateY(-1px);
+
+    filter: brightness(1.04);
+
+    box-shadow:
+        0 8px 24px rgba(164, 207, 57, 0.14);
+}
+
+
+/* ==========================================================
+   17. CONSEIL
+========================================================== */
+
+.support-tip-card {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 0.75rem;
+
+    padding: 1rem;
+}
+
+.support-tip-card > i {
+    flex-shrink: 0;
+
+    margin-top: 0.05rem;
+
+    color: var(--green);
+
+    font-size: 0.85rem;
+}
+
+.support-tip-card strong {
+    display: block;
+
+    margin-bottom: 0.2rem;
+
+    color: var(--dash-text);
+
+    font-size: 0.64rem;
+    font-weight: 730;
+}
+
+.support-tip-card p {
+    margin: 0;
+
+    color: var(--dash-muted);
+
+    font-size: 0.58rem;
+    line-height: 1.55;
+}
+
+
+/* ==========================================================
+   18. MODAL SUPPORT
+========================================================== */
+
+.support-modal {
+    overflow: hidden;
+
+    color: var(--dash-text);
+
+    background: var(--dash-surface);
+
+    border: 1px solid var(--dash-border);
+    border-radius: 17px;
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.25);
+}
+
+.support-modal .modal-header {
+    padding: 1.15rem 1.25rem;
+
+    border-bottom: 1px solid var(--dash-border);
+}
+
+.support-modal .modal-title {
+    margin-top: 0.1rem;
+
+    color: var(--dash-text);
+
+    font-size: 0.95rem;
+    font-weight: 760;
+}
+
+.support-modal .modal-body {
+    padding: 1.25rem;
+}
+
+.support-modal .modal-footer {
+    gap: 0.6rem;
+
+    padding: 1rem 1.25rem;
+
+    border-top: 1px solid var(--dash-border);
+}
+
+html[data-theme="dark"]
+.support-modal .btn-close {
+    filter: invert(1) grayscale(100%);
+}
+
+
+/* ==========================================================
+   19. CHAMPS SUPPORT
+========================================================== */
+
+.support-field {
+    margin-bottom: 1rem;
+}
+
+.support-field:last-child {
+    margin-bottom: 0;
+}
+
+.support-field > label {
+    display: block;
+
+    margin-bottom: 0.4rem;
+
+    color: var(--dash-text);
+
+    font-size: 0.64rem;
+    font-weight: 720;
+}
+
+.support-field > label span {
+    color: var(--green);
+}
+
+
+/* ==========================================================
+   20. INPUT / SELECT
+========================================================== */
+
+.support-input {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+}
+
+.support-input > i {
+    position: absolute;
+
+    left: 0.9rem;
+
+    z-index: 2;
+
+    color: var(--dash-muted);
+
+    font-size: 0.7rem;
+
+    pointer-events: none;
+}
+
+.support-input input,
+.support-input select {
+    width: 100%;
+    height: 44px;
+
+    padding:
+        0 2.5rem
+        0 2.35rem;
+
+    color: var(--dash-text);
+
+    background: var(--dash-surface-soft);
+
+    border: 1px solid var(--dash-border);
+    border-radius: 11px;
+
+    outline: none;
+
+    font-family: inherit;
+    font-size: 0.67rem;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background-color 0.25s ease;
+}
+
+.support-input select {
+    cursor: pointer;
+}
+
+.support-input select option {
+    color: var(--dash-text);
+
+    background: var(--dash-surface);
+}
+
+.support-input input::placeholder {
+    color: var(--dash-muted);
+    opacity: 0.7;
+}
+
+.support-input input:focus,
+.support-input select:focus {
+    border-color: var(--green);
+
+    box-shadow:
+        0 0 0 3px var(--dash-green-soft);
+}
+
+
+/* ==========================================================
+   21. TEXTAREA
+========================================================== */
+
+.support-field textarea {
+    width: 100%;
+
+    min-height: 120px;
+    max-height: 230px;
+
+    padding: 0.8rem 0.9rem;
+
+    resize: vertical;
+
+    color: var(--dash-text);
+
+    background: var(--dash-surface-soft);
+
+    border: 1px solid var(--dash-border);
+    border-radius: 11px;
+
+    outline: none;
+
+    font-family: inherit;
+    font-size: 0.67rem;
+    line-height: 1.6;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background-color 0.25s ease;
+}
+
+.support-field textarea::placeholder {
+    color: var(--dash-muted);
+    opacity: 0.7;
+}
+
+.support-field textarea:focus {
+    border-color: var(--green);
+
+    box-shadow:
+        0 0 0 3px var(--dash-green-soft);
+}
+
+
+/* ==========================================================
+   22. AIDE SOUS CHAMP
+========================================================== */
+
+.support-help {
+    display: block;
+
+    margin-top: 0.35rem;
+
+    color: var(--dash-muted);
+
+    font-size: 0.57rem;
+    line-height: 1.45;
+}
+
+
+/* ==========================================================
+   23. ERREURS
+========================================================== */
+
+.support-error {
+    display: none;
+
+    margin-top: 0.35rem;
+
+    color: var(--dash-danger);
+
+    font-size: 0.58rem;
+    line-height: 1.4;
+}
+
+.support-error.visible {
+    display: block;
+}
+
+.support-field.has-error
+.support-input input,
+
+.support-field.has-error
+.support-input select,
+
+.support-field.has-error
+textarea {
+    border-color: var(--dash-danger);
+
+    box-shadow:
+        0 0 0 3px var(--dash-danger-soft);
+}
+
+.support-field.has-error
+.support-input > i {
+    color: var(--dash-danger);
+}
+
+
+/* ==========================================================
+   24. COMPTEUR MESSAGE
+========================================================== */
+
+.support-message-meta {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 1rem;
+}
+
+#supportCharacterCount {
+    margin-top: 0.35rem;
+    margin-left: auto;
+
+    flex-shrink: 0;
+
+    color: var(--dash-muted);
+
+    font-size: 0.56rem;
+}
+
+
+/* ==========================================================
+   25. BOUTONS MODAL
+========================================================== */
+
+.support-cancel-button,
+.support-submit-button {
+    min-height: 42px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 1rem;
+
+    border-radius: 10px;
+
+    font-family: inherit;
+    font-size: 0.63rem;
+    font-weight: 750;
+
+    cursor: pointer;
+}
+
+.support-cancel-button {
+    color: var(--dash-muted);
+
+    background: transparent;
+
+    border: 1px solid var(--dash-border);
+
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.support-cancel-button:hover {
+    color: var(--dash-text);
+
+    background: var(--dash-surface-soft);
+}
+
+.support-submit-button {
+    gap: 0.45rem;
+
+    color: #171b15;
+
+    background: var(--green);
+
+    border: 1px solid var(--green);
+
+    transition:
+        transform 0.2s ease,
+        filter 0.2s ease;
+}
+
+.support-submit-button:hover {
+    transform: translateY(-1px);
+
+    filter: brightness(1.04);
+}
+
+.support-submit-button:disabled {
+    opacity: 0.65;
+
+    cursor: wait;
+    transform: none;
+}
+
+
+/* ==========================================================
+   26. NOTIFICATION
+========================================================== */
+
+.support-toast {
+    position: fixed;
+
+    right: 1.25rem;
+    bottom: 1.25rem;
+
+    z-index: 1200;
+
+    width: min(370px, calc(100vw - 2rem));
+
+    display: flex;
+    align-items: center;
+
+    gap: 0.75rem;
+
+    padding: 0.85rem 1rem;
+
+    color: var(--dash-text);
+
+    background: var(--dash-surface);
+
+    border: 1px solid var(--dash-border);
+    border-radius: 13px;
+
+    box-shadow:
+        0 16px 45px rgba(0, 0, 0, 0.2);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transform: translateY(15px);
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease,
+        transform 0.25s ease;
+}
+
+.support-toast.show {
+    opacity: 1;
+    visibility: visible;
+
+    transform: translateY(0);
+}
+
+.support-toast-icon {
+    width: 35px;
+    height: 35px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    color: #171b15;
+
+    background: var(--green);
+
+    border-radius: 9px;
+
+    font-size: 0.72rem;
+}
+
+.support-toast > div:last-child {
+    display: flex;
+    flex-direction: column;
+
+    gap: 0.08rem;
+}
+
+.support-toast strong {
+    color: var(--dash-text);
+
+    font-size: 0.64rem;
+    font-weight: 750;
+}
+
+.support-toast span {
+    color: var(--dash-muted);
+
+    font-size: 0.57rem;
+}
+
+
+/* ==========================================================
+   27. AUTOFILL
+========================================================== */
+
+.support-input input:-webkit-autofill,
+.support-input input:-webkit-autofill:hover,
+.support-input input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--dash-text);
+
+    transition:
+        background-color 9999s ease-in-out 0s;
+}
+
+
+/* ==========================================================
+   28. RESPONSIVE — TABLETTE
+========================================================== */
+
+@media (max-width: 991.98px) {
+
+    .help-container {
+        max-width: 900px;
+
+        padding-top: 1.2rem;
+    }
+
+}
+
+
+/* ==========================================================
+   29. RESPONSIVE — PETITE TABLETTE
+========================================================== */
+
+@media (max-width: 767.98px) {
+
+    .help-quick-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .help-content-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .help-side-column {
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+/* ==========================================================
+   30. RESPONSIVE — MOBILE
+========================================================== */
+
+@media (max-width: 575.98px) {
+
+    .help-container {
+        padding-left: 0.85rem;
+        padding-right: 0.85rem;
+    }
+
+
+    .help-page-header {
+        align-items: flex-start;
+        flex-direction: column;
+
+        gap: 0.8rem;
+    }
+
+
+    .help-header-icon {
+        display: none;
+    }
+
+
+    .help-card-header {
+        padding: 1rem;
+    }
+
+
+    .help-card-body {
+        padding: 1rem;
+    }
+
+
+    .help-side-column {
+        display: flex;
+    }
+
+
+    .support-modal .modal-footer {
+        flex-direction: column-reverse;
+    }
+
+
+    .support-cancel-button,
+    .support-submit-button {
+        width: 100%;
+    }
+
+
+    .support-toast {
+        right: 1rem;
+        bottom: 1rem;
+    }
+
+}

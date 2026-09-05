@@ -1,0 +1,2271 @@
+/* ==========================================================
+   ACADEMICPAY — FINANCE DASHBOARD
+   finance-dashboard.css
+========================================================== */
+
+
+/* ==========================================================
+   VARIABLES
+========================================================== */
+
+:root {
+    --bg: #161718;
+    --surface: #1c1d1f;
+    --surface-2: #222426;
+    --surface-hover: #282a2d;
+
+    --text: #eeeeee;
+    --soft: #c7c9cc;
+    --muted: #85898e;
+
+    --border: rgba(255, 255, 255, .075);
+    --border-strong: rgba(255, 255, 255, .13);
+
+    --accent: #b9ed2e;
+    --accent-soft: rgba(185, 237, 46, .09);
+
+    --green: #6edb8f;
+    --green-soft: rgba(110, 219, 143, .09);
+
+    --red: #ff7272;
+    --red-soft: rgba(255, 114, 114, .09);
+
+    --orange: #e8a54b;
+
+    --sidebar-width: 240px;
+
+    --radius-sm: 7px;
+    --radius-md: 9px;
+    --radius-lg: 11px;
+
+    --transition: .18s ease;
+}
+
+
+/* ==========================================================
+   THÈME CLAIR
+========================================================== */
+
+body.light-theme {
+    --bg: #f4f5f6;
+    --surface: #ffffff;
+    --surface-2: #f8f8f8;
+    --surface-hover: #f0f1f2;
+
+    --text: #1d1f21;
+    --soft: #4e5256;
+    --muted: #7b7f84;
+
+    --border: rgba(0, 0, 0, .075);
+    --border-strong: rgba(0, 0, 0, .13);
+
+    --accent-soft: rgba(130, 174, 0, .09);
+}
+
+
+/* ==========================================================
+   BASE
+========================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+
+    color: var(--soft);
+    background: var(--bg);
+
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    font-size: 16px;
+
+    transition:
+        background var(--transition),
+        color var(--transition);
+}
+
+button,
+input,
+select {
+    font: inherit;
+}
+
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible,
+select:focus-visible,
+input:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+
+/* ==========================================================
+   SCROLLBAR GLOBALE
+========================================================== */
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #44484c transparent;
+}
+
+*::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: #3e4246;
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: #555a60;
+}
+
+
+/* ==========================================================
+   LAYOUT
+========================================================== */
+
+.finance-layout {
+    min-height: 100vh;
+    display: flex;
+}
+
+.finance-main {
+    width: calc(100% - var(--sidebar-width));
+    min-width: 0;
+
+    margin-left: var(--sidebar-width);
+    padding: 20px;
+
+    transition:
+        opacity var(--transition),
+        background var(--transition);
+}
+
+
+/* ==========================================================
+   SIDEBAR
+========================================================== */
+
+.finance-sidebar {
+    width: var(--sidebar-width);
+    height: 100vh;
+
+    position: fixed;
+    inset: 0 auto 0 0;
+
+    z-index: 1030;
+
+    display: flex;
+    flex-direction: column;
+
+    background: #18191b;
+    border-right: 1px solid var(--border);
+
+    overflow: hidden;
+}
+
+body.light-theme .finance-sidebar {
+    background: #ffffff;
+}
+
+
+/* ==========================================================
+   LOGO
+========================================================== */
+
+.sidebar-brand {
+    min-height: 73px;
+    padding: 0 17px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    color: var(--text);
+    text-decoration: none;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.brand-icon {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+
+    display: grid;
+    place-items: center;
+
+    color: #161718;
+    background: var(--accent);
+
+    border-radius: 8px;
+
+    font-size: 1rem;
+}
+
+.sidebar-brand > div:last-child {
+    min-width: 0;
+}
+
+.sidebar-brand strong,
+.sidebar-brand span {
+    display: block;
+}
+
+.sidebar-brand strong {
+    color: var(--text);
+    font-size: .92rem;
+    font-weight: 700;
+}
+
+.sidebar-brand span {
+    margin-top: 2px;
+
+    color: var(--accent);
+
+    font-size: .62rem;
+    font-weight: 750;
+    letter-spacing: .11em;
+}
+
+
+/* ==========================================================
+   NAVIGATION SIDEBAR
+========================================================== */
+
+.sidebar-nav {
+    min-height: 0;
+    flex: 1;
+
+    padding: 13px 9px 20px;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    scrollbar-width: thin;
+    scrollbar-color: #414448 transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar {
+    width: 7px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+    background: #3c3f43;
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background-clip: padding-box;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+    background: #55595e;
+}
+
+.nav-section-label {
+    margin: 15px 9px 6px;
+
+    color: #62666a;
+
+    font-size: .65rem;
+    font-weight: 750;
+    letter-spacing: .1em;
+}
+
+.nav-section-label:first-child {
+    margin-top: 2px;
+}
+
+.sidebar-link {
+    min-height: 39px;
+    padding: 0 10px;
+
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    color: #898d92;
+
+    border-radius: 7px;
+    text-decoration: none;
+
+    font-size: .78rem;
+    font-weight: 650;
+    letter-spacing: .015em;
+
+    transition:
+        color var(--transition),
+        background var(--transition);
+}
+
+.sidebar-link > i {
+    width: 18px;
+    text-align: center;
+    font-size: .9rem;
+}
+
+.sidebar-link:hover {
+    color: var(--soft);
+    background: rgba(255, 255, 255, .035);
+}
+
+body.light-theme .sidebar-link:hover {
+    background: rgba(0, 0, 0, .035);
+}
+
+.sidebar-link.active {
+    color: var(--accent);
+    background: var(--accent-soft);
+}
+
+.sidebar-link.active::before {
+    content: "";
+
+    width: 2px;
+
+    position: absolute;
+    top: 9px;
+    bottom: 9px;
+    left: 0;
+
+    background: var(--accent);
+    border-radius: 999px;
+}
+
+.nav-badge {
+    min-width: 22px;
+    height: 19px;
+
+    margin-left: auto;
+    padding: 0 6px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--red);
+    background: var(--red-soft);
+
+    border-radius: 999px;
+
+    font-size: .65rem;
+    font-weight: 750;
+}
+
+
+/* ==========================================================
+   BAS SIDEBAR
+========================================================== */
+
+.sidebar-bottom {
+    flex-shrink: 0;
+    padding: 10px;
+
+    background: #18191b;
+    border-top: 1px solid var(--border);
+}
+
+body.light-theme .sidebar-bottom {
+    background: #ffffff;
+}
+
+.finance-user {
+    min-width: 0;
+    padding: 9px 7px;
+
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    color: inherit;
+    border-radius: 7px;
+    text-decoration: none;
+
+    transition: background var(--transition);
+}
+
+.finance-user:hover {
+    background: var(--surface-hover);
+}
+
+.user-avatar {
+    width: 31px;
+    height: 31px;
+    flex: 0 0 31px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-radius: 7px;
+
+    font-size: .72rem;
+    font-weight: 750;
+}
+
+.user-information {
+    min-width: 0;
+    flex: 1;
+}
+
+.user-information strong,
+.user-information span {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.user-information strong {
+    color: var(--soft);
+    font-size: .74rem;
+    font-weight: 650;
+}
+
+.user-information span {
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: .66rem;
+}
+
+.finance-user > i {
+    color: var(--muted);
+    font-size: .7rem;
+}
+
+.sidebar-actions {
+    margin-top: 7px;
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+}
+
+.sidebar-action-btn {
+    height: 32px;
+
+    display: grid;
+    place-items: center;
+
+    padding: 0;
+
+    color: var(--muted);
+    background: transparent;
+
+    border: 1px solid var(--border);
+    border-radius: 6px;
+
+    text-decoration: none;
+    cursor: pointer;
+
+    font-size: .85rem;
+
+    transition:
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition);
+}
+
+.sidebar-action-btn:hover {
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-color: var(--border-strong);
+}
+
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.dashboard-header {
+    max-width: 1600px;
+    margin: 0 auto 14px;
+}
+
+.header-content {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.page-eyebrow,
+.card-eyebrow {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--accent);
+
+    font-size: .68rem;
+    font-weight: 750;
+    letter-spacing: .1em;
+}
+
+.header-content h1 {
+    margin: 0 0 5px;
+
+    color: var(--text);
+
+    font-size: clamp(1.5rem, 2vw, 1.9rem);
+    font-weight: 560;
+}
+
+.header-content p {
+    margin: 0;
+    color: var(--muted);
+    font-size: .88rem;
+}
+
+
+/* ==========================================================
+   BANDEAU INDICATEURS
+========================================================== */
+
+.market-strip {
+    max-width: 1600px;
+
+    margin: 0 auto 12px;
+    padding: 0 12px;
+
+    min-height: 49px;
+
+    display: grid;
+    grid-template-columns:
+        145px
+        repeat(5, minmax(120px, 1fr));
+
+    align-items: stretch;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+
+    overflow-x: auto;
+}
+
+.strip-title,
+.strip-item {
+    min-width: 0;
+    padding: 8px 12px;
+
+    display: flex;
+    align-items: center;
+}
+
+.strip-title {
+    gap: 7px;
+
+    color: var(--muted);
+
+    font-size: .65rem;
+    font-weight: 750;
+    letter-spacing: .07em;
+
+    white-space: nowrap;
+}
+
+.indicator-dot {
+    width: 6px;
+    height: 6px;
+    flex: 0 0 6px;
+
+    background: var(--accent);
+    border-radius: 50%;
+
+    box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.strip-item {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+
+    border-left: 1px solid var(--border);
+}
+
+.strip-item > span {
+    margin-bottom: 3px;
+
+    color: var(--muted);
+
+    font-size: .68rem;
+    white-space: nowrap;
+}
+
+.strip-item > div {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.strip-item strong {
+    color: var(--text);
+
+    font-size: .88rem;
+    font-weight: 650;
+
+    white-space: nowrap;
+}
+
+.strip-item small {
+    font-size: .65rem;
+}
+
+
+/* ==========================================================
+   ÉTATS
+========================================================== */
+
+.positive {
+    color: var(--green) !important;
+}
+
+.negative,
+.danger-text {
+    color: var(--red) !important;
+}
+
+
+/* ==========================================================
+   KPI — VERSION UNIFORMISÉE
+========================================================== */
+
+.kpi-grid {
+    max-width: 1600px;
+
+    margin: 0 auto 12px;
+
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.kpi-card {
+    min-width: 0;
+    min-height: 156px;
+
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+
+    background:
+        linear-gradient(
+            145deg,
+            color-mix(in srgb, var(--surface) 96%, white 4%),
+            var(--surface)
+        );
+
+    border: 1px solid var(--border);
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, .08),
+        0 8px 24px rgba(0, 0, 0, .06);
+
+    transition:
+        transform var(--transition),
+        border-color var(--transition),
+        box-shadow var(--transition);
+}
+
+body.light-theme .kpi-card {
+    background: var(--surface);
+
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, .025),
+        0 8px 22px rgba(0, 0, 0, .035);
+}
+
+.kpi-card:hover {
+    transform: translateY(-2px);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 18%,
+            var(--border-strong)
+        );
+
+    box-shadow:
+        0 2px 4px rgba(0, 0, 0, .08),
+        0 12px 30px rgba(0, 0, 0, .09);
+}
+
+.kpi-card::before {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    left: 16px;
+    right: 16px;
+
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            color-mix(in srgb, var(--accent) 28%, transparent),
+            transparent
+        );
+
+    opacity: .65;
+}
+
+
+/* ==========================================================
+   CONTENU PRINCIPAL KPI
+========================================================== */
+
+.kpi-card-main {
+    min-height: 120px;
+    flex: 1;
+
+    padding: 17px 16px 15px;
+
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+}
+
+
+/* ==========================================================
+   ICÔNES KPI
+========================================================== */
+
+.kpi-icon {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--accent);
+
+    background:
+        linear-gradient(
+            145deg,
+            color-mix(in srgb, var(--accent-soft) 85%, transparent),
+            var(--accent-soft)
+        );
+
+    border:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--accent) 12%,
+            var(--border)
+        );
+
+    border-radius: 9px;
+
+    font-size: .95rem;
+
+    transition:
+        transform var(--transition),
+        background var(--transition);
+}
+
+.kpi-card:hover .kpi-icon {
+    transform: translateY(-1px);
+}
+
+.kpi-icon.danger-icon {
+    color: var(--red);
+    background: var(--red-soft);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--red) 13%,
+            var(--border)
+        );
+}
+
+
+/* ==========================================================
+   TEXTE KPI
+========================================================== */
+
+.kpi-content {
+    min-width: 0;
+    flex: 1;
+}
+
+.kpi-label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: var(--muted);
+
+    font-size: .67rem;
+    font-weight: 750;
+    letter-spacing: .055em;
+    line-height: 1.35;
+
+    text-transform: uppercase;
+}
+
+.kpi-value {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--text);
+
+    font-size: 1.25rem;
+    font-weight: 650;
+    line-height: 1.15;
+
+    letter-spacing: -.015em;
+
+    white-space: nowrap;
+}
+
+.kpi-content small {
+    display: block;
+
+    color: var(--muted);
+
+    font-size: .72rem;
+    line-height: 1.45;
+}
+
+
+/* ==========================================================
+   FOOTER KPI / TAUX D'ÉVOLUTION
+========================================================== */
+
+.kpi-footer {
+    min-height: 37px;
+    padding: 0 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+
+    background:
+        color-mix(
+            in srgb,
+            var(--surface-2) 48%,
+            transparent
+        );
+
+    border-top: 1px solid var(--border);
+}
+
+.kpi-footer span {
+    color: var(--muted);
+
+    font-size: .66rem;
+    line-height: 1;
+}
+
+.kpi-footer strong {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+
+    font-size: .7rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.kpi-footer strong.positive {
+    color: var(--green) !important;
+}
+
+.kpi-footer strong.negative {
+    color: var(--red) !important;
+}
+
+
+/* ==========================================================
+   ROWS
+========================================================== */
+
+.dashboard-row {
+    max-width: 1600px;
+
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0;
+}
+
+
+/* ==========================================================
+   CARTES GÉNÉRALES
+========================================================== */
+
+.dashboard-card {
+    height: 100%;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+
+    overflow: hidden;
+}
+
+.card-title-row {
+    min-height: 66px;
+    padding: 13px 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 14px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.card-title-row h2 {
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: 1rem;
+    font-weight: 650;
+}
+
+
+/* ==========================================================
+   PÉRIODES GRAPHIQUE
+========================================================== */
+
+.period-tabs {
+    padding: 3px;
+
+    display: flex;
+    gap: 2px;
+
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+.period-tabs button {
+    min-width: 32px;
+    height: 27px;
+
+    padding: 0 7px;
+
+    color: var(--muted);
+    background: transparent;
+
+    border: 0;
+    border-radius: 5px;
+
+    font-size: .7rem;
+    font-weight: 650;
+
+    cursor: pointer;
+
+    transition:
+        color var(--transition),
+        background var(--transition);
+}
+
+.period-tabs button:hover {
+    color: var(--soft);
+}
+
+.period-tabs button.active {
+    color: #171819;
+    background: var(--accent);
+}
+
+
+/* ==========================================================
+   CHART
+========================================================== */
+
+.chart-wrapper {
+    height: 285px;
+    padding: 18px 15px 8px;
+}
+
+.chart-wrapper canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.chart-statistics {
+    min-height: 57px;
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    border-top: 1px solid var(--border);
+}
+
+.chart-statistics > div {
+    padding: 10px 14px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.chart-statistics > div + div {
+    border-left: 1px solid var(--border);
+}
+
+.chart-statistics span,
+.chart-statistics strong {
+    display: block;
+}
+
+.chart-statistics span {
+    margin-bottom: 3px;
+
+    color: var(--muted);
+
+    font-size: .7rem;
+}
+
+.chart-statistics strong {
+    color: var(--text);
+
+    font-size: .88rem;
+    font-weight: 650;
+}
+
+
+/* ==========================================================
+   RAPPROCHEMENT
+========================================================== */
+
+.reconciliation-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.donut-container {
+    padding: 23px 15px 16px;
+
+    display: flex;
+    justify-content: center;
+}
+
+.reconciliation-donut {
+    width: 150px;
+    height: 150px;
+
+    position: relative;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    background:
+        conic-gradient(
+            var(--accent) 0deg 358deg,
+            var(--red) 358deg 360deg
+        );
+}
+
+.reconciliation-donut::before {
+    content: "";
+
+    width: 116px;
+    height: 116px;
+
+    position: absolute;
+
+    background: var(--surface);
+    border-radius: 50%;
+}
+
+.donut-center {
+    position: relative;
+    z-index: 1;
+
+    text-align: center;
+}
+
+.donut-center span,
+.donut-center strong,
+.donut-center small {
+    display: block;
+}
+
+.donut-center span {
+    margin-bottom: 4px;
+
+    color: var(--muted);
+    font-size: .7rem;
+}
+
+.donut-center strong {
+    margin-bottom: 2px;
+
+    color: var(--red);
+
+    font-size: 1rem;
+    font-weight: 650;
+}
+
+.donut-center small {
+    color: var(--muted);
+    font-size: .68rem;
+}
+
+.reconciliation-details {
+    padding: 0 15px;
+}
+
+.reconciliation-row {
+    min-height: 37px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.reconciliation-row:last-child {
+    border-bottom: 0;
+}
+
+.reconciliation-row > div {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    color: var(--muted);
+
+    font-size: .75rem;
+}
+
+.reconciliation-row strong {
+    color: var(--soft);
+
+    font-size: .8rem;
+    font-weight: 650;
+}
+
+.legend-dot {
+    width: 6px;
+    height: 6px;
+    flex: 0 0 6px;
+
+    border-radius: 50%;
+}
+
+.bank-dot {
+    background: var(--accent);
+}
+
+.system-dot {
+    background: #81868c;
+}
+
+.difference-dot {
+    background: var(--red);
+}
+
+
+/* ==========================================================
+   BOUTONS / LIENS
+========================================================== */
+
+.outline-action {
+    min-height: 37px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    color: var(--muted);
+    background: transparent;
+
+    border: 1px solid var(--border);
+    border-radius: 7px;
+
+    text-decoration: none;
+
+    font-size: .76rem;
+    font-weight: 650;
+
+    transition:
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition);
+}
+
+.outline-action:hover {
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-color: var(--border-strong);
+}
+
+.full-action {
+    margin: 15px;
+}
+
+.text-action {
+    color: var(--muted);
+
+    text-decoration: none;
+
+    font-size: .74rem;
+    font-weight: 650;
+
+    transition: color var(--transition);
+}
+
+.text-action:hover {
+    color: var(--accent);
+}
+
+
+/* ==========================================================
+   FACULTÉS
+========================================================== */
+
+.faculty-list {
+    padding: 5px 15px 14px;
+}
+
+.faculty-row {
+    padding: 11px 0;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.faculty-row:last-child {
+    border-bottom: 0;
+}
+
+.faculty-heading {
+    margin-bottom: 4px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+}
+
+.faculty-heading span {
+    color: var(--soft);
+
+    font-size: .78rem;
+    font-weight: 600;
+}
+
+.faculty-heading strong {
+    color: var(--accent);
+
+    font-size: .78rem;
+}
+
+.faculty-amount {
+    margin-bottom: 7px;
+
+    color: var(--muted);
+
+    font-size: .7rem;
+}
+
+.faculty-progress {
+    height: 4px;
+
+    overflow: hidden;
+
+    background: var(--surface-2);
+
+    border-radius: 999px;
+}
+
+.faculty-progress span {
+    height: 100%;
+
+    display: block;
+
+    background: var(--accent);
+
+    border-radius: inherit;
+
+    transition: width .35s ease;
+}
+
+
+/* ==========================================================
+   TABLEAU ANOMALIES
+========================================================== */
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.finance-table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    color: var(--soft);
+}
+
+.finance-table th {
+    padding: 10px 12px;
+
+    color: var(--muted);
+    background: var(--surface-2);
+
+    border-bottom: 1px solid var(--border);
+
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .035em;
+
+    text-align: left;
+    white-space: nowrap;
+}
+
+.finance-table td {
+    padding: 11px 12px;
+
+    color: var(--muted);
+
+    border-bottom: 1px solid var(--border);
+
+    font-size: .76rem;
+
+    vertical-align: middle;
+}
+
+.finance-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.finance-table tbody tr {
+    transition: background var(--transition);
+}
+
+.finance-table tbody tr:hover {
+    background: var(--surface-hover);
+}
+
+.student-cell {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    color: var(--soft);
+
+    white-space: nowrap;
+}
+
+.student-avatar {
+    width: 27px;
+    height: 27px;
+    flex: 0 0 27px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-radius: 6px;
+
+    font-size: .65rem;
+    font-weight: 700;
+}
+
+.finance-table .reference {
+    color: var(--accent);
+
+    font-family:
+        "SFMono-Regular",
+        Consolas,
+        monospace;
+
+    font-size: .72rem;
+}
+
+.finance-table td small {
+    display: block;
+
+    margin-top: 2px;
+
+    color: var(--muted);
+
+    font-size: .65rem;
+}
+
+.table-action {
+    width: 29px;
+    height: 29px;
+
+    display: grid;
+    place-items: center;
+
+    padding: 0;
+
+    color: var(--muted);
+    background: transparent;
+
+    border: 1px solid var(--border);
+    border-radius: 6px;
+
+    text-decoration: none;
+    cursor: pointer;
+
+    font-size: .8rem;
+
+    transition:
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition),
+        transform var(--transition);
+}
+
+.table-action:hover {
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-color: var(--border-strong);
+
+    transform: translateY(-1px);
+}
+
+
+/* ==========================================================
+   MODALE ANOMALIE
+========================================================== */
+
+.finance-modal {
+    overflow: hidden;
+
+    color: var(--soft);
+    background: var(--surface);
+
+    border: 1px solid var(--border-strong);
+    border-radius: 14px;
+
+    box-shadow:
+        0 28px 80px rgba(0, 0, 0, .42),
+        0 8px 25px rgba(0, 0, 0, .18);
+}
+
+.finance-modal .modal-header {
+    min-height: 74px;
+    padding: 17px 20px;
+
+    display: flex;
+    align-items: center;
+
+    background:
+        linear-gradient(
+            180deg,
+            color-mix(in srgb, var(--surface-2) 42%, transparent),
+            transparent
+        );
+
+    border-bottom: 1px solid var(--border);
+}
+
+.finance-modal .modal-header > div {
+    min-width: 0;
+}
+
+.finance-modal .modal-header > div > span {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--accent);
+
+    font-size: .67rem;
+    font-weight: 750;
+    letter-spacing: .1em;
+}
+
+.finance-modal .modal-header h2 {
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: 1.05rem;
+    font-weight: 650;
+    line-height: 1.3;
+}
+
+.finance-modal .modal-header .btn-close {
+    margin-left: auto;
+
+    opacity: .65;
+
+    transition:
+        opacity var(--transition),
+        transform var(--transition);
+}
+
+.finance-modal .modal-header .btn-close:hover {
+    opacity: 1;
+    transform: rotate(4deg);
+}
+
+.finance-modal .modal-body {
+    padding: 20px;
+}
+
+
+/* ==========================================================
+   FOOTER MODALE
+========================================================== */
+
+.finance-modal .modal-footer {
+    padding: 14px 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 9px;
+
+    background:
+        color-mix(
+            in srgb,
+            var(--surface-2) 34%,
+            transparent
+        );
+
+    border-top: 1px solid var(--border);
+}
+
+
+/* ==========================================================
+   BOUTONS MODALE — VERSION FINALE
+========================================================== */
+
+.finance-modal .modal-cancel,
+.finance-modal .modal-confirm {
+    min-height: 41px;
+
+    padding: 0 17px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    border-radius: 8px;
+
+    font-size: .79rem;
+    font-weight: 650;
+    line-height: 1;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    transition:
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition),
+        box-shadow var(--transition),
+        transform var(--transition);
+}
+
+
+/* ----------------------------------------------------------
+   BOUTON SECONDAIRE : FERMER
+---------------------------------------------------------- */
+
+.finance-modal .modal-cancel {
+    min-width: 92px;
+
+    color: var(--soft);
+    background: transparent;
+
+    border: 1px solid var(--border-strong);
+}
+
+.finance-modal .modal-cancel:hover {
+    color: var(--text);
+    background: var(--surface-hover);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--soft) 25%,
+            var(--border-strong)
+        );
+
+    transform: translateY(-1px);
+}
+
+.finance-modal .modal-cancel:active {
+    transform: translateY(0);
+}
+
+
+/* ----------------------------------------------------------
+   BOUTON PRINCIPAL : OUVRIR LE MODULE ANOMALIES
+---------------------------------------------------------- */
+
+.finance-modal .modal-confirm {
+    min-width: 205px;
+
+    color: #171819;
+    background: var(--accent);
+
+    border: 1px solid var(--accent);
+
+    box-shadow:
+        0 3px 10px rgba(185, 237, 46, .08);
+}
+
+.finance-modal .modal-confirm:hover,
+.finance-modal .modal-confirm:focus {
+    color: #171819;
+
+    background:
+        color-mix(
+            in srgb,
+            var(--accent) 91%,
+            white
+        );
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 91%,
+            white
+        );
+
+    box-shadow:
+        0 5px 15px rgba(185, 237, 46, .14);
+
+    transform: translateY(-1px);
+}
+
+.finance-modal .modal-confirm:active {
+    color: #171819;
+
+    background:
+        color-mix(
+            in srgb,
+            var(--accent) 92%,
+            black
+        );
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 92%,
+            black
+        );
+
+    box-shadow: none;
+
+    transform: translateY(0);
+}
+
+
+/* Supprime certains comportements Bootstrap qui peuvent
+   modifier visuellement le lien utilisé comme bouton. */
+.finance-modal a.modal-confirm {
+    color: #171819;
+    text-decoration: none;
+}
+
+.finance-modal a.modal-confirm:hover,
+.finance-modal a.modal-confirm:focus,
+.finance-modal a.modal-confirm:active {
+    color: #171819;
+    text-decoration: none;
+}
+
+
+/* Focus clavier */
+.finance-modal .modal-cancel:focus-visible,
+.finance-modal .modal-confirm:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+
+/* ==========================================================
+   DÉTAIL ANOMALIE
+========================================================== */
+
+.anomaly-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+}
+
+.anomaly-detail-grid > div {
+    min-width: 0;
+
+    padding: 13px;
+
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+
+    transition:
+        background var(--transition),
+        border-color var(--transition);
+}
+
+.anomaly-detail-grid > div:hover {
+    border-color: var(--border-strong);
+}
+
+.anomaly-detail-grid span,
+.anomaly-detail-grid strong {
+    display: block;
+}
+
+.anomaly-detail-grid span {
+    margin-bottom: 5px;
+
+    color: var(--muted);
+
+    font-size: .7rem;
+}
+
+.anomaly-detail-grid strong {
+    color: var(--text);
+
+    font-size: .82rem;
+    font-weight: 650;
+
+    overflow-wrap: anywhere;
+}
+
+.anomaly-detail-grid > div:nth-child(2) strong {
+    color: var(--accent);
+
+    font-family:
+        "SFMono-Regular",
+        Consolas,
+        monospace;
+}
+
+.anomaly-detail-note {
+    margin-top: 14px;
+    padding: 12px 13px;
+
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+
+    color: var(--muted);
+    background: var(--accent-soft);
+
+    border:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--accent) 10%,
+            var(--border)
+        );
+
+    border-radius: var(--radius-sm);
+}
+
+.anomaly-detail-note i {
+    margin-top: 2px;
+
+    color: var(--accent);
+    font-size: .85rem;
+}
+
+.anomaly-detail-note p {
+    margin: 0;
+
+    font-size: .76rem;
+    line-height: 1.55;
+}
+
+
+/* ==========================================================
+   TOAST
+========================================================== */
+
+.finance-toast {
+    color: var(--soft);
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: 9px;
+
+    box-shadow: 0 14px 40px rgba(0, 0, 0, .25);
+}
+
+.finance-toast .toast-body {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    font-size: .78rem;
+}
+
+.finance-toast .toast-body i {
+    color: var(--accent);
+    font-size: .9rem;
+}
+
+
+/* ==========================================================
+   OFFCANVAS MOBILE
+========================================================== */
+
+.finance-offcanvas {
+    width: 270px !important;
+
+    color: var(--soft);
+    background: #18191b;
+
+    border-right: 1px solid var(--border) !important;
+}
+
+body.light-theme .finance-offcanvas {
+    background: #ffffff;
+}
+
+.finance-offcanvas .offcanvas-header {
+    min-height: 70px;
+    padding: 0 12px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.finance-offcanvas .sidebar-brand {
+    min-height: auto;
+    padding: 0;
+
+    border: 0;
+}
+
+.finance-offcanvas .offcanvas-body {
+    padding: 10px;
+
+    overflow-y: auto;
+}
+
+.mobile-navigation {
+    display: grid;
+    gap: 3px;
+}
+
+.mobile-navigation hr {
+    margin: 9px 0;
+    border-color: var(--border);
+}
+
+.mobile-nav-link {
+    min-height: 40px;
+    padding: 0 10px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    color: var(--muted);
+
+    border-radius: 7px;
+
+    text-decoration: none;
+
+    font-size: .8rem;
+    font-weight: 600;
+
+    transition:
+        color var(--transition),
+        background var(--transition);
+}
+
+.mobile-nav-link > i {
+    width: 18px;
+
+    text-align: center;
+
+    font-size: .92rem;
+}
+
+.mobile-nav-link:hover,
+.mobile-nav-link.active {
+    color: var(--accent);
+    background: var(--accent-soft);
+}
+
+.mobile-badge {
+    min-width: 22px;
+    height: 19px;
+
+    margin-left: auto;
+    padding: 0 6px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--red);
+    background: var(--red-soft);
+
+    border-radius: 999px;
+
+    font-size: .65rem;
+    font-weight: 750;
+}
+
+
+/* ==========================================================
+   ÉTAT DURANT FILTRAGE
+========================================================== */
+
+.dashboard-filtering {
+    opacity: .62;
+    pointer-events: none;
+
+    transition: opacity .15s ease;
+}
+
+
+/* ==========================================================
+   BOOTSTRAP — THÈME SOMBRE
+========================================================== */
+
+.modal-backdrop.show {
+    opacity: .62;
+}
+
+body:not(.light-theme) .btn-close {
+    filter: invert(1) grayscale(100%);
+}
+
+.dropdown-menu {
+    --bs-dropdown-link-active-bg: var(--accent-soft);
+}
+
+
+/* ==========================================================
+   ANIMATIONS
+========================================================== */
+
+.kpi-card,
+.dashboard-card,
+.market-strip {
+    animation: dashboardFade .32s ease both;
+}
+
+.kpi-card:nth-child(2) {
+    animation-delay: .025s;
+}
+
+.kpi-card:nth-child(3) {
+    animation-delay: .05s;
+}
+
+.kpi-card:nth-child(4) {
+    animation-delay: .075s;
+}
+
+@keyframes dashboardFade {
+
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* ==========================================================
+   RESPONSIVE — < 1400px
+========================================================== */
+
+@media (max-width: 1399.98px) {
+
+    .market-strip {
+        grid-template-columns:
+            140px
+            repeat(5, minmax(125px, 1fr));
+    }
+
+    .kpi-value {
+        font-size: 1.15rem;
+    }
+}
+
+
+/* ==========================================================
+   RESPONSIVE — SIDEBAR MOBILE
+========================================================== */
+
+@media (max-width: 1199.98px) {
+
+    .finance-main {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .header-content {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .kpi-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+/* ==========================================================
+   RESPONSIVE — TABLETTE
+========================================================== */
+
+@media (max-width: 767.98px) {
+
+    body {
+        font-size: 15px;
+    }
+
+    .finance-main {
+        padding: 14px;
+    }
+
+    .market-strip {
+        grid-template-columns:
+            130px
+            repeat(5, 125px);
+    }
+
+    .kpi-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .kpi-card {
+        min-height: 150px;
+    }
+
+    .kpi-card-main {
+        min-height: 113px;
+        padding: 15px;
+    }
+
+    .kpi-value {
+        font-size: 1.15rem;
+    }
+
+    .chart-wrapper {
+        height: 250px;
+    }
+}
+
+
+/* ==========================================================
+   RESPONSIVE — MOBILE
+========================================================== */
+
+@media (max-width: 575.98px) {
+
+    body {
+        font-size: 15px;
+    }
+
+    .finance-main {
+        padding: 11px;
+    }
+
+    .header-content h1 {
+        font-size: 1.35rem;
+    }
+
+    .header-content p {
+        font-size: .8rem;
+    }
+
+    .kpi-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .kpi-card {
+        min-height: 145px;
+    }
+
+    .kpi-card-main {
+        min-height: 106px;
+        padding: 15px;
+    }
+
+    .kpi-icon {
+        width: 38px;
+        height: 38px;
+        flex-basis: 38px;
+    }
+
+    .kpi-label {
+        font-size: .66rem;
+    }
+
+    .kpi-value {
+        font-size: 1.2rem;
+    }
+
+    .kpi-content small {
+        font-size: .7rem;
+    }
+
+    .kpi-footer {
+        min-height: 36px;
+        padding: 0 15px;
+    }
+
+    .card-title-row {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .period-tabs {
+        width: 100%;
+    }
+
+    .period-tabs button {
+        flex: 1;
+    }
+
+    .chart-wrapper {
+        height: 220px;
+    }
+
+    .chart-statistics {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-statistics > div + div {
+        border-top: 1px solid var(--border);
+        border-left: 0;
+    }
+
+    .reconciliation-donut {
+        width: 135px;
+        height: 135px;
+    }
+
+    .reconciliation-donut::before {
+        width: 104px;
+        height: 104px;
+    }
+
+    .anomaly-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    /* ======================================================
+       MODALE MOBILE
+    ====================================================== */
+
+    .finance-modal {
+        border-radius: 12px;
+    }
+
+    .finance-modal .modal-header {
+        padding: 15px 16px;
+    }
+
+    .finance-modal .modal-body {
+        padding: 16px;
+    }
+
+    .finance-modal .modal-footer {
+        padding: 13px 16px;
+
+        display: grid;
+        grid-template-columns: 1fr;
+
+        gap: 8px;
+    }
+
+    .finance-modal .modal-cancel,
+    .finance-modal .modal-confirm {
+        width: 100%;
+        min-width: 0;
+        min-height: 42px;
+    }
+
+    /*
+       Sur mobile l'action principale est placée
+       visuellement en premier.
+    */
+    .finance-modal .modal-confirm {
+        order: 1;
+    }
+
+    .finance-modal .modal-cancel {
+        order: 2;
+    }
+}

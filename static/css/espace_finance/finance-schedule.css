@@ -1,0 +1,4425 @@
+/* ==========================================================
+   ACADEMICPAY — FINANCE / ÉCHÉANCIER
+   finance-schedule.css
+
+   Thème hérité de finance-dashboard.css
+
+   --accent : identité AcademicPay
+   --green  : succès
+   --red    : erreur / danger
+   --orange : avertissement
+========================================================== */
+
+
+/* ==========================================================
+   1. PAGE
+========================================================== */
+
+.schedule-page {
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+
+/* ==========================================================
+   2. HEADER
+========================================================== */
+
+.schedule-header {
+    max-width: 1600px;
+
+    margin: 0 auto 14px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 20px;
+}
+
+.schedule-header > div:first-child {
+    min-width: 0;
+}
+
+.schedule-header .page-eyebrow {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--accent);
+
+    font-size: .68rem;
+    font-weight: 750;
+    letter-spacing: .1em;
+}
+
+.schedule-header h1 {
+    margin: 0 0 5px;
+
+    color: var(--text);
+
+    font-size: clamp(1.5rem, 2vw, 1.9rem);
+    font-weight: 560;
+    line-height: 1.2;
+}
+
+.schedule-header p {
+    max-width: 720px;
+
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: .88rem;
+    line-height: 1.5;
+}
+
+
+/* ==========================================================
+   3. ACTIONS HEADER
+========================================================== */
+
+.schedule-header-actions {
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+
+    gap: 8px;
+}
+
+
+/* ==========================================================
+   4. ANNÉE ACADÉMIQUE
+========================================================== */
+
+.filter-control {
+    min-height: 39px;
+
+    padding: 0 11px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    color: var(--muted);
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+
+.filter-control > i {
+    flex: 0 0 auto;
+
+    color: var(--accent);
+
+    font-size: .82rem;
+}
+
+.filter-control select {
+    min-width: 112px;
+
+    padding: 0;
+
+    color: var(--soft);
+    background: transparent;
+
+    border: 0;
+    outline: 0;
+
+    font-size: .76rem;
+    font-weight: 650;
+
+    cursor: pointer;
+}
+
+.filter-control select option {
+    color: var(--text);
+    background: var(--surface);
+}
+
+
+/* ==========================================================
+   5. NOUVEL ÉCHÉANCIER
+========================================================== */
+
+.schedule-create-button {
+    min-height: 39px;
+
+    padding: 0 13px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    color: #171819;
+    background: var(--accent);
+
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-sm);
+
+    font-size: .76rem;
+    font-weight: 650;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition:
+        background var(--transition),
+        border-color var(--transition),
+        transform var(--transition);
+}
+
+.schedule-create-button:hover {
+    color: #171819;
+
+    background:
+        color-mix(
+            in srgb,
+            var(--accent) 90%,
+            white
+        );
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 90%,
+            white
+        );
+}
+
+.schedule-create-button:active {
+    transform: translateY(1px);
+}
+
+
+/* ==========================================================
+   6. KPI
+========================================================== */
+
+.schedule-kpi-grid {
+    max-width: 1600px;
+
+    margin: 0 auto 12px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 12px;
+}
+
+.schedule-kpi {
+    min-width: 0;
+    min-height: 116px;
+
+    position: relative;
+
+    padding: 16px;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 13px;
+
+    background:
+        linear-gradient(
+            145deg,
+            color-mix(
+                in srgb,
+                var(--surface) 96%,
+                white 4%
+            ),
+            var(--surface)
+        );
+
+    border: 1px solid var(--border);
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, .08),
+        0 8px 24px rgba(0, 0, 0, .06);
+
+    transition:
+        transform var(--transition),
+        border-color var(--transition),
+        box-shadow var(--transition);
+}
+
+body.light-theme .schedule-kpi {
+    background: var(--surface);
+
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, .025),
+        0 8px 22px rgba(0, 0, 0, .035);
+}
+
+.schedule-kpi:hover {
+    transform: translateY(-2px);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 18%,
+            var(--border-strong)
+        );
+
+    box-shadow:
+        0 2px 4px rgba(0, 0, 0, .08),
+        0 12px 30px rgba(0, 0, 0, .09);
+}
+
+.schedule-kpi::before {
+    content: "";
+
+    height: 1px;
+
+    position: absolute;
+    top: 0;
+    left: 16px;
+    right: 16px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            color-mix(
+                in srgb,
+                var(--accent) 28%,
+                transparent
+            ),
+            transparent
+        );
+
+    opacity: .65;
+}
+
+
+/* ==========================================================
+   7. ICÔNES KPI
+========================================================== */
+
+.schedule-kpi-icon {
+    width: 40px;
+    height: 40px;
+
+    flex: 0 0 40px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--accent);
+
+    background:
+        linear-gradient(
+            145deg,
+            color-mix(
+                in srgb,
+                var(--accent-soft) 85%,
+                transparent
+            ),
+            var(--accent-soft)
+        );
+
+    border:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--accent) 12%,
+            var(--border)
+        );
+
+    border-radius: 9px;
+
+    font-size: .95rem;
+
+    transition: transform var(--transition);
+}
+
+.schedule-kpi:hover .schedule-kpi-icon {
+    transform: translateY(-1px);
+}
+
+.schedule-kpi-icon.warning {
+    color: var(--orange);
+
+    background:
+        color-mix(
+            in srgb,
+            var(--orange) 9%,
+            transparent
+        );
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--orange) 14%,
+            var(--border)
+        );
+}
+
+
+/* ==========================================================
+   8. CONTENU KPI
+========================================================== */
+
+.schedule-kpi > div:last-child {
+    min-width: 0;
+    flex: 1;
+}
+
+.schedule-kpi span {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: var(--muted);
+
+    font-size: .67rem;
+    font-weight: 750;
+    letter-spacing: .055em;
+    line-height: 1.35;
+
+    text-transform: uppercase;
+}
+
+.schedule-kpi strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--text);
+
+    font-size: 1.25rem;
+    font-weight: 650;
+    line-height: 1.15;
+
+    letter-spacing: -.015em;
+}
+
+.schedule-kpi small {
+    display: block;
+
+    color: var(--muted);
+
+    font-size: .72rem;
+    line-height: 1.45;
+}
+
+
+/* ==========================================================
+   9. PROCHAINE ÉCHÉANCE
+========================================================== */
+
+.next-deadline-card {
+    max-width: 1600px;
+    min-height: 76px;
+
+    margin: 0 auto 12px;
+
+    padding: 12px 15px;
+
+    display: grid;
+
+    grid-template-columns:
+        auto
+        minmax(220px, 1fr)
+        minmax(145px, auto)
+        minmax(155px, auto);
+
+    align-items: center;
+
+    gap: 16px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+
+    overflow: hidden;
+}
+
+.next-deadline-icon {
+    width: 40px;
+    height: 40px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--accent) 12%,
+            var(--border)
+        );
+
+    border-radius: 9px;
+
+    font-size: .9rem;
+}
+
+.next-deadline-main,
+.next-deadline-date,
+.next-deadline-amount {
+    min-width: 0;
+}
+
+.next-deadline-main > span,
+.next-deadline-date > span,
+.next-deadline-amount > span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: var(--muted);
+
+    font-size: .66rem;
+    font-weight: 750;
+    letter-spacing: .06em;
+
+    text-transform: uppercase;
+}
+
+.next-deadline-main strong,
+.next-deadline-date strong,
+.next-deadline-amount strong {
+    display: block;
+
+    color: var(--text);
+
+    font-size: .82rem;
+    font-weight: 650;
+}
+
+.next-deadline-main p {
+    margin: 3px 0 0;
+
+    color: var(--muted);
+
+    font-size: .7rem;
+}
+
+.next-deadline-date,
+.next-deadline-amount {
+    padding-left: 16px;
+
+    border-left: 1px solid var(--border);
+}
+
+
+/* ==========================================================
+   10. FILTRES
+========================================================== */
+
+.schedule-filters {
+    max-width: 1600px;
+
+    margin: 0 auto 12px;
+
+    padding: 12px;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(210px, 1.5fr)
+        repeat(5, minmax(125px, 1fr))
+        auto;
+
+    align-items: end;
+
+    gap: 8px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+}
+
+
+/* ==========================================================
+   11. RECHERCHE
+========================================================== */
+
+.schedule-search {
+    min-width: 0;
+    min-height: 39px;
+
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+
+    transition:
+        border-color var(--transition),
+        box-shadow var(--transition);
+}
+
+.schedule-search:focus-within {
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 40%,
+            var(--border)
+        );
+
+    box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+.schedule-search > i {
+    position: absolute;
+    left: 11px;
+
+    color: var(--muted);
+
+    font-size: .78rem;
+
+    pointer-events: none;
+}
+
+.schedule-search input {
+    width: 100%;
+    min-width: 0;
+    height: 37px;
+
+    padding: 0 36px 0 33px;
+
+    color: var(--soft);
+    background: transparent;
+
+    border: 0;
+    outline: 0;
+
+    font-size: .76rem;
+}
+
+.schedule-search input::placeholder {
+    color: var(--muted);
+}
+
+.schedule-search button {
+    width: 29px;
+    height: 29px;
+
+    position: absolute;
+    right: 4px;
+
+    padding: 0;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--muted);
+    background: transparent;
+
+    border: 0;
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    transition:
+        color var(--transition),
+        background var(--transition);
+}
+
+.schedule-search button:hover {
+    color: var(--accent);
+    background: var(--accent-soft);
+}
+
+
+/* ==========================================================
+   12. SELECTS DES FILTRES
+========================================================== */
+
+.schedule-filter {
+    min-width: 0;
+}
+
+.schedule-filter label {
+    display: block;
+
+    margin: 0 0 5px 1px;
+
+    color: var(--muted);
+
+    font-size: .65rem;
+    font-weight: 700;
+    letter-spacing: .035em;
+}
+
+.schedule-filter select {
+    width: 100%;
+    min-width: 0;
+    height: 39px;
+
+    padding: 0 30px 0 10px;
+
+    color: var(--soft);
+    background-color: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+
+    outline: 0;
+
+    font-size: .72rem;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        border-color var(--transition),
+        box-shadow var(--transition),
+        opacity var(--transition);
+}
+
+.schedule-filter select:hover:not(:disabled) {
+    border-color: var(--border-strong);
+}
+
+.schedule-filter select:focus {
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 40%,
+            var(--border)
+        );
+
+    box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+.schedule-filter select option {
+    color: var(--text);
+    background: var(--surface);
+}
+
+.schedule-filter select:disabled,
+.finance-input:disabled {
+    color: var(--muted);
+    background: var(--surface);
+
+    border-color: var(--border);
+
+    cursor: not-allowed;
+
+    opacity: .48;
+}
+
+
+/* ==========================================================
+   13. RÉINITIALISER
+========================================================== */
+
+.schedule-reset-button {
+    min-height: 39px;
+
+    padding: 0 11px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    color: var(--muted);
+    background: transparent;
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+
+    font-size: .72rem;
+    font-weight: 650;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition:
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition);
+}
+
+.schedule-reset-button:hover {
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-color: var(--border-strong);
+}
+
+
+/* ==========================================================
+   14. CARTE LISTE
+========================================================== */
+
+.schedule-list-card {
+    max-width: 1600px;
+
+    margin: 0 auto;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+
+    overflow: hidden;
+}
+
+.schedule-section-header {
+    min-height: 67px;
+
+    padding: 13px 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 16px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.schedule-section-header > div:first-child {
+    min-width: 0;
+}
+
+.schedule-section-header .card-eyebrow {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: var(--accent);
+
+    font-size: .64rem;
+    font-weight: 750;
+    letter-spacing: .085em;
+}
+
+.schedule-section-header h2 {
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: .94rem;
+    font-weight: 650;
+}
+
+.schedule-result-counter {
+    min-height: 30px;
+
+    padding: 0 9px;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 4px;
+
+    color: var(--muted);
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 6px;
+
+    white-space: nowrap;
+}
+
+.schedule-result-counter strong {
+    color: var(--text);
+
+    font-size: .7rem;
+    font-weight: 700;
+}
+
+.schedule-result-counter span {
+    font-size: .66rem;
+}
+
+
+/* ==========================================================
+   15. TABLEAU
+========================================================== */
+
+.schedule-table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+
+    scrollbar-width: thin;
+    scrollbar-color: #44484c transparent;
+}
+
+.schedule-table {
+    width: 100%;
+    min-width: 1250px;
+
+    border-collapse: collapse;
+
+    color: var(--soft);
+
+    font-size: .7rem;
+}
+
+.schedule-table th {
+    height: 42px;
+
+    padding: 0 11px;
+
+    color: var(--muted);
+    background: var(--surface-2);
+
+    border-bottom: 1px solid var(--border);
+
+    font-size: .62rem;
+    font-weight: 750;
+    letter-spacing: .045em;
+
+    text-align: left;
+    text-transform: uppercase;
+
+    white-space: nowrap;
+}
+
+.schedule-table td {
+    padding: 11px;
+
+    vertical-align: middle;
+
+    border-bottom: 1px solid var(--border);
+
+    line-height: 1.4;
+}
+
+.schedule-table tbody tr {
+    transition: background var(--transition);
+}
+
+.schedule-table tbody tr:hover {
+    background: var(--surface-hover);
+}
+
+.schedule-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.schedule-table td strong {
+    color: var(--text);
+
+    font-weight: 650;
+}
+
+.schedule-table td small {
+    display: block;
+
+    margin-top: 2px;
+
+    color: var(--muted);
+
+    font-size: .62rem;
+}
+
+
+/* ==========================================================
+   16. ÉCHÉANCES DANS LE TABLEAU
+========================================================== */
+
+.schedule-installment-summary {
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+}
+
+.schedule-installment-summary span {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+
+    color: var(--muted);
+
+    font-size: .64rem;
+
+    white-space: nowrap;
+}
+
+.schedule-installment-summary i {
+    color: var(--accent);
+
+    font-size: .65rem;
+}
+
+
+/* ==========================================================
+   17. PROCHAINE ÉCHÉANCE TABLE
+========================================================== */
+
+.schedule-next-date {
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+.schedule-next-date strong {
+    font-size: .7rem;
+}
+
+.schedule-next-date span {
+    color: var(--muted);
+
+    font-size: .62rem;
+}
+
+
+/* ==========================================================
+   18. STATUTS
+========================================================== */
+
+.schedule-status {
+    padding: 4px 7px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    border: 1px solid transparent;
+    border-radius: 999px;
+
+    font-size: .63rem;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.schedule-status::before {
+    content: "";
+
+    width: 5px;
+    height: 5px;
+
+    flex: 0 0 5px;
+
+    background: currentColor;
+
+    border-radius: 50%;
+}
+
+.schedule-status.active,
+.schedule-status.actif {
+    color: var(--green);
+    background: var(--green-soft);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--green) 16%,
+            var(--border)
+        );
+}
+
+.schedule-status.draft,
+.schedule-status.brouillon {
+    color: var(--orange);
+
+    background:
+        color-mix(
+            in srgb,
+            var(--orange) 9%,
+            transparent
+        );
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--orange) 15%,
+            var(--border)
+        );
+}
+
+.schedule-status.closed,
+.schedule-status.cloture,
+.schedule-status.clôturé {
+    color: var(--muted);
+    background: var(--surface-2);
+
+    border-color: var(--border);
+}
+
+
+/* ==========================================================
+   19. ACTIONS TABLEAU
+========================================================== */
+
+.schedule-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 5px;
+}
+
+.schedule-action-button {
+    width: 30px;
+    height: 30px;
+
+    padding: 0;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--muted);
+    background: transparent;
+
+    border: 1px solid var(--border);
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    transition:
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition);
+}
+
+.schedule-action-button:hover {
+    color: var(--soft);
+    background: var(--surface-hover);
+
+    border-color: var(--border-strong);
+}
+
+.schedule-action-button.edit:hover {
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 20%,
+            var(--border)
+        );
+}
+
+.schedule-action-button.delete:hover {
+    color: var(--red);
+    background: var(--red-soft);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--red) 20%,
+            var(--border)
+        );
+}
+
+
+/* ==========================================================
+   20. ÉTAT VIDE
+========================================================== */
+
+.schedule-empty {
+    min-height: 300px;
+
+    padding: 38px 20px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+}
+
+.schedule-empty[hidden] {
+    display: none !important;
+}
+
+.schedule-empty-icon {
+    width: 52px;
+    height: 52px;
+
+    margin-bottom: 13px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--muted);
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 12px;
+
+    font-size: 1.1rem;
+}
+
+.schedule-empty > strong {
+    color: var(--text);
+
+    font-size: .9rem;
+    font-weight: 650;
+}
+
+.schedule-empty > p {
+    max-width: 420px;
+
+    margin: 7px 0 15px;
+
+    color: var(--muted);
+
+    font-size: .74rem;
+    line-height: 1.55;
+}
+
+.schedule-empty > button {
+    min-height: 37px;
+
+    padding: 0 12px;
+
+    color: var(--muted);
+    background: transparent;
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+
+    font-size: .72rem;
+    font-weight: 650;
+
+    cursor: pointer;
+
+    transition:
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition);
+}
+
+.schedule-empty > button:hover {
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-color: var(--border-strong);
+}
+
+
+/* ==========================================================
+   21. MODALES
+========================================================== */
+
+.finance-modal {
+    position: relative;
+
+    color: var(--soft);
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: 12px;
+
+    box-shadow:
+        0 24px 80px rgba(0, 0, 0, .38);
+
+    overflow: hidden;
+}
+
+body.light-theme .finance-modal {
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, .12);
+}
+
+
+/* ==========================================================
+   22. HEADER MODALE
+========================================================== */
+
+.finance-modal .modal-header {
+    min-height: 72px;
+
+    position: relative;
+
+    padding: 14px 55px 14px 18px;
+
+    display: flex;
+    align-items: center;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.finance-modal .modal-header > div {
+    min-width: 0;
+}
+
+.finance-modal .modal-header span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: var(--accent);
+
+    font-size: .65rem;
+    font-weight: 750;
+    letter-spacing: .1em;
+}
+
+.finance-modal .modal-header h2 {
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: 1rem;
+    font-weight: 650;
+}
+
+.finance-modal .modal-header p {
+    max-width: 640px;
+
+    color: var(--muted) !important;
+
+    font-size: .68rem !important;
+    line-height: 1.45;
+}
+
+
+/* ==========================================================
+   23. CROIX MODALE
+========================================================== */
+
+.finance-modal .btn-close {
+    width: 30px;
+    height: 30px;
+
+    position: absolute;
+    top: 18px;
+    right: 18px;
+
+    margin: 0;
+    padding: 0;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 6px;
+
+    opacity: .62;
+
+    transition:
+        opacity var(--transition),
+        background var(--transition);
+}
+
+.finance-modal .btn-close:hover {
+    background-color: var(--surface-hover);
+
+    opacity: 1;
+}
+
+body:not(.light-theme)
+.finance-modal
+.btn-close {
+    filter:
+        invert(1)
+        grayscale(100%)
+        brightness(180%);
+}
+
+body.light-theme
+.finance-modal
+.btn-close {
+    filter: none;
+}
+
+
+/* ==========================================================
+   24. BODY / FOOTER MODALE
+========================================================== */
+
+.finance-modal .modal-body {
+    padding: 18px;
+
+    color: var(--soft);
+}
+
+.finance-modal .modal-footer {
+    min-height: 61px;
+
+    padding: 11px 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 8px;
+
+    background:
+        color-mix(
+            in srgb,
+            var(--surface-2) 42%,
+            transparent
+        );
+
+    border-top: 1px solid var(--border);
+}
+
+
+/* ==========================================================
+   25. SECTIONS DU FORMULAIRE
+========================================================== */
+
+.schedule-form-section {
+    padding: 15px;
+
+    background:
+        color-mix(
+            in srgb,
+            var(--surface-2) 72%,
+            transparent
+        );
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+}
+
+.schedule-form-section +
+.schedule-form-section {
+    margin-top: 12px;
+}
+
+.schedule-form-section-title {
+    margin-bottom: 14px;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 10px;
+}
+
+.schedule-form-section-title > i {
+    width: 32px;
+    height: 32px;
+
+    flex: 0 0 32px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--accent) 12%,
+            var(--border)
+        );
+
+    border-radius: 7px;
+
+    font-size: .82rem;
+}
+
+.schedule-form-section-title > div {
+    min-width: 0;
+}
+
+.schedule-form-section-title strong {
+    display: block;
+
+    color: var(--text);
+
+    font-size: .78rem;
+    font-weight: 650;
+}
+
+.schedule-form-section-title span {
+    display: block;
+
+    margin-top: 2px;
+
+    color: var(--muted);
+
+    font-size: .67rem;
+    line-height: 1.4;
+}
+
+
+/* ==========================================================
+   26. GROUPES DU FORMULAIRE
+========================================================== */
+
+.schedule-form-group {
+    min-width: 0;
+}
+
+.schedule-form-group label {
+    display: block;
+
+    margin: 0 0 5px 1px;
+
+    color: var(--muted);
+
+    font-size: .66rem;
+    font-weight: 700;
+    letter-spacing: .035em;
+}
+
+.schedule-field-help {
+    display: block;
+
+    margin-top: 5px;
+
+    color: var(--muted);
+
+    font-size: .64rem;
+    line-height: 1.45;
+}
+
+
+/* ==========================================================
+   27. INPUTS DU FORMULAIRE
+========================================================== */
+
+.finance-input {
+    width: 100%;
+    height: 39px;
+
+    padding: 0 10px;
+
+    color: var(--soft);
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+
+    outline: 0;
+
+    font-size: .75rem;
+
+    transition:
+        border-color var(--transition),
+        box-shadow var(--transition),
+        background var(--transition);
+}
+
+select.finance-input {
+    padding-right: 30px;
+
+    cursor: pointer;
+}
+
+.finance-input::placeholder {
+    color: var(--muted);
+
+    opacity: .8;
+}
+
+.finance-input:hover:not(:disabled) {
+    border-color: var(--border-strong);
+}
+
+.finance-input:focus {
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 42%,
+            var(--border)
+        );
+
+    box-shadow:
+        0 0 0 2px
+        var(--accent-soft);
+}
+
+select.finance-input option {
+    color: var(--text);
+    background: var(--surface);
+}
+
+.finance-input:disabled {
+    color: var(--muted);
+    background: var(--surface-2);
+
+    cursor: not-allowed;
+
+    opacity: .48;
+}
+
+
+/* ==========================================================
+   28. MONTANTS USD
+========================================================== */
+
+.schedule-money-input {
+    position: relative;
+}
+
+.schedule-money-input .finance-input {
+    padding-right: 52px;
+}
+
+.schedule-money-input > span {
+    position: absolute;
+
+    top: 50%;
+    right: 11px;
+
+    transform: translateY(-50%);
+
+    color: var(--muted);
+
+    font-size: .65rem;
+    font-weight: 700;
+
+    pointer-events: none;
+}
+
+/* ==========================================================
+   29. GRILLES DU FORMULAIRE
+========================================================== */
+
+.schedule-form-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+}
+
+.schedule-form-grid.three-columns {
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+}
+
+.schedule-form-grid.four-columns {
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+}
+
+.schedule-form-full {
+    grid-column: 1 / -1;
+}
+
+
+/* ==========================================================
+   30. PORTÉE ACADÉMIQUE
+   Faculté -> Département -> Spécialisation
+
+   IMPORTANT :
+   - Promotion reste toujours active.
+   - Département est désactivé tant qu'aucune faculté
+     n'est sélectionnée.
+   - Spécialisation est désactivée tant qu'aucun
+     département n'est sélectionné.
+========================================================== */
+
+.schedule-scope-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+}
+
+.schedule-scope-grid
+.schedule-form-group {
+    min-width: 0;
+}
+
+.schedule-scope-grid
+select:disabled {
+    color: var(--muted);
+    background: var(--surface-2);
+
+    border-color: var(--border);
+
+    cursor: not-allowed;
+
+    opacity: .48;
+}
+
+
+/* ==========================================================
+   31. PROMOTION
+
+   Promotion est indépendante du chaînage
+   Faculté -> Département -> Spécialisation.
+
+   BAC0, M3 et DOC4 peuvent être proposés par le JS
+   conformément au référentiel utilisé par la page.
+========================================================== */
+
+.schedule-promotion-field
+.finance-input {
+    opacity: 1;
+    cursor: pointer;
+}
+
+.schedule-promotion-field
+.finance-input:disabled {
+    opacity: 1;
+    cursor: pointer;
+}
+
+
+/* ==========================================================
+   32. ZONE DES TRANCHES
+========================================================== */
+
+.installments-container {
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+
+/* ==========================================================
+   33. UNE TRANCHE
+========================================================== */
+
+.installment-item {
+    padding: 11px;
+
+    display: grid;
+
+    grid-template-columns:
+        auto
+        minmax(125px, .72fr)
+        minmax(145px, 1fr)
+        minmax(145px, 1fr)
+        auto;
+
+    align-items: end;
+
+    gap: 9px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+
+    transition:
+        border-color var(--transition),
+        background var(--transition);
+}
+
+.installment-item:hover {
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 12%,
+            var(--border-strong)
+        );
+}
+
+
+/* ==========================================================
+   34. NUMÉRO DE TRANCHE
+========================================================== */
+
+.installment-number {
+    width: 31px;
+    height: 31px;
+
+    margin-bottom: 4px;
+
+    display: grid;
+    place-items: center;
+
+    color: #171819;
+    background: var(--accent);
+
+    border:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--accent) 90%,
+            white
+        );
+
+    border-radius: 7px;
+
+    font-size: .68rem;
+    font-weight: 750;
+
+    line-height: 1;
+}
+
+
+/* ==========================================================
+   35. CHAMPS D'UNE TRANCHE
+========================================================== */
+
+.installment-item
+.schedule-form-group {
+    min-width: 0;
+}
+
+.installment-item
+.schedule-form-group label {
+    margin-bottom: 4px;
+
+    font-size: .62rem;
+}
+
+.installment-item
+.finance-input {
+    height: 36px;
+
+    font-size: .7rem;
+}
+
+
+/* ==========================================================
+   36. SUPPRIMER UNE TRANCHE
+========================================================== */
+
+.installment-remove {
+    width: 34px;
+    height: 34px;
+
+    margin-bottom: 1px;
+    padding: 0;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--muted);
+    background: transparent;
+
+    border: 1px solid var(--border);
+    border-radius: 6px;
+
+    font-size: .75rem;
+
+    cursor: pointer;
+
+    transition:
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition),
+        transform var(--transition);
+}
+
+.installment-remove:hover {
+    color: var(--red);
+    background: var(--red-soft);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--red) 20%,
+            var(--border)
+        );
+}
+
+.installment-remove:active {
+    transform: translateY(1px);
+}
+
+.installment-remove:disabled {
+    color: var(--muted);
+    background: transparent;
+
+    border-color: var(--border);
+
+    cursor: not-allowed;
+
+    opacity: .35;
+}
+
+
+/* ==========================================================
+   37. AJOUTER UNE TRANCHE
+========================================================== */
+
+.add-installment-button {
+    min-height: 36px;
+
+    margin-top: 9px;
+    padding: 0 11px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    color: var(--accent);
+    background: transparent;
+
+    border:
+        1px dashed
+        color-mix(
+            in srgb,
+            var(--accent) 25%,
+            var(--border)
+        );
+
+    border-radius: var(--radius-sm);
+
+    font-size: .7rem;
+    font-weight: 650;
+
+    cursor: pointer;
+
+    transition:
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition),
+        transform var(--transition);
+}
+
+.add-installment-button:hover {
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 45%,
+            var(--border)
+        );
+}
+
+.add-installment-button:active {
+    transform: translateY(1px);
+}
+
+
+/* ==========================================================
+   38. RÉSUMÉ DU MONTANT
+========================================================== */
+
+.schedule-balance {
+    margin-top: 10px;
+    padding: 10px 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+
+    transition:
+        border-color var(--transition),
+        background var(--transition);
+}
+
+.schedule-balance > div {
+    min-width: 0;
+}
+
+.schedule-balance span {
+    display: block;
+
+    color: var(--muted);
+
+    font-size: .67rem;
+    line-height: 1.4;
+}
+
+.schedule-balance strong {
+    display: block;
+
+    margin-top: 2px;
+
+    color: var(--text);
+
+    font-size: .76rem;
+    font-weight: 650;
+
+    white-space: nowrap;
+}
+
+
+/* ==========================================================
+   39. TOTAL CORRECT
+========================================================== */
+
+.schedule-balance.is-valid {
+    background:
+        color-mix(
+            in srgb,
+            var(--green-soft) 45%,
+            var(--surface)
+        );
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--green) 18%,
+            var(--border)
+        );
+}
+
+.schedule-balance.is-valid strong {
+    color: var(--green);
+}
+
+
+/* ==========================================================
+   40. TOTAL INCORRECT
+========================================================== */
+
+.schedule-balance.is-invalid {
+    background:
+        color-mix(
+            in srgb,
+            var(--red-soft) 40%,
+            var(--surface)
+        );
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--red) 18%,
+            var(--border)
+        );
+}
+
+.schedule-balance.is-invalid strong {
+    color: var(--red);
+}
+
+
+/* ==========================================================
+   41. RÉSUMÉ FINANCIER
+========================================================== */
+
+.schedule-financial-summary {
+    margin-top: 10px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 8px;
+}
+
+.schedule-financial-summary-item {
+    min-width: 0;
+
+    padding: 10px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+
+.schedule-financial-summary-item span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: var(--muted);
+
+    font-size: .61rem;
+    font-weight: 700;
+    letter-spacing: .035em;
+
+    text-transform: uppercase;
+}
+
+.schedule-financial-summary-item strong {
+    display: block;
+
+    color: var(--text);
+
+    font-size: .77rem;
+    font-weight: 650;
+
+    white-space: nowrap;
+}
+
+
+/* ==========================================================
+   42. MESSAGE DE VALIDATION
+========================================================== */
+
+.schedule-validation-message {
+    min-height: 18px;
+
+    margin-top: 8px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 6px;
+
+    color: var(--muted);
+
+    font-size: .65rem;
+    line-height: 1.4;
+}
+
+.schedule-validation-message:empty {
+    display: none;
+}
+
+.schedule-validation-message.success {
+    color: var(--green);
+}
+
+.schedule-validation-message.error {
+    color: var(--red);
+}
+
+.schedule-validation-message.warning {
+    color: var(--orange);
+}
+
+
+/* ==========================================================
+   43. BOUTONS FOOTER MODALE
+========================================================== */
+
+.modal-cancel,
+.modal-confirm {
+    min-height: 37px;
+
+    padding: 0 12px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    border-radius: var(--radius-sm);
+
+    font-size: .72rem;
+    font-weight: 650;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition:
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition),
+        transform var(--transition),
+        opacity var(--transition);
+}
+
+
+/* ==========================================================
+   44. ANNULER
+========================================================== */
+
+.modal-cancel {
+    color: var(--muted);
+    background: transparent;
+
+    border: 1px solid var(--border);
+}
+
+.modal-cancel:hover {
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-color: var(--border-strong);
+}
+
+.modal-cancel:active {
+    transform: translateY(1px);
+}
+
+
+/* ==========================================================
+   45. CONFIRMER
+========================================================== */
+
+.modal-confirm {
+    color: #171819;
+    background: var(--accent);
+
+    border: 1px solid var(--accent);
+}
+
+.modal-confirm:hover {
+    color: #171819;
+
+    background:
+        color-mix(
+            in srgb,
+            var(--accent) 90%,
+            white
+        );
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 90%,
+            white
+        );
+}
+
+.modal-confirm:active {
+    transform: translateY(1px);
+}
+
+.modal-confirm:disabled {
+    cursor: not-allowed;
+
+    opacity: .45;
+
+    transform: none;
+}
+
+
+/* ==========================================================
+   46. BOUTON DANGER
+========================================================== */
+
+.modal-confirm.danger {
+    color: #fff;
+    background: var(--red);
+
+    border-color: var(--red);
+}
+
+.modal-confirm.danger:hover {
+    color: #fff;
+
+    background:
+        color-mix(
+            in srgb,
+            var(--red) 88%,
+            black
+        );
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--red) 88%,
+            black
+        );
+}
+
+
+/* ==========================================================
+   47. MODALE DÉTAIL
+========================================================== */
+
+.schedule-detail-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+}
+
+.schedule-detail-item {
+    min-width: 0;
+
+    padding: 11px;
+
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+
+.schedule-detail-item.full {
+    grid-column: 1 / -1;
+}
+
+.schedule-detail-item span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: var(--muted);
+
+    font-size: .62rem;
+    font-weight: 700;
+    letter-spacing: .035em;
+
+    text-transform: uppercase;
+}
+
+.schedule-detail-item strong {
+    display: block;
+
+    color: var(--text);
+
+    font-size: .75rem;
+    font-weight: 650;
+    line-height: 1.45;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* ==========================================================
+   48. DÉTAIL DES TRANCHES
+========================================================== */
+
+.schedule-detail-installments {
+    margin-top: 12px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+.schedule-detail-installment {
+    padding: 10px 11px;
+
+    display: grid;
+
+    grid-template-columns:
+        auto
+        minmax(0, 1fr)
+        auto
+        auto;
+
+    align-items: center;
+
+    gap: 10px;
+
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+
+.schedule-detail-installment-number {
+    width: 27px;
+    height: 27px;
+
+    display: grid;
+    place-items: center;
+
+    color: #171819;
+    background: var(--accent);
+
+    border-radius: 6px;
+
+    font-size: .63rem;
+    font-weight: 750;
+}
+
+.schedule-detail-installment-main {
+    min-width: 0;
+}
+
+.schedule-detail-installment-main strong {
+    display: block;
+
+    color: var(--text);
+
+    font-size: .7rem;
+    font-weight: 650;
+}
+
+.schedule-detail-installment-main span {
+    display: block;
+
+    margin-top: 2px;
+
+    color: var(--muted);
+
+    font-size: .61rem;
+}
+
+.schedule-detail-installment-amount {
+    color: var(--text);
+
+    font-size: .7rem;
+    font-weight: 650;
+
+    white-space: nowrap;
+}
+
+.schedule-detail-installment-date {
+    color: var(--muted);
+
+    font-size: .64rem;
+
+    white-space: nowrap;
+}
+
+
+/* ==========================================================
+   49. MODALE SUPPRESSION
+========================================================== */
+
+.schedule-delete-content {
+    padding: 4px 0;
+
+    text-align: center;
+}
+
+.schedule-delete-icon {
+    width: 52px;
+    height: 52px;
+
+    margin: 0 auto 12px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--red);
+    background: var(--red-soft);
+
+    border:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--red) 18%,
+            var(--border)
+        );
+
+    border-radius: 12px;
+
+    font-size: 1.05rem;
+}
+
+.schedule-delete-content h3 {
+    margin: 0 0 6px;
+
+    color: var(--text);
+
+    font-size: .9rem;
+    font-weight: 650;
+}
+
+.schedule-delete-content p {
+    max-width: 460px;
+
+    margin: 0 auto;
+
+    color: var(--muted);
+
+    font-size: .72rem;
+    line-height: 1.55;
+}
+
+.schedule-delete-target {
+    margin-top: 13px;
+    padding: 10px;
+
+    color: var(--soft);
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+
+    font-size: .7rem;
+}
+
+
+/* ==========================================================
+   50. TOAST
+========================================================== */
+
+.schedule-toast-container {
+    position: fixed;
+
+    right: 20px;
+    bottom: 20px;
+
+    z-index: 1090;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+
+    pointer-events: none;
+}
+
+.schedule-toast {
+    width: min(360px, calc(100vw - 32px));
+    min-height: 54px;
+
+    padding: 10px 12px;
+
+    display: grid;
+
+    grid-template-columns:
+        auto
+        minmax(0, 1fr)
+        auto;
+
+    align-items: center;
+
+    gap: 9px;
+
+    color: var(--soft);
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+
+    box-shadow:
+        0 14px 40px rgba(0, 0, 0, .25);
+
+    pointer-events: auto;
+
+    animation:
+        scheduleToastIn
+        .2s ease-out;
+}
+
+body.light-theme
+.schedule-toast {
+    box-shadow:
+        0 12px 34px
+        rgba(0, 0, 0, .1);
+}
+
+.schedule-toast-icon {
+    width: 30px;
+    height: 30px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-radius: 7px;
+
+    font-size: .75rem;
+}
+
+.schedule-toast.success
+.schedule-toast-icon {
+    color: var(--green);
+    background: var(--green-soft);
+}
+
+.schedule-toast.error
+.schedule-toast-icon {
+    color: var(--red);
+    background: var(--red-soft);
+}
+
+.schedule-toast.warning
+.schedule-toast-icon {
+    color: var(--orange);
+
+    background:
+        color-mix(
+            in srgb,
+            var(--orange) 10%,
+            transparent
+        );
+}
+
+.schedule-toast-content {
+    min-width: 0;
+}
+
+.schedule-toast-content strong {
+    display: block;
+
+    color: var(--text);
+
+    font-size: .7rem;
+    font-weight: 650;
+}
+
+.schedule-toast-content span {
+    display: block;
+
+    margin-top: 2px;
+
+    color: var(--muted);
+
+    font-size: .63rem;
+    line-height: 1.4;
+}
+
+.schedule-toast-close {
+    width: 26px;
+    height: 26px;
+
+    padding: 0;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--muted);
+    background: transparent;
+
+    border: 0;
+    border-radius: 5px;
+
+    cursor: pointer;
+
+    transition:
+        color var(--transition),
+        background var(--transition);
+}
+
+.schedule-toast-close:hover {
+    color: var(--text);
+    background: var(--surface-hover);
+}
+
+
+/* ==========================================================
+   51. ANIMATION TOAST
+========================================================== */
+
+@keyframes scheduleToastIn {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+}
+
+
+/* ==========================================================
+   52. PAGINATION
+========================================================== */
+
+.schedule-pagination {
+    min-height: 56px;
+
+    padding: 10px 14px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    border-top: 1px solid var(--border);
+}
+
+.schedule-pagination-info {
+    color: var(--muted);
+
+    font-size: .66rem;
+}
+
+.schedule-pagination-info strong {
+    color: var(--text);
+
+    font-weight: 650;
+}
+
+.schedule-pagination-actions {
+    display: flex;
+    align-items: center;
+
+    gap: 5px;
+}
+
+.schedule-page-button {
+    min-width: 31px;
+    height: 31px;
+
+    padding: 0 8px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--muted);
+    background: transparent;
+
+    border: 1px solid var(--border);
+    border-radius: 6px;
+
+    font-size: .66rem;
+    font-weight: 650;
+
+    cursor: pointer;
+
+    transition:
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition);
+}
+
+.schedule-page-button:hover:not(:disabled) {
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-color: var(--border-strong);
+}
+
+.schedule-page-button.active {
+    color: #171819;
+    background: var(--accent);
+
+    border-color: var(--accent);
+}
+
+.schedule-page-button:disabled {
+    cursor: not-allowed;
+
+    opacity: .35;
+}
+
+
+/* ==========================================================
+   53. SCROLLBAR TABLE
+========================================================== */
+
+.schedule-table-wrapper::-webkit-scrollbar {
+    height: 7px;
+}
+
+.schedule-table-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.schedule-table-wrapper::-webkit-scrollbar-thumb {
+    background: #3c4044;
+
+    border-radius: 999px;
+}
+
+.schedule-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #4a4f54;
+}
+
+body.light-theme
+.schedule-table-wrapper::-webkit-scrollbar-thumb {
+    background: #c7c9cb;
+}
+
+body.light-theme
+.schedule-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #afb2b5;
+}
+
+
+/* ==========================================================
+   54. ACCESSIBILITÉ : FOCUS
+========================================================== */
+
+.schedule-create-button:focus-visible,
+.schedule-reset-button:focus-visible,
+.schedule-action-button:focus-visible,
+.add-installment-button:focus-visible,
+.installment-remove:focus-visible,
+.modal-cancel:focus-visible,
+.modal-confirm:focus-visible,
+.schedule-page-button:focus-visible {
+    outline:
+        2px solid
+        color-mix(
+            in srgb,
+            var(--accent) 60%,
+            transparent
+        );
+
+    outline-offset: 2px;
+}
+
+
+/* ==========================================================
+   55. ERREUR DE CHAMP
+========================================================== */
+
+.schedule-form-group.has-error
+.finance-input {
+    border-color:
+        color-mix(
+            in srgb,
+            var(--red) 60%,
+            var(--border)
+        );
+
+    box-shadow:
+        0 0 0 2px
+        color-mix(
+            in srgb,
+            var(--red-soft) 70%,
+            transparent
+        );
+}
+
+.schedule-field-error {
+    display: block;
+
+    margin-top: 4px;
+
+    color: var(--red);
+
+    font-size: .61rem;
+    line-height: 1.4;
+}
+
+
+/* ==========================================================
+   56. CHAMP VALIDE
+========================================================== */
+
+.schedule-form-group.is-valid
+.finance-input {
+    border-color:
+        color-mix(
+            in srgb,
+            var(--green) 40%,
+            var(--border)
+        );
+}
+
+
+/* ==========================================================
+   57. TEXTE SECONDAIRE DE MODALE
+========================================================== */
+
+.schedule-modal-note {
+    margin-top: 10px;
+    padding: 9px 10px;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 8px;
+
+    color: var(--muted);
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+
+    font-size: .64rem;
+    line-height: 1.5;
+}
+
+.schedule-modal-note > i {
+    flex: 0 0 auto;
+
+    margin-top: 1px;
+
+    color: var(--accent);
+}
+
+
+/* ==========================================================
+   58. SÉPARATEUR
+========================================================== */
+
+.schedule-form-divider {
+    height: 1px;
+
+    margin: 13px 0;
+
+    background: var(--border);
+
+    border: 0;
+}
+
+
+/* ==========================================================
+   59. BADGE DE PORTÉE
+========================================================== */
+
+.schedule-scope-badge {
+    max-width: 220px;
+
+    padding: 4px 7px;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+
+    color: var(--muted);
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 999px;
+
+    font-size: .61rem;
+    font-weight: 650;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.schedule-scope-badge i {
+    flex: 0 0 auto;
+
+    color: var(--accent);
+
+    font-size: .62rem;
+}
+
+
+/* ==========================================================
+   60. MONTANT DANS TABLEAU
+========================================================== */
+
+.schedule-amount {
+    color: var(--text);
+
+    font-size: .72rem;
+    font-weight: 650;
+
+    white-space: nowrap;
+}
+
+.schedule-currency {
+    margin-left: 2px;
+
+    color: var(--muted);
+
+    font-size: .61rem;
+    font-weight: 650;
+}
+
+
+/* ==========================================================
+   61. DATE DÉPASSÉE
+========================================================== */
+
+.schedule-date-overdue {
+    color: var(--red) !important;
+}
+
+.schedule-date-upcoming {
+    color: var(--orange) !important;
+}
+
+
+/* ==========================================================
+   62. OVERLAY BOOTSTRAP
+========================================================== */
+
+.modal-backdrop.show {
+    opacity: .68;
+}
+
+body.light-theme
+.modal-backdrop.show {
+    opacity: .36;
+}
+
+
+/* ==========================================================
+   63. ANIMATION MODALE
+========================================================== */
+
+.modal.fade
+.finance-modal {
+    transform:
+        translateY(5px)
+        scale(.995);
+
+    transition:
+        transform .18s ease-out;
+}
+
+.modal.show
+.finance-modal {
+    transform:
+        translateY(0)
+        scale(1);
+}
+
+
+/* ==========================================================
+   64. PROTECTION CONTRE LES DÉBORDEMENTS
+========================================================== */
+
+.schedule-header,
+.schedule-kpi-grid,
+.next-deadline-card,
+.schedule-filters,
+.schedule-list-card,
+.schedule-form-grid,
+.schedule-scope-grid,
+.installment-item {
+    min-width: 0;
+}
+
+.schedule-table td,
+.schedule-table th {
+    max-width: 300px;
+}
+
+.schedule-table td {
+    overflow-wrap: anywhere;
+}
+/* ==========================================================
+   65. RESPONSIVE — ÉCRANS LARGES INTERMÉDIAIRES
+========================================================== */
+
+@media (max-width: 1399.98px) {
+
+    .schedule-kpi-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .schedule-filters {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+
+    .schedule-search {
+        grid-column: span 2;
+    }
+
+    .schedule-reset-button {
+        align-self: end;
+    }
+}
+
+
+/* ==========================================================
+   66. RESPONSIVE — ≤ 1200px
+========================================================== */
+
+@media (max-width: 1199.98px) {
+
+    .schedule-header {
+        align-items: flex-start;
+    }
+
+    .schedule-header-actions {
+        justify-content: flex-start;
+    }
+
+    .next-deadline-card {
+        grid-template-columns:
+            auto
+            minmax(200px, 1fr)
+            minmax(130px, auto)
+            minmax(145px, auto);
+    }
+
+    .installment-item {
+        grid-template-columns:
+            auto
+            minmax(120px, .75fr)
+            minmax(135px, 1fr)
+            minmax(135px, 1fr)
+            auto;
+    }
+}
+
+
+/* ==========================================================
+   67. RESPONSIVE — TABLETTE
+========================================================== */
+
+@media (max-width: 991.98px) {
+
+    /* ------------------------------------------------------
+       HEADER
+    ------------------------------------------------------ */
+
+    .schedule-header {
+        flex-direction: column;
+        align-items: stretch;
+
+        gap: 13px;
+    }
+
+    .schedule-header-actions {
+        width: 100%;
+
+        justify-content: flex-start;
+    }
+
+
+    /* ------------------------------------------------------
+       PROCHAINE ÉCHÉANCE
+    ------------------------------------------------------ */
+
+    .next-deadline-card {
+        grid-template-columns:
+            auto
+            minmax(0, 1fr)
+            minmax(135px, auto);
+    }
+
+    .next-deadline-amount {
+        grid-column: 2 / -1;
+
+        padding-top: 10px;
+        padding-left: 0;
+
+        border-top: 1px solid var(--border);
+        border-left: 0;
+    }
+
+
+    /* ------------------------------------------------------
+       FILTRES
+    ------------------------------------------------------ */
+
+    .schedule-filters {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .schedule-search {
+        grid-column: 1 / -1;
+    }
+
+
+    /* ------------------------------------------------------
+       FORMULAIRE
+    ------------------------------------------------------ */
+
+    .schedule-form-grid,
+    .schedule-form-grid.three-columns,
+    .schedule-form-grid.four-columns,
+    .schedule-scope-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+
+    /* ------------------------------------------------------
+       TRANCHES
+    ------------------------------------------------------ */
+
+    .installment-item {
+        grid-template-columns:
+            auto
+            minmax(0, 1fr)
+            minmax(0, 1fr)
+            auto;
+    }
+
+    .installment-item
+    .installment-name,
+    .installment-item
+    .installment-label {
+        grid-column: 2 / 4;
+    }
+
+
+    /* ------------------------------------------------------
+       MODALE
+    ------------------------------------------------------ */
+
+    .finance-modal .modal-body {
+        padding: 15px;
+    }
+
+    .schedule-form-section {
+        padding: 13px;
+    }
+
+
+    /* ------------------------------------------------------
+       DÉTAIL
+    ------------------------------------------------------ */
+
+    .schedule-detail-installment {
+        grid-template-columns:
+            auto
+            minmax(0, 1fr)
+            auto;
+    }
+
+    .schedule-detail-installment-date {
+        grid-column: 2 / -1;
+    }
+}
+
+
+/* ==========================================================
+   68. RESPONSIVE — MOBILE / TABLETTE
+========================================================== */
+
+@media (max-width: 767.98px) {
+
+    /* ------------------------------------------------------
+       HEADER
+    ------------------------------------------------------ */
+
+    .schedule-header {
+        margin-bottom: 11px;
+    }
+
+    .schedule-header h1 {
+        font-size: 1.4rem;
+    }
+
+    .schedule-header p {
+        font-size: .78rem;
+    }
+
+    .schedule-header-actions {
+        display: grid;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 7px;
+    }
+
+    .filter-control,
+    .schedule-create-button {
+        width: 100%;
+    }
+
+    .filter-control {
+        justify-content: center;
+    }
+
+    .filter-control select {
+        flex: 1;
+    }
+
+
+    /* ------------------------------------------------------
+       KPI
+    ------------------------------------------------------ */
+
+    .schedule-kpi-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 8px;
+    }
+
+    .schedule-kpi {
+        min-height: 104px;
+
+        padding: 12px;
+
+        gap: 10px;
+    }
+
+    .schedule-kpi-icon {
+        width: 35px;
+        height: 35px;
+
+        flex-basis: 35px;
+
+        font-size: .82rem;
+    }
+
+    .schedule-kpi span {
+        margin-bottom: 5px;
+
+        font-size: .59rem;
+    }
+
+    .schedule-kpi strong {
+        font-size: 1.05rem;
+    }
+
+    .schedule-kpi small {
+        font-size: .64rem;
+    }
+
+
+    /* ------------------------------------------------------
+       PROCHAINE ÉCHÉANCE
+    ------------------------------------------------------ */
+
+    .next-deadline-card {
+        grid-template-columns:
+            auto
+            minmax(0, 1fr);
+
+        gap: 10px;
+
+        padding: 12px;
+    }
+
+    .next-deadline-date,
+    .next-deadline-amount {
+        grid-column: 1 / -1;
+
+        padding: 9px 0 0;
+
+        border-top: 1px solid var(--border);
+        border-left: 0;
+    }
+
+
+    /* ------------------------------------------------------
+       FILTRES
+    ------------------------------------------------------ */
+
+    .schedule-filters {
+        padding: 10px;
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 8px;
+    }
+
+    .schedule-search {
+        grid-column: 1 / -1;
+    }
+
+    .schedule-reset-button {
+        width: 100%;
+    }
+
+
+    /* ------------------------------------------------------
+       LISTE
+    ------------------------------------------------------ */
+
+    .schedule-section-header {
+        min-height: auto;
+
+        padding: 12px;
+
+        align-items: flex-start;
+    }
+
+    .schedule-section-header h2 {
+        font-size: .85rem;
+    }
+
+
+    /* ------------------------------------------------------
+       MODALE
+    ------------------------------------------------------ */
+
+    .modal-dialog {
+        margin: .65rem;
+    }
+
+    .finance-modal .modal-header {
+        min-height: 68px;
+
+        padding:
+            13px
+            48px
+            13px
+            14px;
+    }
+
+    .finance-modal .modal-header h2 {
+        font-size: .94rem;
+    }
+
+    .finance-modal .modal-header p {
+        font-size: .64rem !important;
+    }
+
+    .finance-modal .btn-close {
+        top: 17px;
+        right: 14px;
+    }
+
+    .finance-modal .modal-body {
+        padding: 12px;
+    }
+
+    .finance-modal .modal-footer {
+        padding: 10px 12px;
+    }
+
+
+    /* ------------------------------------------------------
+       SECTIONS FORMULAIRE
+    ------------------------------------------------------ */
+
+    .schedule-form-section {
+        padding: 12px;
+    }
+
+    .schedule-form-section-title {
+        margin-bottom: 12px;
+    }
+
+    .schedule-form-section-title > i {
+        width: 30px;
+        height: 30px;
+
+        flex-basis: 30px;
+    }
+
+
+    /* ------------------------------------------------------
+       GRILLES FORMULAIRE
+    ------------------------------------------------------ */
+
+    .schedule-form-grid,
+    .schedule-form-grid.three-columns,
+    .schedule-form-grid.four-columns,
+    .schedule-scope-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    /* ------------------------------------------------------
+       TRANCHES
+    ------------------------------------------------------ */
+
+    .installment-item {
+        padding: 10px;
+
+        grid-template-columns:
+            auto
+            minmax(0, 1fr);
+
+        align-items: start;
+
+        gap: 8px;
+    }
+
+    .installment-number {
+        grid-column: 1;
+        grid-row: 1;
+
+        margin: 0;
+    }
+
+    .installment-item
+    .installment-name,
+    .installment-item
+    .installment-label {
+        grid-column: 2;
+        grid-row: 1;
+
+        align-self: center;
+    }
+
+    .installment-item
+    .schedule-form-group {
+        grid-column: 1 / -1;
+    }
+
+    .installment-remove {
+        grid-column: 2;
+
+        justify-self: end;
+
+        margin: 0;
+    }
+
+
+    /* ------------------------------------------------------
+       RÉSUMÉ FINANCIER
+    ------------------------------------------------------ */
+
+    .schedule-financial-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .schedule-balance {
+        align-items: flex-start;
+        flex-direction: column;
+
+        gap: 4px;
+    }
+
+
+    /* ------------------------------------------------------
+       DÉTAIL
+    ------------------------------------------------------ */
+
+    .schedule-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .schedule-detail-item.full {
+        grid-column: auto;
+    }
+
+    .schedule-detail-installment {
+        grid-template-columns:
+            auto
+            minmax(0, 1fr);
+    }
+
+    .schedule-detail-installment-amount,
+    .schedule-detail-installment-date {
+        grid-column: 2;
+
+        white-space: normal;
+    }
+
+
+    /* ------------------------------------------------------
+       PAGINATION
+    ------------------------------------------------------ */
+
+    .schedule-pagination {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+
+    /* ------------------------------------------------------
+       FOOTER MODALE
+    ------------------------------------------------------ */
+
+    .modal-cancel,
+    .modal-confirm {
+        flex: 1;
+    }
+}
+
+
+/* ==========================================================
+   69. RESPONSIVE — PETITS MOBILES
+========================================================== */
+
+@media (max-width: 575.98px) {
+
+    /* ------------------------------------------------------
+       HEADER
+    ------------------------------------------------------ */
+
+    .schedule-header-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .schedule-header h1 {
+        font-size: 1.28rem;
+    }
+
+
+    /* ------------------------------------------------------
+       KPI
+    ------------------------------------------------------ */
+
+    .schedule-kpi-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .schedule-kpi {
+        min-height: 92px;
+    }
+
+
+    /* ------------------------------------------------------
+       FILTRES
+    ------------------------------------------------------ */
+
+    .schedule-filters {
+        grid-template-columns: 1fr;
+    }
+
+    .schedule-search {
+        grid-column: auto;
+    }
+
+
+    /* ------------------------------------------------------
+       PROCHAINE ÉCHÉANCE
+    ------------------------------------------------------ */
+
+    .next-deadline-card {
+        grid-template-columns: 1fr;
+    }
+
+    .next-deadline-icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .next-deadline-main,
+    .next-deadline-date,
+    .next-deadline-amount {
+        grid-column: 1;
+    }
+
+
+    /* ------------------------------------------------------
+       HEADER LISTE
+    ------------------------------------------------------ */
+
+    .schedule-section-header {
+        flex-direction: column;
+
+        gap: 9px;
+    }
+
+
+    /* ------------------------------------------------------
+       MODALE
+    ------------------------------------------------------ */
+
+    .modal-dialog {
+        margin: .45rem;
+    }
+
+    .finance-modal {
+        border-radius: 9px;
+    }
+
+    .finance-modal .modal-header {
+        padding:
+            12px
+            45px
+            12px
+            12px;
+    }
+
+    .finance-modal .modal-header > div > span {
+        font-size: .59rem;
+    }
+
+    .finance-modal .modal-header h2 {
+        font-size: .88rem;
+    }
+
+    .finance-modal .modal-header p {
+        margin-top: 3px !important;
+
+        font-size: .61rem !important;
+    }
+
+    .finance-modal .btn-close {
+        top: 14px;
+        right: 12px;
+    }
+
+    .finance-modal .modal-body {
+        padding: 9px;
+    }
+
+    .finance-modal .modal-footer {
+        padding: 9px;
+
+        flex-direction: column-reverse;
+    }
+
+    .finance-modal .modal-footer
+    .modal-cancel,
+    .finance-modal .modal-footer
+    .modal-confirm {
+        width: 100%;
+        flex: none;
+    }
+
+
+    /* ------------------------------------------------------
+       SECTIONS FORMULAIRE
+    ------------------------------------------------------ */
+
+    .schedule-form-section {
+        padding: 10px;
+
+        border-radius: 7px;
+    }
+
+    .schedule-form-section +
+    .schedule-form-section {
+        margin-top: 8px;
+    }
+
+    .schedule-form-section-title {
+        gap: 8px;
+    }
+
+    .schedule-form-section-title strong {
+        font-size: .72rem;
+    }
+
+    .schedule-form-section-title span {
+        font-size: .62rem;
+    }
+
+
+    /* ------------------------------------------------------
+       INPUTS
+    ------------------------------------------------------ */
+
+    .finance-input {
+        height: 38px;
+
+        font-size: .72rem;
+    }
+
+    .schedule-form-group label {
+        font-size: .63rem;
+    }
+
+
+    /* ------------------------------------------------------
+       TRANCHES
+    ------------------------------------------------------ */
+
+    .installment-item {
+        border-radius: 7px;
+    }
+
+    .installment-number {
+        width: 29px;
+        height: 29px;
+
+        font-size: .63rem;
+    }
+
+
+    /* ------------------------------------------------------
+       TOAST
+    ------------------------------------------------------ */
+
+    .schedule-toast-container {
+        right: 10px;
+        bottom: 10px;
+        left: 10px;
+    }
+
+    .schedule-toast {
+        width: 100%;
+    }
+
+
+    /* ------------------------------------------------------
+       PAGINATION
+    ------------------------------------------------------ */
+
+    .schedule-pagination-actions {
+        width: 100%;
+
+        overflow-x: auto;
+
+        padding-bottom: 2px;
+    }
+}
+
+
+/* ==========================================================
+   70. TRÈS PETITS ÉCRANS
+========================================================== */
+
+@media (max-width: 380px) {
+
+    .schedule-header h1 {
+        font-size: 1.18rem;
+    }
+
+    .schedule-header p {
+        font-size: .72rem;
+    }
+
+    .schedule-kpi {
+        padding: 10px;
+    }
+
+    .schedule-create-button,
+    .filter-control {
+        min-height: 38px;
+    }
+
+    .schedule-form-section-title > i {
+        display: none;
+    }
+
+    .schedule-form-section-title {
+        gap: 0;
+    }
+}
+
+
+/* ==========================================================
+   71. MODE CLAIR — INPUTS
+========================================================== */
+
+body.light-theme
+.finance-input,
+body.light-theme
+.schedule-filter select,
+body.light-theme
+.schedule-search,
+body.light-theme
+.filter-control {
+    background-color:
+        color-mix(
+            in srgb,
+            var(--surface) 94%,
+            #000 6%
+        );
+}
+
+body.light-theme
+.finance-input:disabled,
+body.light-theme
+.schedule-filter select:disabled {
+    background-color: var(--surface-2);
+}
+
+
+/* ==========================================================
+   72. MODE CLAIR — FORMULAIRE
+========================================================== */
+
+body.light-theme
+.schedule-form-section {
+    background:
+        color-mix(
+            in srgb,
+            var(--surface-2) 60%,
+            transparent
+        );
+}
+
+body.light-theme
+.installment-item,
+body.light-theme
+.schedule-balance,
+body.light-theme
+.schedule-financial-summary-item {
+    background: var(--surface);
+}
+
+
+/* ==========================================================
+   73. MODE SOMBRE — CALENDRIER NATIF
+========================================================== */
+
+body:not(.light-theme)
+input[type="date"] {
+    color-scheme: dark;
+}
+
+body.light-theme
+input[type="date"] {
+    color-scheme: light;
+}
+
+
+/* ==========================================================
+   74. SÉLECTION TEXTE
+========================================================== */
+
+.schedule-header ::selection,
+.schedule-list-card ::selection,
+.finance-modal ::selection {
+    color: #171819;
+    background: var(--accent);
+}
+
+
+/* ==========================================================
+   75. RÉDUCTION DES ANIMATIONS
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .schedule-kpi,
+    .schedule-kpi-icon,
+    .schedule-create-button,
+    .schedule-reset-button,
+    .schedule-action-button,
+    .installment-remove,
+    .add-installment-button,
+    .modal-cancel,
+    .modal-confirm,
+    .finance-input,
+    .schedule-filter select,
+    .schedule-search,
+    .schedule-toast,
+    .modal.fade .finance-modal {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+
+/* ==========================================================
+   76. IMPRESSION
+========================================================== */
+
+@media print {
+
+    .finance-sidebar,
+    .mobile-header,
+    .schedule-header-actions,
+    .schedule-filters,
+    .schedule-actions,
+    .schedule-pagination,
+    .schedule-toast-container {
+        display: none !important;
+    }
+
+    .finance-main {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .schedule-header,
+    .schedule-kpi-grid,
+    .next-deadline-card,
+    .schedule-list-card {
+        max-width: none;
+
+        break-inside: avoid;
+    }
+
+    .schedule-list-card,
+    .schedule-kpi,
+    .next-deadline-card {
+        box-shadow: none;
+    }
+
+    .schedule-table-wrapper {
+        overflow: visible;
+    }
+
+    .schedule-table {
+        min-width: 0;
+    }
+}
+
+
+/* ==========================================================
+   77. CORRECTIONS BOOTSTRAP
+========================================================== */
+
+.finance-modal
+.row {
+    --bs-gutter-x: .75rem;
+    --bs-gutter-y: .75rem;
+}
+
+.finance-modal
+.form-control,
+.finance-modal
+.form-select {
+    box-shadow: none;
+}
+
+.finance-modal
+.btn:focus,
+.finance-modal
+.btn:active {
+    box-shadow: none;
+}
+
+
+/* ==========================================================
+   78. MODALE NOUVEL ÉCHÉANCIER — DIMENSIONS
+========================================================== */
+
+#scheduleModal
+.modal-dialog {
+    max-width: 920px;
+}
+
+#scheduleModal
+.finance-modal {
+    max-height:
+        calc(
+            100vh - 2rem
+        );
+}
+
+#scheduleModal
+.modal-body {
+    overflow-y: auto;
+
+    scrollbar-width: thin;
+    scrollbar-color:
+        #44484c
+        transparent;
+}
+
+#scheduleModal
+.modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+#scheduleModal
+.modal-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#scheduleModal
+.modal-body::-webkit-scrollbar-thumb {
+    background: #44484c;
+
+    border-radius: 999px;
+}
+
+body.light-theme
+#scheduleModal
+.modal-body {
+    scrollbar-color:
+        #c7c9cb
+        transparent;
+}
+
+body.light-theme
+#scheduleModal
+.modal-body::-webkit-scrollbar-thumb {
+    background: #c7c9cb;
+}
+
+
+/* ==========================================================
+   79. MODALE — TITRE DES BLOCS
+========================================================== */
+
+#scheduleModal
+.schedule-form-section-title {
+    padding-bottom: 10px;
+
+    border-bottom:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--border) 70%,
+            transparent
+        );
+}
+
+
+/* ==========================================================
+   80. MODALE — CHAMPS DÉPENDANTS
+========================================================== */
+
+#scheduleDepartment:disabled,
+#scheduleProgram:disabled {
+    background-image: none;
+}
+
+#scheduleDepartment:not(:disabled),
+#scheduleProgram:not(:disabled) {
+    opacity: 1;
+}
+
+
+/* ==========================================================
+   81. PROMOTION TOUJOURS DISPONIBLE
+========================================================== */
+
+#schedulePromotion {
+    opacity: 1;
+}
+
+#promotionFilter {
+    opacity: 1;
+}
+
+
+/* ==========================================================
+   82. ERREUR GLOBALE DU FORMULAIRE
+========================================================== */
+
+.schedule-form-error {
+    display: none;
+
+    margin-top: 10px;
+    padding: 9px 10px;
+
+    color: var(--red);
+    background: var(--red-soft);
+
+    border:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--red) 18%,
+            var(--border)
+        );
+
+    border-radius: var(--radius-sm);
+
+    font-size: .65rem;
+    line-height: 1.45;
+}
+
+.schedule-form-error:not(:empty) {
+    display: block;
+}
+
+
+/* ==========================================================
+   83. CHAMP REQUIS
+========================================================== */
+
+.schedule-required {
+    margin-left: 2px;
+
+    color: var(--red);
+
+    font-weight: 700;
+}
+
+
+/* ==========================================================
+   84. ÉTAT DE CHARGEMENT DU BOUTON ENREGISTRER
+========================================================== */
+
+.modal-confirm.is-loading {
+    position: relative;
+
+    cursor: wait;
+
+    opacity: .72;
+
+    pointer-events: none;
+}
+
+.modal-confirm.is-loading i {
+    animation:
+        scheduleButtonSpinner
+        .7s linear
+        infinite;
+}
+
+@keyframes scheduleButtonSpinner {
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* ==========================================================
+   85. BOUTONS ACTIONS — INFOBULLES NATIVES
+========================================================== */
+
+.schedule-action-button[title] {
+    position: relative;
+}
+
+
+/* ==========================================================
+   86. TABLEAU — CELLULE FACULTÉ
+========================================================== */
+
+.schedule-faculty-cell {
+    min-width: 155px;
+}
+
+.schedule-faculty-cell strong {
+    display: block;
+
+    color: var(--text);
+
+    font-size: .69rem;
+    font-weight: 650;
+}
+
+
+/* ==========================================================
+   87. TABLEAU — DÉPARTEMENT
+========================================================== */
+
+.schedule-department-cell {
+    min-width: 155px;
+
+    color: var(--soft);
+}
+
+
+/* ==========================================================
+   88. TABLEAU — SPÉCIALISATION
+========================================================== */
+
+.schedule-program-cell {
+    min-width: 165px;
+
+    color: var(--soft);
+}
+
+
+/* ==========================================================
+   89. TABLEAU — PROMOTION
+========================================================== */
+
+.schedule-promotion {
+    min-width: 46px;
+
+    padding: 4px 7px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--accent) 14%,
+            var(--border)
+        );
+
+    border-radius: 6px;
+
+    font-size: .62rem;
+    font-weight: 750;
+
+    white-space: nowrap;
+}
+
+
+/* ==========================================================
+   90. TABLEAU — ANNÉE ACADÉMIQUE
+========================================================== */
+
+.schedule-academic-year {
+    color: var(--muted);
+
+    font-size: .66rem;
+    font-weight: 650;
+
+    white-space: nowrap;
+}
+
+
+/* ==========================================================
+   91. INDICATEUR D'ÉCHÉANCE
+========================================================== */
+
+.schedule-deadline-indicator {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+}
+
+.schedule-deadline-indicator::before {
+    content: "";
+
+    width: 5px;
+    height: 5px;
+
+    flex: 0 0 5px;
+
+    background: var(--muted);
+
+    border-radius: 50%;
+}
+
+.schedule-deadline-indicator.upcoming::before {
+    background: var(--orange);
+}
+
+.schedule-deadline-indicator.overdue::before {
+    background: var(--red);
+}
+
+.schedule-deadline-indicator.future::before {
+    background: var(--accent);
+}
+
+
+/* ==========================================================
+   92. LIGNE BROUILLON
+========================================================== */
+
+.schedule-table
+tr[data-status="Brouillon"] {
+    opacity: .78;
+}
+
+.schedule-table
+tr[data-status="Clôturé"] {
+    opacity: .62;
+}
+
+
+/* ==========================================================
+   93. HOVER LIGNE
+========================================================== */
+
+.schedule-table
+tbody
+tr:hover
+.schedule-promotion {
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 24%,
+            var(--border)
+        );
+}
+
+
+/* ==========================================================
+   94. MESSAGE AUCUNE DONNÉE
+========================================================== */
+
+.schedule-empty
+.schedule-create-button {
+    margin-top: 3px;
+}
+
+
+/* ==========================================================
+   95. RESPONSIVE MODALE NOUVEL ÉCHÉANCIER
+========================================================== */
+
+@media (max-width: 991.98px) {
+
+    #scheduleModal
+    .modal-dialog {
+        max-width:
+            calc(
+                100% - 1.5rem
+            );
+
+        margin:
+            .75rem auto;
+    }
+}
+
+
+@media (max-width: 767.98px) {
+
+    #scheduleModal
+    .modal-dialog {
+        max-width: none;
+
+        margin: .55rem;
+    }
+
+    #scheduleModal
+    .finance-modal {
+        max-height:
+            calc(
+                100vh - 1.1rem
+            );
+    }
+}
+
+
+@media (max-width: 575.98px) {
+
+    #scheduleModal
+    .modal-dialog {
+        margin: .35rem;
+    }
+
+    #scheduleModal
+    .finance-modal {
+        max-height:
+            calc(
+                100vh - .7rem
+            );
+    }
+}
+
+
+/* ==========================================================
+   96. CORRECTION MOBILE DU FOOTER
+========================================================== */
+
+@media (max-width: 575.98px) {
+
+    #scheduleModal
+    .modal-footer {
+        position: sticky;
+
+        bottom: 0;
+
+        z-index: 4;
+
+        background: var(--surface);
+
+        box-shadow:
+            0 -8px 20px
+            rgba(0, 0, 0, .08);
+    }
+
+    body.light-theme
+    #scheduleModal
+    .modal-footer {
+        box-shadow:
+            0 -6px 18px
+            rgba(0, 0, 0, .04);
+    }
+}
+
+
+/* ==========================================================
+   97. ÉVITER LES INPUTS NUMBER TROP LARGES
+========================================================== */
+
+input[type="number"].finance-input {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+input[type="number"].finance-input::-webkit-inner-spin-button,
+input[type="number"].finance-input::-webkit-outer-spin-button {
+    margin: 0;
+
+    -webkit-appearance: none;
+}
+
+
+/* ==========================================================
+   98. TRANSITION DES FILTRES DÉPENDANTS
+========================================================== */
+
+#departmentFilter,
+#programFilter,
+#scheduleDepartment,
+#scheduleProgram {
+    transition:
+        opacity var(--transition),
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition);
+}
+
+
+/* ==========================================================
+   99. CONTRASTE DES PLACEHOLDERS
+========================================================== */
+
+body:not(.light-theme)
+.finance-input::placeholder,
+body:not(.light-theme)
+.schedule-search input::placeholder {
+    color:
+        color-mix(
+            in srgb,
+            var(--muted) 90%,
+            white
+        );
+}
+
+
+/* ==========================================================
+   100. FIN DU FICHIER
+========================================================== */

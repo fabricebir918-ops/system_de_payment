@@ -1,0 +1,1873 @@
+/* ==========================================================
+   ACADEMICPAY — FINANCE / PAIEMENTS
+   finance-payments.css
+
+   Dépend de :
+   finance-dashboard.css
+========================================================== */
+
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.payments-header {
+    max-width: 1600px;
+    margin: 0 auto 14px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 20px;
+}
+
+.payments-header h1 {
+    margin: 0 0 5px;
+
+    color: var(--text);
+
+    font-size: clamp(1.5rem, 2vw, 1.9rem);
+    font-weight: 560;
+}
+
+.payments-header p {
+    max-width: 620px;
+
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: .88rem;
+    line-height: 1.55;
+}
+
+.payments-header-actions {
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+}
+
+
+/* ==========================================================
+   FILTRE ANNÉE ACADÉMIQUE
+========================================================== */
+
+.payments-header-actions .filter-control {
+    min-width: 165px;
+    height: 39px;
+
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: 7px;
+
+    transition:
+        background var(--transition),
+        border-color var(--transition),
+        box-shadow var(--transition);
+}
+
+.payments-header-actions .filter-control > i {
+    position: absolute;
+    left: 11px;
+
+    z-index: 1;
+
+    color: var(--accent);
+
+    font-size: .8rem;
+
+    pointer-events: none;
+}
+
+.payments-header-actions .filter-control select {
+    width: 100%;
+    height: 100%;
+
+    padding: 0 32px 0 34px;
+
+    color: var(--soft);
+    background: transparent;
+
+    border: 0;
+    border-radius: inherit;
+    outline: 0;
+
+    font-family: inherit;
+    font-size: .76rem;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.payments-header-actions .filter-control::after {
+    content: "";
+
+    width: 6px;
+    height: 6px;
+
+    position: absolute;
+    right: 13px;
+    top: 50%;
+
+    border-right: 1.5px solid var(--muted);
+    border-bottom: 1.5px solid var(--muted);
+
+    transform:
+        translateY(-70%)
+        rotate(45deg);
+
+    pointer-events: none;
+
+    transition:
+        border-color var(--transition),
+        transform var(--transition);
+}
+
+.payments-header-actions .filter-control:hover {
+    background: var(--surface-2);
+    border-color: var(--border-strong);
+}
+
+.payments-header-actions .filter-control:hover::after {
+    border-color: var(--soft);
+}
+
+.payments-header-actions .filter-control:focus-within {
+    background: var(--surface);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 35%,
+            var(--border)
+        );
+
+    box-shadow:
+        0 0 0 3px var(--accent-soft);
+}
+
+.payments-header-actions .filter-control select option {
+    color: var(--text);
+    background: var(--surface);
+
+    font-size: .76rem;
+}
+
+
+/* ==========================================================
+   KPI
+========================================================== */
+
+.payments-kpi-grid {
+    max-width: 1600px;
+
+    margin: 0 auto 12px;
+
+    display: grid;
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 10px;
+}
+
+.payment-kpi {
+    min-width: 0;
+
+    padding: 15px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+
+    transition:
+        transform var(--transition),
+        border-color var(--transition);
+}
+
+.payment-kpi:hover {
+    transform: translateY(-2px);
+
+    border-color: var(--border-strong);
+}
+
+.payment-kpi-top {
+    margin-bottom: 14px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+}
+
+.payment-kpi-icon {
+    width: 29px;
+    height: 29px;
+
+    flex: 0 0 29px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-radius: 7px;
+
+    font-size: .9rem;
+}
+
+.payment-kpi-icon.success {
+    color: var(--green);
+    background: var(--green-soft);
+}
+
+.payment-kpi-icon.danger {
+    color: var(--red);
+    background: var(--red-soft);
+}
+
+.payment-kpi-label {
+    color: var(--muted);
+
+    font-size: .67rem;
+    font-weight: 750;
+    letter-spacing: .07em;
+}
+
+.payment-kpi > strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--text);
+
+    font-size: 1.15rem;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+.payment-kpi > small {
+    display: block;
+
+    color: var(--muted);
+
+    font-size: .7rem;
+}
+
+
+/* ==========================================================
+   BANQUES PARTENAIRES
+========================================================== */
+
+.bank-summary {
+    max-width: 1600px;
+
+    margin: 0 auto 12px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+
+    overflow: hidden;
+}
+
+.bank-summary-header {
+    min-height: 65px;
+
+    padding: 12px 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.bank-summary-header h2 {
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: 1rem;
+    font-weight: 650;
+}
+
+.reset-bank-filter {
+    min-height: 31px;
+
+    padding: 0 10px;
+
+    color: var(--muted);
+    background: transparent;
+
+    border: 1px solid var(--border);
+    border-radius: 6px;
+
+    font-size: .74rem;
+    font-weight: 650;
+
+    cursor: pointer;
+
+    transition:
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition);
+}
+
+.reset-bank-filter:hover {
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 25%,
+            var(--border)
+        );
+}
+
+
+/* ==========================================================
+   CARTES BANQUES
+========================================================== */
+
+.bank-cards {
+    padding: 12px;
+
+    display: grid;
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 9px;
+}
+
+.bank-card {
+    min-width: 0;
+
+    padding: 13px;
+
+    color: inherit;
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 8px;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        background var(--transition),
+        border-color var(--transition),
+        transform var(--transition);
+}
+
+.bank-card:hover {
+    background: var(--surface-hover);
+    border-color: var(--border-strong);
+
+    transform: translateY(-1px);
+}
+
+.bank-card.active {
+    background: var(--accent-soft);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 32%,
+            var(--border)
+        );
+}
+
+.bank-card-heading {
+    margin-bottom: 15px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+}
+
+.bank-logo {
+    width: 34px;
+    height: 34px;
+
+    flex: 0 0 34px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--accent) 15%,
+            transparent
+        );
+
+    border-radius: 8px;
+
+    font-size: .72rem;
+    font-weight: 750;
+}
+
+.bank-card-heading > div:last-child {
+    min-width: 0;
+}
+
+.bank-card-heading strong,
+.bank-card-heading span {
+    display: block;
+}
+
+.bank-card-heading strong {
+    margin-bottom: 2px;
+
+    color: var(--soft);
+
+    font-size: .8rem;
+    font-weight: 650;
+}
+
+.bank-card-heading span {
+    color: var(--muted);
+
+    font-size: .68rem;
+}
+
+.bank-card-value {
+    margin-bottom: 9px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 10px;
+}
+
+.bank-card-value strong {
+    color: var(--text);
+
+    font-size: .95rem;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+.bank-card-value span {
+    color: var(--muted);
+
+    font-size: .7rem;
+
+    white-space: nowrap;
+}
+
+.bank-progress {
+    height: 4px;
+
+    overflow: hidden;
+
+    background: var(--bg);
+
+    border-radius: 999px;
+}
+
+.bank-progress span {
+    height: 100%;
+
+    display: block;
+
+    background: var(--accent);
+
+    border-radius: inherit;
+
+    transition: width .3s ease;
+}
+
+
+/* ==========================================================
+   BARRE DE FILTRES
+
+   1 recherche
+   6 sélecteurs :
+   - banque
+   - faculté
+   - département
+   - spécialisation
+   - promotion
+   - semestre
+   - statut
+
+   + période
+   + reset
+========================================================== */
+
+.payments-filter-card {
+    max-width: 1600px;
+
+    margin: 0 auto 12px;
+    padding: 10px;
+
+    display: grid;
+
+    /*
+     * Contrairement à l'ancienne version, on ne force plus
+     * seulement quatre sélecteurs sur une ligne.
+     *
+     * La grille s'adapte automatiquement au nombre de filtres.
+     */
+    grid-template-columns:
+        repeat(auto-fit, minmax(145px, 1fr));
+
+    align-items: end;
+
+    gap: 7px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+}
+
+
+/* ==========================================================
+   RECHERCHE
+========================================================== */
+
+.payment-search {
+    min-height: 39px;
+
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 7px;
+
+    transition:
+        border-color var(--transition),
+        background var(--transition);
+}
+
+.payment-search:focus-within {
+    background: var(--surface);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 35%,
+            var(--border)
+        );
+
+    box-shadow:
+        0 0 0 3px var(--accent-soft);
+}
+
+.payment-search > i {
+    margin-left: 11px;
+
+    color: var(--muted);
+
+    font-size: .8rem;
+}
+
+.payment-search input {
+    width: 100%;
+    min-width: 0;
+    height: 37px;
+
+    padding: 0 34px 0 8px;
+
+    color: var(--soft);
+    background: transparent;
+
+    border: 0;
+    outline: 0;
+
+    font-size: .78rem;
+}
+
+.payment-search input::placeholder {
+    color: var(--muted);
+
+    opacity: .8;
+}
+
+.payment-search button {
+    width: 29px;
+    height: 29px;
+
+    position: absolute;
+    right: 4px;
+
+    display: grid;
+    place-items: center;
+
+    padding: 0;
+
+    color: var(--muted);
+    background: transparent;
+
+    border: 0;
+    border-radius: 5px;
+
+    font-size: .76rem;
+
+    cursor: pointer;
+
+    transition:
+        color var(--transition),
+        background var(--transition);
+}
+
+.payment-search button:hover {
+    color: var(--text);
+    background: var(--surface-hover);
+}
+
+
+/* ==========================================================
+   SELECTS DES FILTRES
+========================================================== */
+
+.payment-filter {
+    min-width: 0;
+}
+
+.payment-filter label {
+    display: block;
+
+    margin: 0 0 5px 2px;
+
+    color: var(--muted);
+
+    font-size: .67rem;
+    font-weight: 650;
+}
+
+.payment-filter select {
+    width: 100%;
+    height: 39px;
+
+    padding: 0 29px 0 9px;
+
+    color: var(--soft);
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    outline: 0;
+
+    font-size: .76rem;
+
+    cursor: pointer;
+
+    transition:
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition),
+        opacity var(--transition);
+}
+
+.payment-filter select:hover:not(:disabled) {
+    border-color: var(--border-strong);
+}
+
+.payment-filter select:focus {
+    background: var(--surface);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 35%,
+            var(--border)
+        );
+
+    box-shadow:
+        0 0 0 3px var(--accent-soft);
+}
+
+.payment-filter select option {
+    color: var(--text);
+    background: var(--surface);
+}
+
+
+/*
+ * Département et spécialisation utilisent cet état
+ * lorsqu'aucun parent n'a encore été sélectionné.
+ */
+
+.payment-filter select:disabled {
+    color: var(--muted);
+
+    background:
+        color-mix(
+            in srgb,
+            var(--surface-2) 70%,
+            var(--bg)
+        );
+
+    opacity: .55;
+
+    cursor: not-allowed;
+}
+
+
+/* ==========================================================
+   FILTRE DATE + RÉINITIALISATION
+========================================================== */
+
+.date-filter-button,
+.reset-filters-button {
+    min-height: 39px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    padding: 0 10px;
+
+    border-radius: 7px;
+
+    font-size: .74rem;
+    font-weight: 650;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition:
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition);
+}
+
+.date-filter-button {
+    color: var(--muted);
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+}
+
+.date-filter-button:hover,
+.date-filter-button.active {
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 25%,
+            var(--border)
+        );
+}
+
+.date-filter-button i {
+    font-size: .8rem;
+}
+
+.reset-filters-button {
+    color: var(--muted);
+    background: transparent;
+
+    border: 1px solid var(--border);
+}
+
+.reset-filters-button:hover {
+    color: var(--soft);
+    background: var(--surface-hover);
+
+    border-color: var(--border-strong);
+}
+
+
+/* ==========================================================
+   TABLEAU
+========================================================== */
+
+.payments-table-card {
+    max-width: 1600px;
+
+    margin: 0 auto;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+
+    overflow: hidden;
+}
+
+.payments-table-header {
+    min-height: 65px;
+
+    padding: 12px 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.payments-table-header h2 {
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: 1rem;
+    font-weight: 650;
+}
+
+.result-counter {
+    display: flex;
+    align-items: baseline;
+
+    gap: 4px;
+
+    color: var(--muted);
+
+    font-size: .7rem;
+}
+
+.result-counter strong {
+    color: var(--accent);
+
+    font-size: .82rem;
+    font-weight: 650;
+}
+
+
+/* ==========================================================
+   WRAPPER + SCROLLBAR HORIZONTALE
+========================================================== */
+
+.payments-table-wrapper {
+    position: relative;
+
+    overflow-x: auto;
+
+    scrollbar-width: thin;
+    scrollbar-color: #414448 transparent;
+}
+
+.payments-table-wrapper::-webkit-scrollbar {
+    height: 8px;
+}
+
+.payments-table-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.payments-table-wrapper::-webkit-scrollbar-thumb {
+    background: #3e4246;
+
+    border: 2px solid transparent;
+    border-radius: 999px;
+
+    background-clip: padding-box;
+}
+
+.payments-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #555a60;
+
+    border: 2px solid transparent;
+
+    background-clip: padding-box;
+}
+
+
+/* ==========================================================
+   TABLE
+========================================================== */
+
+.payments-table {
+    width: 100%;
+    min-width: 1150px;
+
+    border-collapse: collapse;
+
+    color: var(--soft);
+}
+
+.payments-table th {
+    padding: 10px 12px;
+
+    color: var(--muted);
+    background: var(--surface-2);
+
+    border-bottom: 1px solid var(--border);
+
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .035em;
+
+    text-align: left;
+
+    white-space: nowrap;
+}
+
+.payments-table td {
+    padding: 10px 12px;
+
+    color: var(--muted);
+
+    border-bottom: 1px solid var(--border);
+
+    font-size: .76rem;
+
+    vertical-align: middle;
+}
+
+.payments-table tbody tr {
+    transition: background var(--transition);
+}
+
+.payments-table tbody tr:hover {
+    background: var(--surface-hover);
+}
+
+.payments-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+/* ==========================================================
+   ÉTUDIANT
+========================================================== */
+
+.payment-student {
+    min-width: 150px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+}
+
+.payment-student-avatar {
+    width: 28px;
+    height: 28px;
+
+    flex: 0 0 28px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-radius: 6px;
+
+    font-size: .65rem;
+    font-weight: 750;
+}
+
+.payment-student > div {
+    min-width: 0;
+}
+
+.payment-student strong,
+.payment-student span {
+    display: block;
+}
+
+.payment-student strong {
+    max-width: 155px;
+
+    overflow: hidden;
+
+    color: var(--soft);
+
+    font-size: .78rem;
+    font-weight: 600;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.payment-student span {
+    margin-top: 2px;
+
+    color: var(--muted);
+
+    font-size: .66rem;
+}
+
+
+/* ==========================================================
+   RÉFÉRENCE BANCAIRE
+========================================================== */
+
+.payment-reference {
+    color: var(--accent);
+
+    font-family:
+        "SFMono-Regular",
+        Consolas,
+        "Liberation Mono",
+        monospace;
+
+    font-size: .72rem;
+
+    white-space: nowrap;
+}
+
+
+/* ==========================================================
+   BANQUE DANS LE TABLEAU
+========================================================== */
+
+.payment-bank {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 6px;
+
+    font-size: .74rem;
+
+    white-space: nowrap;
+}
+
+.payment-bank::before {
+    content: "";
+
+    width: 6px;
+    height: 6px;
+
+    flex: 0 0 6px;
+
+    background: var(--accent);
+
+    border-radius: 50%;
+}
+
+
+/* ==========================================================
+   MONTANT
+========================================================== */
+
+.payment-amount {
+    color: var(--soft);
+
+    font-size: .78rem;
+    font-weight: 650;
+
+    white-space: nowrap;
+}
+
+
+/* ==========================================================
+   STATUTS
+========================================================== */
+
+.payment-status {
+    min-height: 23px;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+
+    padding: 0 7px;
+
+    border-radius: 999px;
+
+    font-size: .7rem;
+    font-weight: 650;
+
+    white-space: nowrap;
+}
+
+.payment-status::before {
+    content: "";
+
+    width: 5px;
+    height: 5px;
+
+    border-radius: 50%;
+}
+
+
+/* VALIDÉ */
+
+.payment-status.validated {
+    color: var(--green);
+    background: var(--green-soft);
+}
+
+.payment-status.validated::before {
+    background: var(--green);
+}
+
+
+/* EN ATTENTE */
+
+.payment-status.pending {
+    color: var(--orange);
+
+    background:
+        color-mix(
+            in srgb,
+            var(--orange) 9%,
+            transparent
+        );
+}
+
+.payment-status.pending::before {
+    background: var(--orange);
+}
+
+
+/* ANOMALIE */
+
+.payment-status.anomaly {
+    color: var(--red);
+    background: var(--red-soft);
+}
+
+.payment-status.anomaly::before {
+    background: var(--red);
+}
+
+
+/* ==========================================================
+   BOUTON DÉTAIL
+========================================================== */
+
+.payment-detail-button {
+    width: 29px;
+    height: 29px;
+
+    display: grid;
+    place-items: center;
+
+    padding: 0;
+
+    color: var(--muted);
+    background: transparent;
+
+    border: 1px solid var(--border);
+    border-radius: 6px;
+
+    font-size: .8rem;
+
+    cursor: pointer;
+
+    transition:
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition);
+}
+
+.payment-detail-button:hover {
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 25%,
+            var(--border)
+        );
+}
+
+
+/* ==========================================================
+   AUCUN RÉSULTAT
+========================================================== */
+
+.payments-empty {
+    min-height: 310px;
+
+    padding: 40px 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    text-align: center;
+}
+
+.payments-empty[hidden] {
+    display: none;
+}
+
+.empty-icon {
+    width: 48px;
+    height: 48px;
+
+    margin-bottom: 13px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--muted);
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    font-size: 1.1rem;
+}
+
+.payments-empty strong {
+    margin-bottom: 5px;
+
+    color: var(--soft);
+
+    font-size: .88rem;
+}
+
+.payments-empty p {
+    max-width: 310px;
+
+    margin: 0 0 14px;
+
+    color: var(--muted);
+
+    font-size: .76rem;
+    line-height: 1.6;
+}
+
+.payments-empty button {
+    min-height: 34px;
+
+    padding: 0 11px;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--accent) 20%,
+            var(--border)
+        );
+
+    border-radius: 6px;
+
+    font-size: .74rem;
+    font-weight: 650;
+
+    cursor: pointer;
+}
+
+
+/* ==========================================================
+   FOOTER DU TABLEAU
+========================================================== */
+
+.payments-table-footer {
+    min-height: 55px;
+
+    padding: 9px 14px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    background:
+        color-mix(
+            in srgb,
+            var(--surface-2) 45%,
+            transparent
+        );
+
+    border-top: 1px solid var(--border);
+}
+
+.pagination-information {
+    color: var(--muted);
+
+    font-size: .7rem;
+}
+
+.pagination-information strong {
+    color: var(--soft);
+
+    font-size: .74rem;
+    font-weight: 650;
+}
+
+
+/* ==========================================================
+   PAGINATION
+========================================================== */
+
+.payment-pagination {
+    display: flex;
+    align-items: center;
+
+    gap: 4px;
+}
+
+.payment-pagination > button,
+#paginationPages button {
+    min-width: 29px;
+    height: 29px;
+
+    display: inline-grid;
+    place-items: center;
+
+    padding: 0 7px;
+
+    color: var(--muted);
+    background: transparent;
+
+    border: 1px solid var(--border);
+    border-radius: 6px;
+
+    font-size: .7rem;
+
+    cursor: pointer;
+
+    transition:
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition);
+}
+
+#paginationPages {
+    display: flex;
+
+    gap: 4px;
+}
+
+.payment-pagination > button:hover:not(:disabled),
+#paginationPages button:hover {
+    color: var(--accent);
+    background: var(--accent-soft);
+}
+
+#paginationPages button.active {
+    color: #171819;
+    background: var(--accent);
+
+    border-color: var(--accent);
+}
+
+.payment-pagination button:disabled {
+    opacity: .35;
+
+    cursor: not-allowed;
+}
+
+
+/* ==========================================================
+   MODALE — SECTIONS
+========================================================== */
+
+.payment-detail-section + .payment-detail-section {
+    margin-top: 20px;
+}
+
+.detail-section-title {
+    margin-bottom: 9px;
+
+    color: var(--muted);
+
+    font-size: .67rem;
+    font-weight: 750;
+    letter-spacing: .07em;
+
+    text-transform: uppercase;
+}
+
+
+/* ==========================================================
+   MODALE — GRILLE INFORMATIONS
+========================================================== */
+
+.payment-detail-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 8px;
+}
+
+.payment-detail-grid > div {
+    min-width: 0;
+
+    padding: 11px;
+
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 7px;
+}
+
+.payment-detail-grid span,
+.payment-detail-grid strong {
+    display: block;
+}
+
+.payment-detail-grid span {
+    margin-bottom: 5px;
+
+    color: var(--muted);
+
+    font-size: .68rem;
+}
+
+.payment-detail-grid strong {
+    color: var(--soft);
+
+    font-size: .8rem;
+    font-weight: 650;
+
+    overflow-wrap: anywhere;
+}
+
+.detail-reference {
+    color: var(--accent) !important;
+
+    font-family:
+        "SFMono-Regular",
+        Consolas,
+        monospace;
+}
+
+
+/* ==========================================================
+   RAPPROCHEMENT DANS LA MODALE
+========================================================== */
+
+.payment-reconciliation-status {
+    padding: 12px;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 10px;
+
+    color: var(--green);
+    background: var(--green-soft);
+
+    border:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--green) 20%,
+            var(--border)
+        );
+
+    border-radius: 7px;
+}
+
+.payment-reconciliation-status > i {
+    margin-top: 1px;
+
+    font-size: .9rem;
+}
+
+.payment-reconciliation-status > div {
+    min-width: 0;
+}
+
+.payment-reconciliation-status strong,
+.payment-reconciliation-status span {
+    display: block;
+}
+
+.payment-reconciliation-status strong {
+    margin-bottom: 4px;
+
+    font-size: .8rem;
+    font-weight: 650;
+}
+
+.payment-reconciliation-status span {
+    color: var(--muted);
+
+    font-size: .72rem;
+    line-height: 1.55;
+}
+
+
+/* EN ATTENTE */
+
+.payment-reconciliation-status.pending {
+    color: var(--orange);
+
+    background:
+        color-mix(
+            in srgb,
+            var(--orange) 8%,
+            transparent
+        );
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--orange) 20%,
+            var(--border)
+        );
+}
+
+
+/* ANOMALIE */
+
+.payment-reconciliation-status.anomaly {
+    color: var(--red);
+    background: var(--red-soft);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--red) 20%,
+            var(--border)
+        );
+}
+
+
+/* ==========================================================
+   ANIMATIONS
+========================================================== */
+
+.payment-kpi,
+.bank-summary,
+.payments-filter-card,
+.payments-table-card {
+    animation:
+        paymentFade .3s ease both;
+}
+
+.payment-kpi:nth-child(2) {
+    animation-delay: .025s;
+}
+
+.payment-kpi:nth-child(3) {
+    animation-delay: .05s;
+}
+
+.payment-kpi:nth-child(4) {
+    animation-delay: .075s;
+}
+
+@keyframes paymentFade {
+
+    from {
+        opacity: 0;
+
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform: translateY(0);
+    }
+}
+
+
+/* ==========================================================
+   RESPONSIVE — 1400px
+
+   Avec les nouveaux filtres :
+   faculté / département / spécialisation / promotion
+========================================================== */
+
+@media (max-width: 1399.98px) {
+
+    .payments-filter-card {
+        grid-template-columns:
+            repeat(4, minmax(140px, 1fr));
+    }
+
+    .payment-search {
+        grid-column: span 2;
+    }
+
+    .date-filter-button,
+    .reset-filters-button {
+        width: 100%;
+    }
+}
+
+
+/* ==========================================================
+   RESPONSIVE — 1200px
+========================================================== */
+
+@media (max-width: 1199.98px) {
+
+    .payments-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .payments-header-actions {
+        width: 100%;
+
+        flex-wrap: wrap;
+    }
+
+    .payments-kpi-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .payments-filter-card {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+
+    .payment-search {
+        grid-column: span 2;
+    }
+}
+
+
+/* ==========================================================
+   RESPONSIVE — TABLETTE
+========================================================== */
+
+@media (max-width: 767.98px) {
+
+    /* HEADER */
+
+    .payments-header h1 {
+        font-size: 1.4rem;
+    }
+
+    .payments-header p {
+        font-size: .82rem;
+    }
+
+    .payments-header-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .payments-header-actions .filter-control {
+        width: 100%;
+    }
+
+    .payments-header-actions .dropdown {
+        width: 100%;
+    }
+
+    .payments-header-actions .export-button {
+        width: 100%;
+
+        justify-content: center;
+    }
+
+
+    /* KPI */
+
+    .payments-kpi-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .payment-kpi > strong {
+        font-size: 1.1rem;
+    }
+
+
+    /* BANQUES */
+
+    .bank-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .bank-card-heading strong {
+        font-size: .78rem;
+    }
+
+    .bank-card-value strong {
+        font-size: .9rem;
+    }
+
+
+    /* FILTRES */
+
+    .payments-filter-card {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .payment-search {
+        grid-column: 1 / -1;
+    }
+
+
+    /* TABLEAU */
+
+    .payments-table-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .payments-table th {
+        font-size: .67rem;
+    }
+
+    .payments-table td {
+        font-size: .74rem;
+    }
+}
+
+
+/* ==========================================================
+   RESPONSIVE — MOBILE
+========================================================== */
+
+@media (max-width: 575.98px) {
+
+    /* HEADER */
+
+    .payments-header h1 {
+        font-size: 1.3rem;
+    }
+
+    .payments-header p {
+        font-size: .8rem;
+    }
+
+    .payments-header-actions {
+        grid-template-columns: 1fr;
+    }
+
+
+    /* KPI */
+
+    .payments-kpi-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .payment-kpi-label {
+        font-size: .66rem;
+    }
+
+    .payment-kpi > strong {
+        font-size: 1.15rem;
+    }
+
+    .payment-kpi > small {
+        font-size: .7rem;
+    }
+
+
+    /* BANQUES */
+
+    .bank-summary-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .bank-summary-header h2 {
+        font-size: .95rem;
+    }
+
+    .reset-bank-filter {
+        width: 100%;
+    }
+
+    .bank-card-heading strong {
+        font-size: .78rem;
+    }
+
+    .bank-card-heading span {
+        font-size: .67rem;
+    }
+
+    .bank-card-value strong {
+        font-size: .9rem;
+    }
+
+
+    /* FILTRES */
+
+    .payments-filter-card {
+        grid-template-columns: 1fr;
+    }
+
+    .payment-search {
+        grid-column: auto;
+    }
+
+    .payment-search input,
+    .payment-filter select {
+        font-size: .76rem;
+    }
+
+    .payment-filter label {
+        font-size: .66rem;
+    }
+
+    .date-filter-button,
+    .reset-filters-button {
+        width: 100%;
+    }
+
+
+    /* TABLEAU */
+
+    .payments-table-header h2 {
+        font-size: .95rem;
+    }
+
+
+    /* FOOTER TABLEAU */
+
+    .payments-table-footer {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .payment-pagination {
+        width: 100%;
+
+        justify-content: space-between;
+    }
+
+
+    /* MODALE */
+
+    .payment-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .payment-detail-grid strong {
+        font-size: .78rem;
+    }
+
+    .payment-reconciliation-status span {
+        font-size: .7rem;
+    }
+}

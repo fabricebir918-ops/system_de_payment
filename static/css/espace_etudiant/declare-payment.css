@@ -1,0 +1,1126 @@
+/* ==========================================================
+   ACADEMICPAY — DÉCLARER UN PAIEMENT
+   Dépend de :
+   - style.css
+   - dashbord.css
+========================================================== */
+
+
+/* ==========================================================
+   1. CONTENEUR
+========================================================== */
+
+.declare-payment-container {
+    max-width: 1180px;
+    padding-top: 2.4rem;
+    padding-bottom: 2rem;
+}
+
+
+/* ==========================================================
+   2. HEADER
+========================================================== */
+
+.declare-page-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 2rem;
+
+    margin-bottom: 1.5rem;
+}
+
+
+.declare-page-header h1 {
+    margin: 0 0 0.4rem;
+
+    color: var(--dash-text);
+
+    font-size: clamp(1.7rem, 2.6vw, 2.2rem);
+    font-weight: 780;
+
+    letter-spacing: -0.04em;
+}
+
+
+.declare-page-header p {
+    max-width: 600px;
+
+    margin: 0;
+
+    color: var(--dash-muted);
+
+    font-size: 0.8rem;
+    line-height: 1.65;
+}
+
+
+.declare-header-icon {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    color: var(--green);
+
+    background: var(--dash-green-soft);
+
+    border: 1px solid var(--dash-green-border);
+    border-radius: 13px;
+
+    font-size: 1rem;
+}
+
+
+/* ==========================================================
+   3. MESSAGE D'INFORMATION
+========================================================== */
+
+.payment-info-banner {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 0.8rem;
+
+    margin-bottom: 1rem;
+    padding: 1rem 1.1rem;
+
+    background: var(--dash-green-soft);
+
+    border: 1px solid var(--dash-green-border);
+    border-radius: 14px;
+}
+
+
+.payment-info-icon {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    color: var(--green);
+
+    background: var(--dash-surface);
+
+    border-radius: 9px;
+
+    font-size: 0.8rem;
+}
+
+
+.payment-info-banner strong {
+    display: block;
+
+    margin-bottom: 0.25rem;
+
+    color: var(--dash-text);
+
+    font-size: 0.7rem;
+    font-weight: 760;
+}
+
+
+.payment-info-banner p {
+    max-width: 760px;
+
+    margin: 0;
+
+    color: var(--dash-muted);
+
+    font-size: 0.67rem;
+    line-height: 1.6;
+}
+
+
+/* ==========================================================
+   4. GRILLE PRINCIPALE
+========================================================== */
+
+.declare-payment-grid {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.55fr)
+        minmax(270px, 0.75fr);
+
+    gap: 1rem;
+
+    align-items: start;
+}
+
+
+/* ==========================================================
+   5. CARTES
+========================================================== */
+
+.declare-form-card,
+.declare-summary-card,
+.declaration-process-card {
+    background: var(--dash-surface);
+
+    border: 1px solid var(--dash-border);
+    border-radius: 17px;
+
+    transition:
+        background-color 0.25s ease,
+        border-color 0.25s ease,
+        color 0.25s ease;
+}
+
+
+/* ==========================================================
+   6. HEADER FORMULAIRE
+========================================================== */
+
+.declare-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 1rem;
+
+    padding: 1.2rem 1.3rem;
+
+    border-bottom: 1px solid var(--dash-border);
+}
+
+
+.declare-card-header h2 {
+    margin: 0;
+
+    color: var(--dash-text);
+
+    font-size: 0.98rem;
+    font-weight: 750;
+}
+
+
+.declare-card-icon {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    color: var(--green);
+
+    background: var(--dash-green-soft);
+
+    border-radius: 10px;
+
+    font-size: 0.85rem;
+}
+
+
+/* ==========================================================
+   7. CORPS FORMULAIRE
+========================================================== */
+
+.declare-form-body {
+    padding: 1.35rem 1.3rem;
+}
+
+
+/* ==========================================================
+   8. CHAMP
+========================================================== */
+
+.form-field {
+    margin-bottom: 1.15rem;
+}
+
+
+.form-field > label {
+    display: block;
+
+    margin-bottom: 0.45rem;
+
+    color: var(--dash-text);
+
+    font-size: 0.67rem;
+    font-weight: 720;
+}
+
+
+.form-field > label span {
+    color: var(--green);
+}
+
+
+/* ==========================================================
+   9. CONTROL
+========================================================== */
+
+.field-control {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+}
+
+
+.field-control > i {
+    position: absolute;
+
+    left: 0.9rem;
+
+    z-index: 2;
+
+    color: var(--dash-muted);
+
+    font-size: 0.75rem;
+
+    pointer-events: none;
+}
+
+
+.field-control input,
+.field-control select {
+    width: 100%;
+    height: 45px;
+
+    padding:
+        0 2.7rem
+        0 2.35rem;
+
+    color: var(--dash-text);
+
+    background: var(--dash-surface-soft);
+
+    border: 1px solid var(--dash-border);
+    border-radius: 11px;
+
+    outline: none;
+
+    font-family: inherit;
+    font-size: 0.7rem;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background-color 0.25s ease;
+}
+
+
+.field-control select {
+    cursor: pointer;
+}
+
+
+.field-control input::placeholder {
+    color: var(--dash-muted);
+
+    opacity: 0.7;
+}
+
+
+.field-control input:focus,
+.field-control select:focus {
+    border-color: var(--green);
+
+    box-shadow:
+        0 0 0 3px var(--dash-green-soft);
+}
+
+
+/* ==========================================================
+   10. OPTIONS SELECT
+========================================================== */
+
+.field-control select option {
+    color: var(--dash-text);
+    background: var(--dash-surface);
+}
+
+
+/* ==========================================================
+   11. SUFFIXE $
+========================================================== */
+
+.field-suffix {
+    position: absolute;
+
+    right: 0.9rem;
+
+    color: var(--dash-muted);
+
+    font-size: 0.68rem;
+    font-weight: 750;
+
+    pointer-events: none;
+}
+
+
+/* ==========================================================
+   12. AIDE
+========================================================== */
+
+.field-help {
+    display: block;
+
+    margin-top: 0.35rem;
+
+    color: var(--dash-muted);
+
+    font-size: 0.59rem;
+    line-height: 1.5;
+}
+
+
+/* ==========================================================
+   13. ERREURS
+========================================================== */
+
+.field-error {
+    display: none;
+
+    margin-top: 0.35rem;
+
+    color: var(--dash-danger);
+
+    font-size: 0.6rem;
+    line-height: 1.45;
+}
+
+
+.field-error.visible {
+    display: block;
+}
+
+
+.form-field.has-error
+.field-control input,
+
+.form-field.has-error
+.field-control select {
+    border-color: var(--dash-danger);
+
+    box-shadow:
+        0 0 0 3px var(--dash-danger-soft);
+}
+
+
+.form-field.has-error
+.field-control > i {
+    color: var(--dash-danger);
+}
+
+
+/* ==========================================================
+   14. DEUX CHAMPS SUR UNE LIGNE
+========================================================== */
+
+.form-row {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 1rem;
+}
+
+
+/* ==========================================================
+   15. CHECKBOX
+========================================================== */
+
+.declaration-confirmation {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 0.7rem;
+
+    margin-top: 0.2rem;
+    padding: 0.9rem;
+
+    background: var(--dash-surface-soft);
+
+    border: 1px solid var(--dash-border);
+    border-radius: 11px;
+}
+
+
+.declaration-confirmation input {
+    width: 16px;
+    height: 16px;
+
+    flex-shrink: 0;
+
+    margin-top: 0.1rem;
+
+    accent-color: var(--green);
+
+    cursor: pointer;
+}
+
+
+.declaration-confirmation label {
+    margin: 0;
+
+    color: var(--dash-muted);
+
+    font-size: 0.64rem;
+    line-height: 1.55;
+
+    cursor: pointer;
+}
+
+
+.confirmation-error {
+    margin-bottom: 0;
+}
+
+
+/* ==========================================================
+   16. ACTIONS FORMULAIRE
+========================================================== */
+
+.declare-form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 0.7rem;
+
+    margin-top: 1.4rem;
+    padding-top: 1.2rem;
+
+    border-top: 1px solid var(--dash-border);
+}
+
+
+/* ==========================================================
+   17. ANNULER
+========================================================== */
+
+.cancel-payment-button {
+    min-height: 43px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 1rem;
+
+    color: var(--dash-muted);
+
+    background: transparent;
+
+    border: 1px solid var(--dash-border);
+    border-radius: 10px;
+
+    font-size: 0.66rem;
+    font-weight: 720;
+
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.cancel-payment-button:hover {
+    color: var(--dash-text);
+
+    background: var(--dash-surface-soft);
+
+    border-color: var(--dash-muted);
+}
+
+
+/* ==========================================================
+   18. BOUTON PRINCIPAL
+========================================================== */
+
+.submit-payment-button {
+    min-height: 43px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 0.5rem;
+
+    padding: 0 1rem;
+
+    color: #171b15;
+
+    background: var(--green);
+
+    border: 1px solid var(--green);
+    border-radius: 10px;
+
+    font-size: 0.66rem;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        filter 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.submit-payment-button:hover {
+    transform: translateY(-1px);
+
+    filter: brightness(1.04);
+
+    box-shadow:
+        0 9px 25px rgba(164, 207, 57, 0.15);
+}
+
+
+.submit-payment-button:disabled {
+    opacity: 0.65;
+
+    cursor: wait;
+
+    transform: none;
+}
+
+
+/* ==========================================================
+   19. PANNEAU LATÉRAL
+========================================================== */
+
+.declare-side-panel {
+    display: flex;
+    flex-direction: column;
+
+    gap: 1rem;
+}
+
+
+/* ==========================================================
+   20. SITUATION FINANCIÈRE
+========================================================== */
+
+.declare-summary-card {
+    padding: 1.25rem;
+}
+
+
+.declare-summary-card h2 {
+    margin: 0 0 1.2rem;
+
+    color: var(--dash-text);
+
+    font-size: 0.95rem;
+    font-weight: 750;
+}
+
+
+.summary-amount {
+    display: flex;
+    flex-direction: column;
+
+    gap: 0.25rem;
+
+    padding: 1rem;
+
+    background: var(--dash-green-soft);
+
+    border: 1px solid var(--dash-green-border);
+    border-radius: 12px;
+}
+
+
+.summary-amount span {
+    color: var(--dash-muted);
+
+    font-size: 0.62rem;
+}
+
+
+.summary-amount strong {
+    color: var(--green);
+
+    font-size: 1.65rem;
+    font-weight: 800;
+
+    letter-spacing: -0.04em;
+}
+
+
+.summary-divider {
+    height: 1px;
+
+    margin: 1rem 0;
+
+    background: var(--dash-border);
+}
+
+
+.summary-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 1rem;
+
+    min-height: 36px;
+}
+
+
+.summary-row span {
+    color: var(--dash-muted);
+
+    font-size: 0.64rem;
+}
+
+
+.summary-row strong {
+    color: var(--dash-text);
+
+    font-size: 0.67rem;
+    font-weight: 730;
+}
+
+
+/* ==========================================================
+   21. PROCESSUS
+========================================================== */
+
+.declaration-process-card {
+    padding: 1.25rem;
+}
+
+
+.declaration-process-card h2 {
+    margin: 0 0 1.25rem;
+
+    color: var(--dash-text);
+
+    font-size: 0.95rem;
+    font-weight: 750;
+}
+
+
+.process-list {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.process-item {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 0.75rem;
+}
+
+
+.process-number {
+    width: 29px;
+    height: 29px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    color: #171b15;
+
+    background: var(--green);
+
+    border-radius: 50%;
+
+    font-size: 0.62rem;
+    font-weight: 850;
+}
+
+
+.process-item > div:last-child {
+    display: flex;
+    flex-direction: column;
+
+    gap: 0.15rem;
+
+    padding-top: 0.1rem;
+}
+
+
+.process-item strong {
+    color: var(--dash-text);
+
+    font-size: 0.67rem;
+    font-weight: 730;
+}
+
+
+.process-item span {
+    color: var(--dash-muted);
+
+    font-size: 0.59rem;
+    line-height: 1.5;
+}
+
+
+.process-line {
+    width: 1px;
+    height: 24px;
+
+    margin-left: 14px;
+
+    background: var(--dash-border);
+}
+
+
+/* ==========================================================
+   22. OVERLAY SUCCÈS
+========================================================== */
+
+.declaration-success-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 1100;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 1rem;
+
+    background:
+        rgba(10, 12, 10, 0.72);
+
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
+}
+
+
+.declaration-success-overlay.d-none {
+    display: none !important;
+}
+
+
+/* ==========================================================
+   23. CARTE SUCCÈS
+========================================================== */
+
+.declaration-success-card {
+    width: min(100%, 440px);
+
+    padding: 2rem;
+
+    background: var(--dash-surface);
+
+    border: 1px solid var(--dash-border);
+    border-radius: 20px;
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.28);
+
+    text-align: center;
+}
+
+
+.success-icon {
+    width: 58px;
+    height: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto 1rem;
+
+    color: #171b15;
+
+    background: var(--green);
+
+    border-radius: 16px;
+
+    font-size: 1.2rem;
+}
+
+
+.declaration-success-card h2 {
+    margin: 0.3rem 0 0.6rem;
+
+    color: var(--dash-text);
+
+    font-size: 1.25rem;
+    font-weight: 780;
+}
+
+
+.declaration-success-card > p {
+    margin: 0 auto 1.2rem;
+
+    max-width: 340px;
+
+    color: var(--dash-muted);
+
+    font-size: 0.69rem;
+    line-height: 1.65;
+}
+
+
+/* ==========================================================
+   24. RÉFÉRENCE DANS LE MODAL
+========================================================== */
+
+.success-reference {
+    display: flex;
+    flex-direction: column;
+
+    gap: 0.25rem;
+
+    margin-bottom: 1.2rem;
+    padding: 0.9rem;
+
+    background: var(--dash-surface-soft);
+
+    border: 1px solid var(--dash-border);
+    border-radius: 11px;
+}
+
+
+.success-reference span {
+    color: var(--dash-muted);
+
+    font-size: 0.59rem;
+}
+
+
+.success-reference strong {
+    color: var(--green);
+
+    font-size: 0.82rem;
+    font-weight: 800;
+
+    letter-spacing: 0.03em;
+}
+
+
+/* ==========================================================
+   25. ACTIONS SUCCÈS
+========================================================== */
+
+.success-actions {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 0.65rem;
+}
+
+
+.success-secondary-button,
+.success-primary-button {
+    min-height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 0.8rem;
+
+    border-radius: 10px;
+
+    font-size: 0.65rem;
+    font-weight: 750;
+}
+
+
+.success-secondary-button {
+    color: var(--dash-text);
+
+    background: transparent;
+
+    border: 1px solid var(--dash-border);
+}
+
+
+.success-secondary-button:hover {
+    color: var(--dash-text);
+
+    background: var(--dash-surface-soft);
+}
+
+
+.success-primary-button {
+    color: #171b15;
+
+    background: var(--green);
+
+    border: 1px solid var(--green);
+}
+
+
+.success-primary-button:hover {
+    color: #171b15;
+
+    filter: brightness(1.04);
+}
+
+
+/* ==========================================================
+   26. DATE INPUT
+========================================================== */
+
+.field-control input[type="date"] {
+    color-scheme: dark;
+}
+
+
+html[data-theme="light"]
+.field-control input[type="date"] {
+    color-scheme: light;
+}
+
+
+/* ==========================================================
+   27. AUTOFILL
+========================================================== */
+
+.field-control input:-webkit-autofill,
+.field-control input:-webkit-autofill:hover,
+.field-control input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--dash-text);
+
+    transition:
+        background-color 9999s ease-in-out 0s;
+}
+
+
+/* ==========================================================
+   28. RESPONSIVE — TABLETTE
+========================================================== */
+
+@media (max-width: 991.98px) {
+
+    .declare-payment-container {
+        max-width: 900px;
+
+        padding-top: 1.2rem;
+    }
+
+
+    .declare-payment-grid {
+        grid-template-columns:
+            minmax(0, 1.4fr)
+            minmax(250px, 0.7fr);
+    }
+
+}
+
+
+/* ==========================================================
+   29. RESPONSIVE — PETITE TABLETTE
+========================================================== */
+
+@media (max-width: 767.98px) {
+
+    .declare-page-header {
+        align-items: flex-start;
+    }
+
+
+    .declare-payment-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .declare-side-panel {
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+/* ==========================================================
+   30. RESPONSIVE — MOBILE
+========================================================== */
+
+@media (max-width: 575.98px) {
+
+    .declare-payment-container {
+        padding-left: 0.85rem;
+        padding-right: 0.85rem;
+    }
+
+
+    .declare-page-header {
+        align-items: flex-start;
+        flex-direction: column;
+
+        gap: 0.8rem;
+    }
+
+
+    .declare-header-icon {
+        display: none;
+    }
+
+
+    .payment-info-banner {
+        padding: 0.9rem;
+    }
+
+
+    .declare-form-body {
+        padding: 1.1rem 1rem;
+    }
+
+
+    .declare-card-header {
+        padding: 1rem;
+    }
+
+
+    .form-row {
+        grid-template-columns: 1fr;
+
+        gap: 0;
+    }
+
+
+    .declare-side-panel {
+        display: flex;
+    }
+
+
+    .declare-form-actions {
+        flex-direction: column-reverse;
+    }
+
+
+    .cancel-payment-button,
+    .submit-payment-button {
+        width: 100%;
+    }
+
+
+    .success-actions {
+        grid-template-columns: 1fr;
+    }
+
+
+    .declaration-success-card {
+        padding: 1.5rem 1.1rem;
+    }
+
+}

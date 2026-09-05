@@ -1,0 +1,1874 @@
+/* ==========================================================
+   ACADEMICPAY — DASHBOARD ÉTUDIANT
+   Ce fichier complète style.css.
+========================================================== */
+
+
+/* ==========================================================
+   1. VARIABLES DASHBOARD — SOMBRE PAR DÉFAUT
+========================================================== */
+
+:root {
+    --dash-bg: var(--grey-900);
+    --dash-surface: var(--grey-800);
+    --dash-surface-soft: #252825;
+    --dash-surface-hover: #2b2f2b;
+
+    --dash-border: var(--grey-700);
+
+    --dash-text: var(--white);
+    --dash-muted: var(--text-muted);
+
+    --dash-green-soft: rgba(164, 207, 57, 0.10);
+    --dash-green-border: rgba(164, 207, 57, 0.28);
+
+    --dash-warning: #e7ad49;
+    --dash-warning-soft: rgba(231, 173, 73, 0.11);
+
+    --dash-danger: #e86e6e;
+    --dash-danger-soft: rgba(232, 110, 110, 0.11);
+
+    --dash-shadow:
+        0 18px 50px rgba(0, 0, 0, 0.14);
+}
+
+
+/* ==========================================================
+   2. BASE
+========================================================== */
+
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+
+    background: var(--dash-bg);
+    color: var(--dash-text);
+
+    transition:
+        background-color 0.25s ease,
+        color 0.25s ease;
+}
+
+a {
+    text-decoration: none;
+}
+
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+/* ==========================================================
+   3. SIDEBAR
+========================================================== */
+
+.dashboard-sidebar {
+    width: 96px;
+    min-height: 100vh;
+
+    background: var(--grey-800);
+
+    border-right:
+        1px solid var(--grey-700);
+
+    z-index: 1030;
+
+    transition:
+        background-color 0.25s ease,
+        border-color 0.25s ease;
+}
+
+
+.dashboard-logo {
+    width: 96px;
+    height: 96px;
+
+    color: var(--grey-900);
+    background: var(--green);
+
+    font-size: 1.8rem;
+}
+
+
+.dashboard-logo:hover {
+    color: var(--grey-900);
+}
+
+
+.dashboard-nav-icon {
+    width: 46px;
+    height: 46px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    color: var(--text-muted);
+    background: transparent;
+
+    border-radius: 12px;
+
+    font-size: 1.08rem;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.dashboard-nav-icon:hover {
+    color: var(--white);
+    background: var(--grey-700);
+
+    transform: translateY(-1px);
+}
+
+
+.dashboard-nav-icon.active {
+    color: var(--green);
+
+    background:
+        rgba(164, 207, 57, 0.10);
+}
+
+
+.dashboard-sidebar-user {
+    border-top:
+        1px solid var(--grey-700);
+
+    transition:
+        border-color 0.25s ease;
+}
+
+
+.dashboard-avatar {
+    width: 44px;
+    height: 44px;
+
+    color: var(--grey-900);
+    background: var(--green);
+
+    font-size: 1rem;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.dashboard-avatar:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 8px 22px rgba(0, 0, 0, 0.22);
+}
+
+
+/* ==========================================================
+   4. MAIN
+========================================================== */
+
+.dashboard-main {
+    min-width: 0;
+    min-height: 100vh;
+
+    margin-left: 96px;
+
+    background: var(--dash-bg);
+
+    transition:
+        background-color 0.25s ease;
+}
+
+
+.dashboard-container {
+    max-width: 1320px;
+
+    padding-top: 2.4rem;
+    padding-bottom: 2rem;
+}
+
+
+/* ==========================================================
+   5. EN-TÊTE
+========================================================== */
+
+.dashboard-page-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 2rem;
+
+    margin-bottom: 1.8rem;
+}
+
+
+.dashboard-eyebrow {
+    display: block;
+
+    margin-bottom: 0.4rem;
+
+    color: var(--green);
+
+    font-size: 0.68rem;
+    font-weight: 800;
+
+    letter-spacing: 0.13em;
+
+    text-transform: uppercase;
+}
+
+
+.dashboard-page-header h1 {
+    margin: 0 0 0.45rem;
+
+    color: var(--dash-text);
+
+    font-size: clamp(1.65rem, 2.5vw, 2.15rem);
+    font-weight: 750;
+
+    letter-spacing: -0.035em;
+}
+
+
+.dashboard-page-header p {
+    max-width: 600px;
+
+    margin: 0;
+
+    color: var(--dash-muted);
+
+    font-size: 0.88rem;
+    line-height: 1.6;
+}
+
+
+.academic-year-badge {
+    min-height: 46px;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 0.55rem;
+
+    padding: 0 0.9rem;
+
+    flex-shrink: 0;
+
+    color: var(--dash-text);
+    background: var(--dash-surface);
+
+    border:
+        1px solid var(--dash-border);
+
+    border-radius: 12px;
+
+    font-size: 0.75rem;
+    font-weight: 700;
+
+    transition:
+        background-color 0.25s ease,
+        border-color 0.25s ease,
+        color 0.25s ease;
+}
+
+
+.academic-year-badge i {
+    color: var(--green);
+}
+
+
+/* ==========================================================
+   6. GRILLE FINANCIÈRE
+========================================================== */
+
+.financial-grid {
+    display: grid;
+
+    grid-template-columns:
+        minmax(280px, 0.82fr)
+        minmax(0, 2fr);
+
+    gap: 1rem;
+
+    margin-bottom: 2rem;
+}
+
+
+.financial-small-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    grid-template-rows:
+        repeat(2, minmax(205px, 1fr));
+
+    gap: 1rem;
+}
+
+
+/* ==========================================================
+   7. GRANDE CARTE SOLDE
+========================================================== */
+
+.balance-card {
+    position: relative;
+
+    min-height: 426px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    overflow: hidden;
+
+    padding: 1.65rem;
+
+    color: #171b15;
+
+    background:
+        var(--green);
+
+    border-radius: 20px;
+
+    box-shadow: var(--dash-shadow);
+}
+
+
+/* Décoration */
+
+.card-decoration {
+    position: absolute;
+
+    top: -15px;
+    right: -18px;
+
+    width: 145px;
+    height: 145px;
+
+    pointer-events: none;
+}
+
+
+.card-decoration span {
+    position: absolute;
+
+    border:
+        1px solid rgba(23, 27, 21, 0.13);
+
+    border-radius: 50%;
+}
+
+
+.card-decoration span:nth-child(1) {
+    width: 140px;
+    height: 140px;
+
+    top: 0;
+    right: 0;
+}
+
+
+.card-decoration span:nth-child(2) {
+    width: 105px;
+    height: 105px;
+
+    top: 17px;
+    right: 17px;
+}
+
+
+.card-decoration span:nth-child(3) {
+    width: 68px;
+    height: 68px;
+
+    top: 35px;
+    right: 35px;
+}
+
+
+.balance-card-icon {
+    width: 46px;
+    height: 46px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 2.3rem;
+
+    color: #171b15;
+
+    background:
+        rgba(255, 255, 255, 0.22);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.20);
+
+    border-radius: 13px;
+
+    font-size: 1.15rem;
+}
+
+
+.balance-label {
+    display: block;
+
+    margin-bottom: 0.55rem;
+
+    color:
+        rgba(23, 27, 21, 0.68);
+
+    font-size: 0.66rem;
+    font-weight: 800;
+
+    letter-spacing: 0.12em;
+}
+
+
+.balance-card h2 {
+    margin: 0;
+
+    color: #171b15;
+
+    font-size: clamp(2.1rem, 4vw, 3.1rem);
+    font-weight: 800;
+
+    letter-spacing: -0.055em;
+}
+
+
+.balance-card > div:first-of-type p {
+    margin: 0.45rem 0 0;
+
+    color:
+        rgba(23, 27, 21, 0.70);
+
+    font-size: 0.75rem;
+}
+
+
+.balance-bottom {
+    position: relative;
+
+    z-index: 1;
+}
+
+
+.balance-progress-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 1rem;
+
+    margin-bottom: 0.6rem;
+
+    color:
+        rgba(23, 27, 21, 0.72);
+
+    font-size: 0.69rem;
+}
+
+
+.balance-progress-info strong {
+    color: #171b15;
+
+    font-size: 0.72rem;
+}
+
+
+.balance-progress {
+    height: 7px;
+
+    overflow: hidden;
+
+    background:
+        rgba(23, 27, 21, 0.14);
+
+    border-radius: 999px;
+}
+
+
+.balance-progress .progress-bar {
+    background: #171b15;
+}
+
+
+.balance-values {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 1rem;
+
+    margin-top: 0.55rem;
+
+    color:
+        rgba(23, 27, 21, 0.70);
+
+    font-size: 0.66rem;
+}
+
+
+.balance-meta {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 0.8rem;
+
+    margin-top: 1.35rem;
+    padding-top: 1.15rem;
+
+    border-top:
+        1px solid rgba(23, 27, 21, 0.16);
+}
+
+
+.balance-meta > div {
+    display: flex;
+    flex-direction: column;
+
+    gap: 0.25rem;
+}
+
+
+.balance-meta span {
+    color:
+        rgba(23, 27, 21, 0.62);
+
+    font-size: 0.61rem;
+}
+
+
+.balance-meta strong {
+    color: #171b15;
+
+    font-size: 0.72rem;
+}
+
+
+.balance-state {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 0.35rem;
+}
+
+
+.balance-state i {
+    font-size: 0.38rem;
+}
+
+
+/* ==========================================================
+   8. PETITES CARTES
+========================================================== */
+
+.financial-mini-card {
+    position: relative;
+
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    overflow: hidden;
+
+    padding: 1.25rem;
+
+    color: var(--dash-text);
+    background: var(--dash-surface);
+
+    border:
+        1px solid var(--dash-border);
+
+    border-radius: 17px;
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        background-color 0.25s ease,
+        color 0.25s ease,
+        box-shadow 0.2s ease;
+}
+
+
+a.financial-mini-card:hover {
+    color: var(--dash-text);
+
+    transform: translateY(-3px);
+
+    border-color:
+        var(--dash-green-border);
+
+    box-shadow:
+        0 14px 35px rgba(0, 0, 0, 0.12);
+}
+
+
+.mini-card-decoration {
+    position: absolute;
+
+    top: -48px;
+    right: -42px;
+
+    width: 125px;
+    height: 125px;
+
+    border:
+        1px solid var(--dash-border);
+
+    border-radius: 50%;
+
+    opacity: 0.45;
+
+    pointer-events: none;
+}
+
+
+.mini-card-decoration::before,
+.mini-card-decoration::after {
+    content: "";
+
+    position: absolute;
+
+    border:
+        1px solid var(--dash-border);
+
+    border-radius: 50%;
+}
+
+
+.mini-card-decoration::before {
+    inset: 17px;
+}
+
+
+.mini-card-decoration::after {
+    inset: 34px;
+}
+
+
+.mini-card-header {
+    position: relative;
+
+    z-index: 1;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 1rem;
+}
+
+
+.mini-card-header > span {
+    color: var(--dash-muted);
+
+    font-size: 0.64rem;
+    font-weight: 800;
+
+    letter-spacing: 0.1em;
+}
+
+
+.mini-card-icon {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    color: var(--green);
+
+    background:
+        var(--dash-green-soft);
+
+    border-radius: 10px;
+
+    font-size: 0.9rem;
+}
+
+
+.mini-card-content {
+    position: relative;
+
+    z-index: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: flex-start;
+}
+
+
+.mini-main-value {
+    color: var(--dash-text);
+
+    font-size: clamp(1.35rem, 2.3vw, 1.85rem);
+    font-weight: 780;
+
+    letter-spacing: -0.035em;
+}
+
+
+.mini-card-caption {
+    margin-top: 0.3rem;
+
+    color: var(--dash-muted);
+
+    font-size: 0.67rem;
+}
+
+
+.mini-card-footer {
+    position: relative;
+
+    z-index: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 0.7rem;
+
+    padding-top: 0.8rem;
+
+    color: var(--dash-muted);
+
+    border-top:
+        1px solid var(--dash-border);
+
+    font-size: 0.67rem;
+}
+
+
+/* ==========================================================
+   9. PROCHAINE ÉCHÉANCE
+========================================================== */
+
+.deadline-card {
+    border-color:
+        var(--dash-green-border);
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--dash-surface),
+            var(--dash-green-soft)
+        );
+}
+
+
+.deadline-card .mini-card-header > span {
+    color: var(--green);
+}
+
+
+.deadline-date {
+    color: var(--dash-text);
+
+    font-size: clamp(1.35rem, 2.2vw, 1.8rem);
+    font-weight: 780;
+
+    letter-spacing: -0.035em;
+}
+
+
+.deadline-value {
+    margin-top: 0.1rem;
+
+    color: var(--green);
+
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+
+.deadline-card .mini-card-footer {
+    color: var(--green);
+
+    font-weight: 700;
+}
+
+
+/* ==========================================================
+   10. TOTAL PAYÉ
+========================================================== */
+
+.paid-card .mini-card-icon {
+    color: var(--green);
+}
+
+
+/* ==========================================================
+   11. SEMESTRES
+========================================================== */
+
+.semester-complete {
+    border-color:
+        var(--dash-green-border);
+}
+
+
+.semester-balance-zero {
+    margin-top: 0.05rem;
+
+    color: var(--green);
+
+    font-size: 0.95rem;
+}
+
+
+.semester-balance-current {
+    margin-top: 0.05rem;
+
+    color: var(--dash-warning);
+
+    font-size: 0.95rem;
+}
+
+
+.semester-success {
+    justify-content: flex-start;
+
+    color: var(--green);
+
+    font-weight: 700;
+}
+
+
+/* ==========================================================
+   12. DERNIERS PAIEMENTS
+========================================================== */
+
+.recent-payments-section {
+    padding: 1.4rem;
+
+    background: var(--dash-surface);
+
+    border:
+        1px solid var(--dash-border);
+
+    border-radius: 18px;
+
+    transition:
+        background-color 0.25s ease,
+        border-color 0.25s ease;
+}
+
+
+.section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 1.5rem;
+
+    margin-bottom: 1.15rem;
+}
+
+
+.section-header h2 {
+    margin: 0;
+
+    color: var(--dash-text);
+
+    font-size: 1.08rem;
+    font-weight: 750;
+}
+
+
+.view-all-link {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 0.45rem;
+
+    color: var(--green);
+
+    font-size: 0.72rem;
+    font-weight: 700;
+
+    transition:
+        color 0.2s ease,
+        gap 0.2s ease;
+}
+
+
+.view-all-link:hover {
+    color: var(--dash-text);
+
+    gap: 0.65rem;
+}
+
+
+.recent-payments-list {
+    display: grid;
+
+    gap: 0.55rem;
+}
+
+
+.recent-payment-row {
+    display: grid;
+
+    grid-template-columns:
+        auto
+        minmax(120px, 1.2fr)
+        minmax(120px, 1fr)
+        minmax(90px, 0.8fr)
+        minmax(110px, 0.8fr)
+        auto;
+
+    align-items: center;
+
+    gap: 1rem;
+
+    padding: 0.85rem 1rem;
+
+    color: var(--dash-text);
+
+    background: var(--dash-surface-soft);
+
+    border:
+        1px solid transparent;
+
+    border-radius: 12px;
+
+    transition:
+        transform 0.2s ease,
+        background-color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.recent-payment-row:hover {
+    color: var(--dash-text);
+
+    background: var(--dash-surface-hover);
+
+    border-color:
+        var(--dash-border);
+
+    transform: translateX(2px);
+}
+
+
+.payment-icon {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    font-size: 0.82rem;
+}
+
+
+.payment-icon.valid {
+    color: var(--green);
+
+    background:
+        var(--dash-green-soft);
+}
+
+
+.payment-icon.pending {
+    color: var(--dash-warning);
+
+    background:
+        var(--dash-warning-soft);
+}
+
+
+.payment-icon.error {
+    color: var(--dash-danger);
+
+    background:
+        var(--dash-danger-soft);
+}
+
+
+.payment-reference,
+.payment-date,
+.payment-amount {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 0.18rem;
+}
+
+
+.payment-reference span,
+.payment-date span,
+.payment-amount span {
+    color: var(--dash-muted);
+
+    font-size: 0.6rem;
+}
+
+
+.payment-reference strong,
+.payment-date strong,
+.payment-amount strong {
+    overflow: hidden;
+
+    color: var(--dash-text);
+
+    font-size: 0.75rem;
+    font-weight: 700;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+.payment-status {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 0.38rem;
+
+    padding: 0.35rem 0.55rem;
+
+    border-radius: 999px;
+
+    font-size: 0.64rem;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+.payment-status i {
+    font-size: 0.35rem;
+}
+
+
+.payment-status.valid {
+    color: var(--green);
+
+    background:
+        var(--dash-green-soft);
+}
+
+
+.payment-status.pending {
+    color: var(--dash-warning);
+
+    background:
+        var(--dash-warning-soft);
+}
+
+
+.payment-status.error {
+    color: var(--dash-danger);
+
+    background:
+        var(--dash-danger-soft);
+}
+
+
+.payment-arrow {
+    color: var(--dash-muted);
+
+    font-size: 0.7rem;
+
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.recent-payment-row:hover .payment-arrow {
+    color: var(--green);
+
+    transform: translateX(2px);
+}
+
+
+/* ==========================================================
+   13. DROPDOWN
+========================================================== */
+
+.dropdown-menu {
+    padding: 0.45rem;
+
+    background: var(--dash-surface);
+
+    border:
+        1px solid var(--dash-border);
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 14px 38px rgba(0, 0, 0, 0.18);
+}
+
+
+.dropdown-item {
+    padding: 0.6rem 0.7rem;
+
+    color: var(--dash-text);
+
+    border-radius: 8px;
+
+    font-size: 0.76rem;
+}
+
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+    color: var(--dash-text);
+
+    background:
+        var(--dash-surface-hover);
+}
+
+
+.dropdown-divider {
+    border-color:
+        var(--dash-border);
+}
+
+
+/* ==========================================================
+   14. FOOTER
+========================================================== */
+
+.dashboard-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 1rem;
+
+    margin-top: 2rem;
+    padding-top: 1.2rem;
+
+    color: var(--dash-muted);
+
+    border-top:
+        1px solid var(--dash-border);
+
+    font-size: 0.63rem;
+}
+
+
+/* ==========================================================
+   15. MOBILE HEADER
+========================================================== */
+
+.mobile-header {
+    margin-bottom: 1.5rem;
+}
+
+
+.mobile-logo {
+    width: 43px;
+    height: 43px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--grey-900);
+
+    background: var(--green);
+
+    border-radius: 11px;
+
+    font-size: 1rem;
+}
+
+
+.mobile-logo:hover {
+    color: var(--grey-900);
+}
+
+
+.mobile-menu-button {
+    width: 43px;
+    height: 43px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    color: var(--dash-text);
+
+    background: var(--dash-surface);
+
+    border:
+        1px solid var(--dash-border);
+
+    border-radius: 11px;
+
+    font-size: 1.3rem;
+}
+
+
+/* ==========================================================
+   16. MENU MOBILE
+========================================================== */
+
+.dashboard-offcanvas {
+    --bs-offcanvas-width: min(310px, 88vw);
+
+    color: var(--dash-text);
+
+    background: var(--dash-surface);
+}
+
+
+.dashboard-offcanvas .offcanvas-header {
+    border-bottom:
+        1px solid var(--dash-border);
+}
+
+
+.mobile-menu-brand {
+    display: flex;
+    align-items: center;
+
+    gap: 0.7rem;
+}
+
+
+.mobile-menu-logo {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--grey-900);
+
+    background: var(--green);
+
+    border-radius: 9px;
+}
+
+
+.dashboard-offcanvas .btn-close {
+    filter: invert(1);
+}
+
+
+.mobile-navigation {
+    display: grid;
+
+    gap: 0.35rem;
+}
+
+
+.mobile-nav-link {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 0.8rem;
+
+    padding: 0.8rem 0.85rem;
+
+    color: var(--dash-muted);
+
+    background: transparent;
+
+    border: 0;
+    border-radius: 10px;
+
+    font-size: 0.8rem;
+    font-weight: 600;
+
+    text-align: left;
+
+    cursor: pointer;
+}
+
+
+.mobile-nav-link:hover {
+    color: var(--dash-text);
+
+    background:
+        var(--dash-surface-hover);
+}
+
+
+.mobile-nav-link.active {
+    color: var(--green);
+
+    background:
+        var(--dash-green-soft);
+}
+
+
+.mobile-nav-divider {
+    height: 1px;
+
+    margin: 0.65rem 0;
+
+    background:
+        var(--dash-border);
+}
+
+
+/* ==========================================================
+   17. MODE CLAIR
+   ----------------------------------------------------------
+   Le JS ajoute :
+       body.light-theme
+
+   Le contenu ET la sidebar passent en clair.
+   Le vert AcademicPay reste inchangé.
+========================================================== */
+
+body.light-theme {
+
+    --dash-bg: #f2f4ef;
+
+    --dash-surface: #ffffff;
+
+    --dash-surface-soft: #f7f8f5;
+
+    --dash-surface-hover: #edf0e9;
+
+    --dash-border: #dce1d8;
+
+    --dash-text: #20251f;
+
+    --dash-muted: #697168;
+
+    --dash-green-soft:
+        rgba(164, 207, 57, 0.12);
+
+    --dash-green-border:
+        rgba(139, 181, 37, 0.36);
+
+    --dash-warning: #b87a18;
+
+    --dash-warning-soft:
+        rgba(184, 122, 24, 0.10);
+
+    --dash-danger: #c64f4f;
+
+    --dash-danger-soft:
+        rgba(198, 79, 79, 0.09);
+
+    --dash-shadow:
+        0 18px 50px rgba(29, 36, 27, 0.08);
+
+    background: var(--dash-bg);
+
+    color: var(--dash-text);
+}
+
+
+/* ==========================================================
+   MAIN — LIGHT
+========================================================== */
+
+body.light-theme .dashboard-main {
+    background: var(--dash-bg);
+}
+
+
+/* ==========================================================
+   SIDEBAR — LIGHT
+========================================================== */
+
+body.light-theme .dashboard-sidebar {
+    background: #ffffff;
+
+    border-right:
+        1px solid var(--dash-border);
+}
+
+
+/* Logo reste vert */
+
+body.light-theme .dashboard-logo {
+    color: var(--grey-900);
+
+    background: var(--green);
+}
+
+
+body.light-theme .dashboard-logo:hover {
+    color: var(--grey-900);
+}
+
+
+/* Navigation */
+
+body.light-theme
+.dashboard-sidebar
+.dashboard-nav-icon {
+
+    color: #697168;
+
+    background: transparent;
+}
+
+
+body.light-theme
+.dashboard-sidebar
+.dashboard-nav-icon:hover {
+
+    color: #20251f;
+
+    background: #edf0e9;
+}
+
+
+body.light-theme
+.dashboard-sidebar
+.dashboard-nav-icon.active {
+
+    color: var(--green);
+
+    background:
+        rgba(164, 207, 57, 0.12);
+}
+
+
+/* Bouton changement de thème */
+
+body.light-theme #themeToggle {
+    color: #697168;
+
+    background: transparent;
+}
+
+
+body.light-theme #themeToggle:hover {
+    color: var(--green);
+
+    background:
+        rgba(164, 207, 57, 0.12);
+}
+
+
+/* Partie utilisateur */
+
+body.light-theme .dashboard-sidebar-user {
+    border-top:
+        1px solid var(--dash-border);
+}
+
+
+/* Avatar reste vert */
+
+body.light-theme .dashboard-avatar {
+    color: var(--grey-900);
+
+    background: var(--green);
+}
+
+
+body.light-theme .dashboard-avatar:hover {
+    color: var(--grey-900);
+
+    box-shadow:
+        0 8px 22px rgba(29, 36, 27, 0.14);
+}
+
+
+/* ==========================================================
+   CARTE PRINCIPALE
+   Elle reste verte dans les deux thèmes
+========================================================== */
+
+body.light-theme .balance-card {
+    color: #171b15;
+
+    background: var(--green);
+}
+
+
+/* ==========================================================
+   DROPDOWN — LIGHT
+========================================================== */
+
+body.light-theme .dropdown-menu {
+    background: #ffffff;
+
+    border-color:
+        var(--dash-border);
+
+    box-shadow:
+        0 14px 38px rgba(29, 36, 27, 0.12);
+}
+
+
+body.light-theme .dropdown-item {
+    color: #20251f;
+}
+
+
+body.light-theme .dropdown-item:hover,
+body.light-theme .dropdown-item:focus {
+    color: #20251f;
+
+    background: #edf0e9;
+}
+
+
+body.light-theme .dropdown-divider {
+    border-color:
+        var(--dash-border);
+}
+
+
+/* ==========================================================
+   OFFCANVAS MOBILE — LIGHT
+========================================================== */
+
+body.light-theme .dashboard-offcanvas {
+    color: var(--dash-text);
+
+    background: #ffffff;
+}
+
+
+body.light-theme
+.dashboard-offcanvas
+.offcanvas-header {
+
+    border-bottom-color:
+        var(--dash-border);
+}
+
+
+body.light-theme
+.dashboard-offcanvas
+.btn-close {
+
+    filter: none;
+}
+
+
+/* Navigation mobile */
+
+body.light-theme .mobile-nav-link {
+    color: var(--dash-muted);
+
+    background: transparent;
+}
+
+
+body.light-theme .mobile-nav-link:hover {
+    color: var(--dash-text);
+
+    background:
+        var(--dash-surface-hover);
+}
+
+
+body.light-theme .mobile-nav-link.active {
+    color: var(--green);
+
+    background:
+        var(--dash-green-soft);
+}
+
+
+body.light-theme .mobile-nav-divider {
+    background:
+        var(--dash-border);
+}
+
+
+/* Bouton menu mobile */
+
+body.light-theme .mobile-menu-button {
+    color: var(--dash-text);
+
+    background: #ffffff;
+
+    border-color:
+        var(--dash-border);
+}
+
+
+/* Logo mobile reste vert */
+
+body.light-theme .mobile-logo {
+    color: var(--grey-900);
+
+    background: var(--green);
+}
+
+
+/* ==========================================================
+   18. RESPONSIVE — TABLETTE
+========================================================== */
+
+@media (max-width: 1199.98px) {
+
+    .financial-grid {
+        grid-template-columns:
+            minmax(260px, 0.85fr)
+            minmax(0, 1.6fr);
+    }
+
+
+    .recent-payment-row {
+        grid-template-columns:
+            auto
+            1.2fr
+            1fr
+            0.8fr
+            auto;
+    }
+
+
+    .payment-status-wrapper {
+        display: none;
+    }
+
+}
+
+
+/* ==========================================================
+   19. RESPONSIVE — < 992px
+========================================================== */
+
+@media (max-width: 991.98px) {
+
+    .dashboard-main {
+        margin-left: 0;
+    }
+
+
+    .dashboard-container {
+        max-width: 900px;
+
+        padding-top: 1.2rem;
+    }
+
+
+    .financial-grid {
+        grid-template-columns:
+            minmax(240px, 0.8fr)
+            minmax(0, 1.4fr);
+    }
+
+}
+
+
+/* ==========================================================
+   20. RESPONSIVE — TABLETTE VERTICALE
+========================================================== */
+
+@media (max-width: 767.98px) {
+
+    .dashboard-page-header {
+        align-items: flex-start;
+    }
+
+
+    .financial-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .balance-card {
+        min-height: 360px;
+    }
+
+
+    .financial-small-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        grid-template-rows: auto;
+    }
+
+
+    .financial-mini-card {
+        min-height: 195px;
+    }
+
+
+    .recent-payment-row {
+        grid-template-columns:
+            auto
+            1fr
+            auto;
+    }
+
+
+    .payment-date,
+    .payment-status-wrapper {
+        display: none;
+    }
+
+
+    .payment-amount {
+        align-items: flex-end;
+    }
+
+
+    .dashboard-footer {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+}
+
+
+/* ==========================================================
+   21. RESPONSIVE — MOBILE
+========================================================== */
+
+@media (max-width: 575.98px) {
+
+    .dashboard-container {
+        padding-left: 0.85rem;
+        padding-right: 0.85rem;
+    }
+
+
+    .dashboard-page-header {
+        flex-direction: column;
+
+        gap: 1rem;
+
+        margin-bottom: 1.35rem;
+    }
+
+
+    .academic-year-badge {
+        min-height: 40px;
+    }
+
+
+    .balance-card {
+        min-height: 340px;
+
+        padding: 1.35rem;
+    }
+
+
+    .balance-card-icon {
+        margin-bottom: 1.7rem;
+    }
+
+
+    .financial-small-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    /*
+     * L'échéance reste la première carte
+     * après le solde sur mobile.
+     */
+
+    .deadline-card {
+        order: 1;
+    }
+
+
+    .paid-card {
+        order: 2;
+    }
+
+
+    .semester-complete {
+        order: 3;
+    }
+
+
+    .semester-current {
+        order: 4;
+    }
+
+
+    .financial-mini-card {
+        min-height: 180px;
+    }
+
+
+    .section-header {
+        align-items: center;
+    }
+
+
+    .recent-payments-section {
+        padding: 1rem;
+    }
+
+
+    .recent-payment-row {
+        grid-template-columns:
+            auto
+            minmax(0, 1fr)
+            auto;
+
+        gap: 0.7rem;
+
+        padding: 0.8rem;
+    }
+
+
+    .payment-date {
+        display: none;
+    }
+
+
+    .payment-reference span,
+    .payment-amount span {
+        display: none;
+    }
+
+
+    .payment-reference strong,
+    .payment-amount strong {
+        font-size: 0.72rem;
+    }
+
+
+    .payment-arrow {
+        display: none;
+    }
+
+
+    .balance-meta {
+        grid-template-columns: 1fr;
+    }
+
+}

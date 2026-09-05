@@ -1,0 +1,797 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Vérifier un étudiant | AcademicPay</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    >
+
+    <link rel="stylesheet" href="{% static 'css/espace_supervisor/student-verification.css' %}">
+</head>
+
+<body>
+
+<div class="d-flex min-vh-100">
+
+    <!-- =====================================================
+         SIDEBAR DESKTOP
+    ====================================================== -->
+    <aside
+        class="supervisor-sidebar d-none d-lg-flex flex-column
+               justify-content-between position-fixed top-0 start-0"
+    >
+
+        <div>
+
+            <a
+                href="{% url 'supervisor_dashboard' %}"
+                class="sidebar-logo d-flex align-items-center
+                       justify-content-center text-decoration-none"
+                aria-label="Accueil"
+            >
+                <i class="bi bi-mortarboard-fill"></i>
+            </a>
+
+            <nav class="nav flex-column align-items-center gap-3 mt-4">
+
+                <!-- Accueil -->
+                <a
+                    href="{% url 'supervisor_dashboard' %}"
+                    class="sidebar-icon"
+                    title="Accueil"
+                    aria-label="Accueil"
+                >
+                    <i class="bi bi-house-door-fill"></i>
+                </a>
+
+                <!-- Vérification : actif -->
+                <a
+                    href="{% url 'supervisor_verification' %}"
+                    class="sidebar-icon active"
+                    title="Vérifier un étudiant"
+                    aria-label="Vérifier un étudiant"
+                    aria-current="page"
+                >
+                    <i class="bi bi-person-check"></i>
+                </a>
+
+                <!-- Historique -->
+                <a
+                    href="{% url 'supervisor_history' %}"
+                    class="sidebar-icon"
+                    title="Historique"
+                    aria-label="Historique"
+                >
+                    <i class="bi bi-clock-history"></i>
+                </a>
+
+            </nav>
+
+        </div>
+
+        <div>
+
+            <!-- Thème -->
+            <div class="d-flex justify-content-center py-3">
+
+                <button
+                    class="sidebar-icon border-0"
+                    type="button"
+                    id="themeToggle"
+                    title="Thème"
+                    aria-label="Changer le thème"
+                >
+                    <i class="bi bi-moon-stars"></i>
+                </button>
+
+            </div>
+
+            <!-- Utilisateur -->
+            <div class="sidebar-user d-flex justify-content-center py-4">
+
+                <div class="dropdown">
+
+                    <button
+                        class="supervisor-avatar border-0 rounded-circle
+                               d-flex align-items-center justify-content-center"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        aria-label="Menu utilisateur"
+                    >
+                        {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" alt="{{ user.full_congolese_name }}" class="rounded-circle" width="40" height="40">
+                        {% else %}
+                        <i class="bi bi-person-fill"></i>
+                        {% endif %}
+                    </button>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+
+                        <li>
+                            <a
+                                class="dropdown-item"
+                                href="{% url 'supervisor_profile' %}"
+                            >
+                                <i class="bi bi-person me-2"></i>
+                                Mon compte
+                            </a>
+                        </li>
+
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <a
+                                class="dropdown-item"
+                                href="{% url 'logout' %}"
+                            >
+                                <i class="bi bi-box-arrow-right me-2"></i>
+                                Déconnexion
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         CONTENU PRINCIPAL
+    ====================================================== -->
+    <main class="supervisor-main flex-grow-1">
+
+        <div class="container-fluid verification-container">
+
+            <!-- =================================================
+                 HEADER MOBILE
+            ================================================== -->
+            <header
+                class="d-flex d-lg-none justify-content-between
+                       align-items-center mb-4"
+            >
+
+                <a
+                    href="{% url 'supervisor_dashboard' %}"
+                    class="mobile-logo d-flex align-items-center
+                           justify-content-center text-decoration-none"
+                    aria-label="Accueil"
+                >
+                    <i class="bi bi-mortarboard-fill"></i>
+                </a>
+
+                <button
+                    class="btn mobile-menu-btn"
+                    type="button"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#supervisorMobileMenu"
+                    aria-controls="supervisorMobileMenu"
+                    aria-label="Ouvrir le menu"
+                >
+                    <i class="bi bi-list"></i>
+                </button>
+
+            </header>
+
+
+            <!-- =================================================
+                 MESSAGES
+            ================================================== -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+
+            <!-- =================================================
+                 TITRE
+            ================================================== -->
+            <header class="page-header">
+
+                <span class="page-eyebrow">
+                    Contrôle d'accès
+                </span>
+
+                <h1>
+                    Vérifier un étudiant
+                </h1>
+
+                <p>
+                    Recherchez l'étudiant par son matricule afin de vérifier
+                    s'il remplit les conditions financières requises pour
+                    participer à l'évaluation.
+                </p>
+
+            </header>
+
+
+            <!-- =================================================
+                 RECHERCHE
+            ================================================== -->
+            <section class="search-section">
+
+                <div class="search-heading">
+
+                    <div class="search-icon">
+                        <i class="bi bi-search"></i>
+                    </div>
+
+                    <div>
+                        <h2>Rechercher l'étudiant</h2>
+
+                        <p>
+                            Saisissez son matricule universitaire.
+                        </p>
+                    </div>
+
+                </div>
+
+                <form id="studentSearchForm" method="get" action="{% url 'supervisor_verification' %}">
+
+                    <label
+                        for="studentMatricule"
+                        class="form-label"
+                    >
+                        Matricule de l'étudiant
+                    </label>
+
+                    <div class="search-form">
+
+                        <div class="search-input-wrapper">
+
+                            <i class="bi bi-person-vcard"></i>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="studentMatricule"
+                                name="search"
+                                placeholder="Ex. 2024-GL-001"
+                                autocomplete="off"
+                                value="{{ search_query }}"
+                                required
+                            >
+
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="btn search-btn"
+                        >
+                            <i class="bi bi-search me-2"></i>
+                            Vérifier
+                        </button>
+
+                    </div>
+
+                    <span class="search-help">
+                        Utilisez le matricule figurant sur la carte
+                        d'étudiant.
+                    </span>
+
+                </form>
+
+            </section>
+
+
+            <!-- =================================================
+                 RÉSULTAT
+            ================================================== -->
+            {% if student %}
+            <section
+                class="verification-result show"
+                id="verificationResult"
+            >
+
+                <!-- =============================================
+                     IDENTITÉ
+                ============================================== -->
+                <div class="student-header">
+
+                    <div class="student-identity">
+
+                        <div class="student-avatar-large">
+                            {% with initials=student.full_congolese_name|slice:":2" %}
+                                {{ initials|upper }}
+                            {% endwith %}
+                        </div>
+
+                        <div>
+
+                            <span class="result-label">
+                                Étudiant
+                            </span>
+
+                            <h2>
+                                {{ student.full_congolese_name }}
+                            </h2>
+
+                            <div class="student-meta">
+
+                                <span>
+                                    <i class="bi bi-person-vcard"></i>
+                                    {{ student.registration_num|default:"Sans ID" }}
+                                </span>
+
+                                <span>
+                                    <i class="bi bi-mortarboard"></i>
+                                    {% if student.academic_program %}
+                                        {{ student.academic_program.get_level_display }} {{ student.academic_program.program.name }}
+                                    {% else %}
+                                        Programme non défini
+                                    {% endif %}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <span class="student-status-active">
+                        <i class="bi bi-check-circle-fill"></i>
+                        Étudiant actif
+                    </span>
+
+                </div>
+
+
+                <!-- =============================================
+                     DÉCISION
+                ============================================== -->
+                <div class="eligibility-card {% if payment_status == 'clear' %}authorized{% elif payment_status == 'partial' %}partial{% else %}unauthorized{% endif %}">
+
+                    <div class="eligibility-icon">
+                        <i class="bi 
+                            {% if payment_status == 'clear' %}bi-check-lg
+                            {% elif payment_status == 'partial' %}bi-hourglass-split
+                            {% else %}bi-x-lg{% endif %}"></i>
+                    </div>
+
+                    <div class="eligibility-content">
+
+                        <span class="eligibility-label">
+                            Statut pour l'évaluation
+                        </span>
+
+                        <h2>
+                            {% if payment_status == 'clear' %}
+                                Autorisé à passer l'évaluation
+                            {% elif payment_status == 'partial' %}
+                                Partiellement autorisé
+                            {% else %}
+                                Non autorisé
+                            {% endif %}
+                        </h2>
+
+                        <p>
+                            {{ status_message }}
+                            {% if has_anomaly %}
+                                <br><span class="text-danger"><i class="bi bi-exclamation-triangle"></i> Une anomalie a été détectée sur les paiements de cet étudiant.</span>
+                            {% endif %}
+                        </p>
+
+                    </div>
+
+                    <div class="eligibility-badge">
+                        <i class="bi 
+                            {% if payment_status == 'clear' %}bi-shield-check
+                            {% elif payment_status == 'partial' %}bi-clock
+                            {% else %}bi-shield-x{% endif %}"></i>
+                        {% if payment_status == 'clear' %}
+                            AUTORISÉ
+                        {% elif payment_status == 'partial' %}
+                            PARTIEL
+                        {% else %}
+                            NON AUTORISÉ
+                        {% endif %}
+                    </div>
+
+                </div>
+
+
+                <!-- =============================================
+                     SITUATION FINANCIÈRE
+                ============================================== -->
+                <div class="financial-section">
+
+                    <div class="section-heading">
+
+                        <div>
+                            <span class="section-eyebrow">
+                                Informations de contrôle
+                            </span>
+
+                            <h2>
+                                Situation financière
+                            </h2>
+                        </div>
+
+                        <span class="academic-year">
+                            Année académique
+                            <strong>{{ current_academic_year }}</strong>
+                        </span>
+
+                    </div>
+
+                    <div class="row g-3">
+
+                        <!-- Total -->
+                        <div class="col-12 col-md-4">
+
+                            <article class="financial-card">
+
+                                <div class="financial-icon">
+                                    <i class="bi bi-wallet2"></i>
+                                </div>
+
+                                <span>
+                                    Total des frais
+                                </span>
+
+                                <strong>
+                                    {% if total_fees %}
+                                        {{ total_fees|floatformat:2 }} $
+                                    {% else %}
+                                        Non défini
+                                    {% endif %}
+                                </strong>
+
+                            </article>
+
+                        </div>
+
+                        <!-- Payé -->
+                        <div class="col-12 col-md-4">
+
+                            <article class="financial-card">
+
+                                <div class="financial-icon success">
+                                    <i class="bi bi-check-circle"></i>
+                                </div>
+
+                                <span>
+                                    Montant validé
+                                </span>
+
+                                <strong>
+                                    {% if total_paid %}
+                                        {{ total_paid|floatformat:2 }} $
+                                    {% else %}
+                                        0,00 $
+                                    {% endif %}
+                                </strong>
+
+                            </article>
+
+                        </div>
+
+                        <!-- Reste -->
+                        <div class="col-12 col-md-4">
+
+                            <article class="financial-card">
+
+                                <div class="financial-icon">
+                                    <i class="bi bi-hourglass-split"></i>
+                                </div>
+
+                                <span>
+                                    Reste à payer
+                                </span>
+
+                                <strong>
+                                    {% if remaining_balance is not None %}
+                                        {{ remaining_balance|floatformat:2 }} $
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </strong>
+
+                            </article>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Progression -->
+                    {% if total_fees %}
+                    <div class="payment-progress">
+
+                        <div class="progress-header">
+
+                            <span>
+                                Progression du paiement
+                            </span>
+
+                            <strong>
+                                {{ paid_percentage }} %
+                            </strong>
+
+                        </div>
+
+                        <div
+                            class="progress"
+                            role="progressbar"
+                            aria-label="Progression du paiement"
+                            aria-valuenow="{{ paid_percentage }}"
+                            aria-valuemin="0"
+                            aria-valuemax="100"
+                        >
+                            <div
+                                class="progress-bar"
+                                style="width: {{ paid_percentage }}%"
+                            ></div>
+                        </div>
+
+                        <div class="progress-footer">
+
+                            <span>
+                                {{ total_paid|floatformat:2 }} $ payés
+                            </span>
+
+                            <span>
+                                {{ total_fees|floatformat:2 }} $ exigés
+                            </span>
+
+                        </div>
+
+                    </div>
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =============================================
+                     RÈGLE APPLIQUÉE
+                ============================================== -->
+                <div class="rule-section">
+
+                    <div class="rule-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+
+                    <div>
+
+                        <span class="result-label">
+                            Règle appliquée
+                        </span>
+
+                        <strong>
+                            {% if total_fees %}
+                                Minimum requis pour cette évaluation : 100 % des frais
+                            {% else %}
+                                Aucun échéancier défini pour ce programme
+                            {% endif %}
+                        </strong>
+
+                        <p>
+                            {% if total_fees %}
+                                L'étudiant a réglé {{ paid_percentage }} % de ses frais académiques.
+                                {% if payment_status == 'clear' %}
+                                    Le minimum requis est donc atteint.
+                                {% elif payment_status == 'partial' %}
+                                    Un solde de {{ remaining_balance|floatformat:2 }} $ reste à payer.
+                                {% else %}
+                                    Aucun paiement n'a été enregistré.
+                                {% endif %}
+                            {% else %}
+                                Veuillez contacter le service financier pour définir l'échéancier.
+                            {% endif %}
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =============================================
+                     VÉRIFICATION ENREGISTRÉE
+                ============================================== -->
+                <div class="verification-actions">
+
+                    <span class="verification-note">
+                        <i class="bi bi-info-circle"></i>
+                        Cette vérification a été enregistrée dans l'historique.
+                        <br>
+                        <small class="text-muted">ID: #{{ verification_result.id }} - {{ verification_result.verified_at|date:"d/m/Y H:i" }}</small>
+                    </span>
+
+                    <a
+                        href="{% url 'supervisor_verification' %}"
+                        class="btn new-verification-btn"
+                    >
+                        <i class="bi bi-search me-2"></i>
+                        Vérifier un autre étudiant
+                    </a>
+
+                </div>
+
+            </section>
+            {% endif %}
+
+
+            <!-- =================================================
+                 NOTE DE SÉCURITÉ
+            ================================================== -->
+            <section class="security-note">
+
+                <i class="bi bi-lock"></i>
+
+                <p>
+                    Vous disposez d'un accès en lecture seule aux informations
+                    financières nécessaires au contrôle. Toute modification
+                    des paiements relève du service financier.
+                </p>
+
+            </section>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- =========================================================
+     MENU MOBILE
+========================================================= -->
+<div
+    class="offcanvas offcanvas-start supervisor-offcanvas"
+    tabindex="-1"
+    id="supervisorMobileMenu"
+    aria-labelledby="supervisorMobileMenuLabel"
+>
+
+    <div class="offcanvas-header">
+
+        <div class="d-flex align-items-center gap-3">
+
+            <div class="offcanvas-brand">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+            <div>
+
+                <strong id="supervisorMobileMenuLabel">
+                    AcademicPay
+                </strong>
+
+                <span>
+                    Espace surveillant
+                </span>
+
+            </div>
+
+        </div>
+
+        <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="offcanvas"
+            aria-label="Fermer"
+        ></button>
+
+    </div>
+
+    <div class="offcanvas-body">
+
+        <nav class="nav flex-column gap-1">
+
+            <a
+                href="{% url 'supervisor_dashboard' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-house-door-fill"></i>
+                <span>Accueil</span>
+            </a>
+
+            <a
+                href="{% url 'supervisor_verification' %}"
+                class="mobile-nav-link active"
+                aria-current="page"
+            >
+                <i class="bi bi-person-check"></i>
+                <span>Vérifier un étudiant</span>
+            </a>
+
+            <a
+                href="{% url 'supervisor_history' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-clock-history"></i>
+                <span>Historique</span>
+            </a>
+
+            <hr>
+
+            <a
+                href="{% url 'supervisor_profile' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-person"></i>
+                <span>Mon compte</span>
+            </a>
+
+            <a
+                href="{% url 'logout' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Déconnexion</span>
+            </a>
+
+        </nav>
+
+    </div>
+
+</div>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+></script>
+
+<!-- Theme Toggle -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('dark-theme');
+                const icon = this.querySelector('i');
+                if (document.body.classList.contains('dark-theme')) {
+                    icon.className = 'bi bi-sun-fill';
+                } else {
+                    icon.className = 'bi bi-moon-stars';
+                }
+            });
+        }
+    });
+</script>
+
+<script>
+    /*
+     * Démonstration frontend uniquement.
+     * La recherche réelle sera gérée par Django.
+     */
+
+    const searchForm = document.getElementById("studentSearchForm");
+    const matriculeInput = document.getElementById("studentMatricule");
+    const result = document.getElementById("verificationResult");
+    const newVerificationBtn = document.getElementById("newVerificationBtn");
+
+    // The form submission is now handled by Django via GET request
+
+    newVerificationBtn.addEventListener("click", function () {
+        window.location.href = "{% url 'supervisor_verification' %}";
+    });
+</script>
+
+</body>
+
+</html>

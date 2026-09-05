@@ -1,0 +1,1766 @@
+/* ==========================================================
+   ACADEMICPAY
+   FINANCE — ANOMALIES
+   ========================================================== */
+
+
+/* ==========================================================
+   HEADER
+   ========================================================== */
+
+.anomalies-header {
+    max-width: 1600px;
+    margin: 0 auto 20px;
+}
+
+.page-eyebrow,
+.card-eyebrow {
+    display: block;
+    margin-bottom: 5px;
+
+    color: var(--accent);
+
+    font-size: .68rem;
+    font-weight: 750;
+    letter-spacing: .09em;
+}
+
+.anomalies-header h1 {
+    margin: 0 0 5px;
+
+    color: var(--text);
+
+    font-size: clamp(1.5rem, 2vw, 1.9rem);
+    font-weight: 550;
+}
+
+.anomalies-header p {
+    max-width: 700px;
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: .88rem;
+    line-height: 1.6;
+}
+
+
+/* ==========================================================
+   KPI
+   ========================================================== */
+
+.anomaly-kpi-grid {
+    max-width: 1600px;
+    margin: 0 auto 13px;
+
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    gap: 11px;
+}
+
+.anomaly-kpi {
+    min-height: 112px;
+    padding: 17px;
+
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+
+    transition:
+        background var(--transition),
+        border-color var(--transition),
+        transform var(--transition),
+        box-shadow var(--transition);
+}
+
+.anomaly-kpi:hover {
+    background: var(--surface-hover);
+    border-color: var(--border-strong);
+
+    transform: translateY(-2px);
+}
+
+.anomaly-kpi-icon {
+    width: 46px;
+    height: 46px;
+    flex: 0 0 46px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-radius: 10px;
+
+    font-size: 1.05rem;
+}
+
+.anomaly-kpi-icon.danger {
+    color: var(--red);
+    background: var(--red-soft);
+}
+
+.anomaly-kpi-icon.warning {
+    color: #d6a83e;
+    background: rgba(214, 168, 62, .1);
+}
+
+.anomaly-kpi-icon.success {
+    color: var(--green);
+
+    background:
+        color-mix(
+            in srgb,
+            var(--green) 10%,
+            transparent
+        );
+}
+
+.anomaly-kpi span,
+.anomaly-kpi strong,
+.anomaly-kpi small {
+    display: block;
+}
+
+.anomaly-kpi span {
+    margin-bottom: 5px;
+
+    color: var(--muted);
+
+    font-size: .67rem;
+    font-weight: 700;
+    letter-spacing: .045em;
+}
+
+.anomaly-kpi strong {
+    margin-bottom: 4px;
+
+    color: var(--text);
+
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.anomaly-kpi small {
+    color: var(--muted);
+
+    font-size: .7rem;
+}
+
+
+/* ==========================================================
+   CARTES PAR TYPE D'ANOMALIE
+   ========================================================== */
+
+.anomaly-type-grid {
+    max-width: 1600px;
+    margin: 0 auto 13px;
+
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    gap: 11px;
+}
+
+.anomaly-type-card {
+    min-width: 0;
+    min-height: 76px;
+
+    padding: 12px 13px;
+
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+
+    gap: 10px;
+
+    color: inherit;
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        background var(--transition),
+        border-color var(--transition),
+        transform var(--transition);
+}
+
+.anomaly-type-card:hover,
+.anomaly-type-card.active {
+    background: var(--surface-hover);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 35%,
+            var(--border)
+        );
+
+    transform: translateY(-1px);
+}
+
+.anomaly-type-card > i {
+    color: var(--muted);
+
+    font-size: .8rem;
+}
+
+.anomaly-type-icon {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+
+    display: grid;
+    place-items: center;
+
+    color: #d6a83e;
+    background: rgba(214, 168, 62, .1);
+
+    border-radius: 8px;
+
+    font-size: .88rem;
+}
+
+.anomaly-type-icon.danger {
+    color: var(--red);
+    background: var(--red-soft);
+}
+
+.anomaly-type-icon.warning {
+    color: #d6a83e;
+    background: rgba(214, 168, 62, .1);
+}
+
+.anomaly-type-icon.accent {
+    color: var(--accent);
+    background: var(--accent-soft);
+}
+
+.anomaly-type-card strong,
+.anomaly-type-card span {
+    display: block;
+}
+
+.anomaly-type-card strong {
+    overflow: hidden;
+
+    margin-bottom: 3px;
+
+    color: var(--text);
+
+    font-size: .78rem;
+    font-weight: 650;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.anomaly-type-card span {
+    color: var(--muted);
+
+    font-size: .68rem;
+}
+
+
+/* ==========================================================
+   BARRE DE FILTRES
+   ========================================================== */
+
+.anomaly-filters {
+    max-width: 1600px;
+    margin: 0 auto 13px;
+    padding: 12px;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(260px, 2fr)
+        repeat(4, minmax(145px, 1fr))
+        auto;
+
+    align-items: center;
+    gap: 8px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+}
+
+
+/* ==========================================================
+   RECHERCHE
+   ========================================================== */
+
+.anomaly-search {
+    position: relative;
+
+    min-width: 0;
+}
+
+.anomaly-search > i {
+    position: absolute;
+
+    top: 50%;
+    left: 12px;
+
+    color: var(--muted);
+
+    font-size: .82rem;
+
+    transform: translateY(-50%);
+
+    pointer-events: none;
+}
+
+.anomaly-search input {
+    width: 100%;
+    height: 40px;
+
+    padding: 0 12px 0 37px;
+
+    color: var(--text);
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 7px;
+
+    outline: none;
+
+    font-size: .78rem;
+
+    transition:
+        background var(--transition),
+        border-color var(--transition),
+        box-shadow var(--transition);
+}
+
+.anomaly-search input::placeholder {
+    color: var(--muted);
+}
+
+.anomaly-search input:focus {
+    background: var(--surface);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 50%,
+            transparent
+        );
+
+    box-shadow:
+        0 0 0 3px var(--accent-soft);
+}
+
+
+/* ==========================================================
+   SELECTS DE FILTRAGE
+   ========================================================== */
+
+.anomaly-filter-control {
+    position: relative;
+
+    min-width: 0;
+}
+
+.anomaly-filter-control > i {
+    position: absolute;
+
+    top: 50%;
+    left: 11px;
+
+    z-index: 2;
+
+    color: var(--muted);
+
+    font-size: .76rem;
+
+    transform: translateY(-50%);
+
+    pointer-events: none;
+}
+
+.anomaly-filter-control select {
+    width: 100%;
+    height: 40px;
+
+    padding: 0 30px 0 34px;
+
+    color: var(--soft);
+    background-color: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 7px;
+
+    outline: none;
+
+    font-size: .76rem;
+
+    cursor: pointer;
+
+    transition:
+        background var(--transition),
+        border-color var(--transition),
+        box-shadow var(--transition);
+}
+
+.anomaly-filter-control select:hover {
+    background: var(--surface-hover);
+    border-color: var(--border-strong);
+}
+
+.anomaly-filter-control select:focus {
+    background: var(--surface);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 50%,
+            transparent
+        );
+
+    box-shadow:
+        0 0 0 3px var(--accent-soft);
+}
+
+.anomaly-filter-control option {
+    color: var(--text);
+    background: var(--surface);
+}
+
+
+/* ==========================================================
+   BOUTON RÉINITIALISER
+   ========================================================== */
+
+.reset-filter-button {
+    height: 40px;
+    min-width: 118px;
+
+    padding: 0 14px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    color: var(--muted);
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 7px;
+
+    font-size: .74rem;
+    font-weight: 650;
+
+    line-height: 1;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition:
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition),
+        transform var(--transition),
+        box-shadow var(--transition);
+}
+
+.reset-filter-button i {
+    flex: 0 0 auto;
+
+    font-size: .82rem;
+    line-height: 1;
+
+    transition: transform var(--transition);
+}
+
+.reset-filter-button:hover {
+    color: var(--text);
+    background: var(--surface-hover);
+
+    border-color: var(--border-strong);
+
+    transform: translateY(-1px);
+}
+
+.reset-filter-button:hover i {
+    color: var(--accent);
+
+    transform: rotate(-35deg);
+}
+
+.reset-filter-button:active {
+    transform: translateY(0);
+}
+
+.reset-filter-button:focus-visible {
+    outline: none;
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 45%,
+            transparent
+        );
+
+    box-shadow:
+        0 0 0 3px var(--accent-soft);
+}
+
+
+/* ==========================================================
+   CARTE LISTE
+   ========================================================== */
+
+.anomalies-list-card {
+    max-width: 1600px;
+    margin: 0 auto;
+
+    overflow: hidden;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+}
+
+.anomalies-list-header {
+    padding: 17px 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 18px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.anomalies-list-header h2 {
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: 1rem;
+    font-weight: 650;
+}
+
+.anomaly-result-count {
+    flex: 0 0 auto;
+
+    padding: 6px 10px;
+
+    color: var(--muted);
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 999px;
+
+    font-size: .7rem;
+    font-weight: 650;
+
+    white-space: nowrap;
+}
+
+
+/* ==========================================================
+   TABLEAU
+   ========================================================== */
+
+.anomalies-list-card .table-responsive {
+    width: 100%;
+
+    overflow-x: auto;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+}
+
+.anomalies-list-card .table-responsive::-webkit-scrollbar {
+    height: 8px;
+}
+
+.anomalies-list-card .table-responsive::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.anomalies-list-card .table-responsive::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+
+    border: 2px solid transparent;
+    border-radius: 999px;
+
+    background-clip: padding-box;
+}
+
+.anomalies-table {
+    width: 100%;
+    min-width: 1250px;
+
+    margin: 0;
+
+    border-collapse: collapse;
+
+    color: var(--soft);
+}
+
+.anomalies-table th {
+    padding: 12px 13px;
+
+    color: var(--muted);
+    background: var(--surface-2);
+
+    border-bottom: 1px solid var(--border);
+
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .035em;
+
+    text-align: left;
+
+    white-space: nowrap;
+}
+
+.anomalies-table td {
+    padding: 13px;
+
+    border-bottom: 1px solid var(--border);
+
+    font-size: .76rem;
+
+    vertical-align: middle;
+}
+
+.anomalies-table tbody tr {
+    transition:
+        background var(--transition),
+        box-shadow var(--transition);
+}
+
+.anomalies-table tbody tr:hover {
+    background: var(--surface-hover);
+}
+
+.anomalies-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.anomaly-row[hidden] {
+    display: none;
+}
+
+
+/* ==========================================================
+   ÉTUDIANT
+   ========================================================== */
+
+.student-cell {
+    min-width: 165px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+}
+
+.student-avatar {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--accent) 20%,
+            transparent
+        );
+
+    border-radius: 8px;
+
+    font-size: .68rem;
+    font-weight: 750;
+}
+
+.student-cell > div {
+    min-width: 0;
+}
+
+.student-cell strong,
+.student-cell small {
+    display: block;
+}
+
+.student-cell strong {
+    margin-bottom: 3px;
+
+    color: var(--text);
+
+    font-size: .76rem;
+    font-weight: 650;
+
+    white-space: nowrap;
+}
+
+.student-cell small {
+    color: var(--muted);
+
+    font-size: .66rem;
+}
+
+
+/* ==========================================================
+   RÉFÉRENCE
+   ========================================================== */
+
+.anomalies-table .reference,
+.finance-modal .reference {
+    color: var(--text);
+
+    font-size: .74rem;
+    font-weight: 650;
+
+    white-space: nowrap;
+}
+
+
+/* ==========================================================
+   TYPE D'ANOMALIE
+   ========================================================== */
+
+.anomaly-type-badge {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 5px 8px;
+
+    border-radius: 999px;
+
+    font-size: .68rem;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.anomaly-type-badge.danger {
+    color: var(--red);
+    background: var(--red-soft);
+}
+
+.anomaly-type-badge.warning {
+    color: #d6a83e;
+    background: rgba(214, 168, 62, .1);
+}
+
+.anomaly-type-badge.accent {
+    color: var(--accent);
+    background: var(--accent-soft);
+}
+
+.anomaly-type-badge:not(.danger):not(.warning):not(.accent) {
+    color: var(--soft);
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+}
+
+
+/* ==========================================================
+   PRIORITÉ
+   ========================================================== */
+
+.priority-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 58px;
+
+    padding: 5px 8px;
+
+    border-radius: 999px;
+
+    font-size: .68rem;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.priority-badge.high {
+    color: var(--red);
+    background: var(--red-soft);
+}
+
+.priority-badge.medium {
+    color: #d6a83e;
+    background: rgba(214, 168, 62, .1);
+}
+
+.priority-badge.low {
+    color: var(--muted);
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+}
+
+
+/* ==========================================================
+   STATUT
+   ========================================================== */
+
+.anomaly-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 67px;
+
+    padding: 5px 8px;
+
+    border-radius: 999px;
+
+    font-size: .68rem;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.anomaly-status.pending {
+    color: var(--red);
+    background: var(--red-soft);
+}
+
+.anomaly-status.processing {
+    color: #d6a83e;
+    background: rgba(214, 168, 62, .1);
+}
+
+.anomaly-status.resolved {
+    color: var(--green);
+
+    background:
+        color-mix(
+            in srgb,
+            var(--green) 10%,
+            transparent
+        );
+}
+
+
+/* ==========================================================
+   DATE TABLEAU
+   ========================================================== */
+
+.anomalies-table td > small {
+    display: block;
+
+    margin-top: 3px;
+
+    color: var(--muted);
+
+    font-size: .66rem;
+}
+
+
+/* ==========================================================
+   BOUTON EXAMINER
+   ========================================================== */
+
+.anomaly-view-button {
+    width: 33px;
+    height: 33px;
+
+    display: grid;
+    place-items: center;
+
+    padding: 0;
+
+    color: var(--muted);
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 7px;
+
+    font-size: .8rem;
+
+    cursor: pointer;
+
+    transition:
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition),
+        transform var(--transition),
+        box-shadow var(--transition);
+}
+
+.anomaly-view-button:hover {
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 40%,
+            transparent
+        );
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 5px 14px
+        color-mix(
+            in srgb,
+            var(--accent) 10%,
+            transparent
+        );
+}
+
+.anomaly-view-button:focus-visible {
+    outline: none;
+
+    box-shadow:
+        0 0 0 3px var(--accent-soft);
+}
+
+
+/* ==========================================================
+   EMPTY STATE
+   ========================================================== */
+
+.anomaly-empty-state {
+    min-height: 220px;
+    padding: 30px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    border-top: 1px solid var(--border);
+}
+
+.anomaly-empty-state[hidden] {
+    display: none;
+}
+
+.anomaly-empty-state > i {
+    margin-bottom: 11px;
+
+    color: var(--muted);
+
+    font-size: 1.55rem;
+}
+
+.anomaly-empty-state strong {
+    margin-bottom: 5px;
+
+    color: var(--text);
+
+    font-size: .88rem;
+}
+
+.anomaly-empty-state span {
+    max-width: 400px;
+
+    color: var(--muted);
+
+    font-size: .74rem;
+    line-height: 1.55;
+}
+
+
+/* ==========================================================
+   MODALE
+   ========================================================== */
+
+.finance-modal {
+    overflow: hidden;
+
+    color: var(--soft);
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: 14px;
+
+    box-shadow:
+        0 24px 70px rgba(0, 0, 0, .28);
+}
+
+.finance-modal .modal-header {
+    padding: 18px 20px;
+
+    align-items: center;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.finance-modal .modal-header > div > span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: var(--accent);
+
+    font-size: .67rem;
+    font-weight: 750;
+    letter-spacing: .08em;
+}
+
+.finance-modal .modal-header h2 {
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: 1rem;
+    font-weight: 650;
+}
+
+.finance-modal .modal-body {
+    max-height: min(72vh, 720px);
+
+    padding: 19px;
+
+    overflow-y: auto;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+}
+
+.finance-modal .modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.finance-modal .modal-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.finance-modal .modal-body::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+
+    border: 2px solid transparent;
+    border-radius: 999px;
+
+    background-clip: padding-box;
+}
+
+.finance-modal .btn-close {
+    opacity: .7;
+}
+
+.finance-modal .btn-close:hover {
+    opacity: 1;
+}
+
+
+/* ==========================================================
+   MODALE — STATUT / PRIORITÉ
+   ========================================================== */
+
+.anomaly-modal-status-row {
+    margin-bottom: 12px;
+
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 9px;
+}
+
+.anomaly-modal-status-row > div {
+    padding: 11px 12px;
+
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.anomaly-modal-label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: var(--muted);
+
+    font-size: .68rem;
+    font-weight: 600;
+}
+
+
+/* ==========================================================
+   BLOCS DE DÉTAIL
+   ========================================================== */
+
+.anomaly-detail-block {
+    margin-bottom: 10px;
+    padding: 15px;
+
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 9px;
+}
+
+.anomaly-detail-block-title {
+    margin-bottom: 14px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    color: var(--text);
+
+    font-size: .78rem;
+    font-weight: 700;
+}
+
+.anomaly-detail-block-title i {
+    width: 29px;
+    height: 29px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-radius: 7px;
+
+    font-size: .8rem;
+}
+
+
+/* ==========================================================
+   GRILLE DES DÉTAILS
+   ========================================================== */
+
+.anomaly-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+}
+
+.anomaly-detail-grid > div {
+    min-width: 0;
+
+    padding: 10px 11px;
+
+    background:
+        color-mix(
+            in srgb,
+            var(--surface) 55%,
+            transparent
+        );
+
+    border: 1px solid var(--border);
+    border-radius: 7px;
+}
+
+.anomaly-detail-grid span,
+.anomaly-detail-grid strong {
+    display: block;
+}
+
+.anomaly-detail-grid span {
+    margin-bottom: 5px;
+
+    color: var(--muted);
+
+    font-size: .68rem;
+}
+
+.anomaly-detail-grid strong {
+    overflow: hidden;
+
+    color: var(--text);
+
+    font-size: .8rem;
+    font-weight: 650;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* ==========================================================
+   DIAGNOSTIC
+   ========================================================== */
+
+.anomaly-diagnostic {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 9px;
+}
+
+.anomaly-diagnostic > div {
+    padding: 10px 11px;
+
+    background: rgba(214, 168, 62, .07);
+
+    border: 1px solid rgba(214, 168, 62, .17);
+    border-radius: 7px;
+}
+
+.anomaly-diagnostic span,
+.anomaly-diagnostic strong {
+    display: block;
+}
+
+.anomaly-diagnostic span {
+    margin-bottom: 5px;
+
+    color: #d6a83e;
+
+    font-size: .67rem;
+    font-weight: 650;
+}
+
+.anomaly-diagnostic strong {
+    color: var(--text);
+
+    font-size: .8rem;
+    font-weight: 650;
+}
+
+
+/* ==========================================================
+   DESCRIPTION
+   ========================================================== */
+
+.anomaly-description {
+    margin-top: 9px;
+    padding: 11px 12px;
+
+    background:
+        color-mix(
+            in srgb,
+            var(--surface) 55%,
+            transparent
+        );
+
+    border: 1px solid var(--border);
+    border-radius: 7px;
+}
+
+.anomaly-description span {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--muted);
+
+    font-size: .68rem;
+    font-weight: 650;
+}
+
+.anomaly-description p {
+    margin: 0;
+
+    color: var(--soft);
+
+    font-size: .74rem;
+    line-height: 1.6;
+}
+
+
+/* ==========================================================
+   TRAITEMENT
+   ========================================================== */
+
+.anomaly-treatment {
+    margin-top: 12px;
+    padding: 15px;
+
+    background:
+        color-mix(
+            in srgb,
+            var(--surface-2) 65%,
+            transparent
+        );
+
+    border: 1px solid var(--border);
+    border-radius: 9px;
+}
+
+.anomaly-treatment .form-label {
+    margin-bottom: 6px;
+
+    color: var(--muted);
+
+    font-size: .68rem;
+    font-weight: 650;
+}
+
+.finance-input {
+    color: var(--text) !important;
+    background-color: var(--surface) !important;
+
+    border: 1px solid var(--border) !important;
+    border-radius: 7px;
+
+    font-size: .76rem;
+}
+
+select.finance-input {
+    min-height: 40px;
+}
+
+textarea.finance-input {
+    min-height: 95px;
+
+    padding: 10px 11px;
+
+    resize: vertical;
+
+    line-height: 1.55;
+}
+
+.finance-input::placeholder {
+    color: var(--muted);
+}
+
+.finance-input:focus {
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 50%,
+            transparent
+        ) !important;
+
+    box-shadow:
+        0 0 0 3px var(--accent-soft) !important;
+}
+
+
+/* ==========================================================
+   NOTE DE LA MODALE
+   ========================================================== */
+
+.anomaly-detail-note {
+    margin-top: 12px;
+    padding: 11px 13px;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 9px;
+
+    color: var(--muted);
+    background: var(--accent-soft);
+
+    border:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--accent) 18%,
+            transparent
+        );
+
+    border-radius: 8px;
+}
+
+.anomaly-detail-note i {
+    flex: 0 0 auto;
+
+    margin-top: 2px;
+
+    color: var(--accent);
+
+    font-size: .85rem;
+}
+
+.anomaly-detail-note p {
+    margin: 0;
+
+    font-size: .72rem;
+    line-height: 1.55;
+}
+
+
+/* ==========================================================
+   FOOTER MODALE
+   ========================================================== */
+
+.finance-modal .modal-footer {
+    padding: 14px 19px;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 8px;
+
+    background:
+        color-mix(
+            in srgb,
+            var(--surface-2) 45%,
+            transparent
+        );
+
+    border-top: 1px solid var(--border);
+}
+
+.finance-modal .modal-footer .btn {
+    margin: 0;
+}
+
+
+/* ==========================================================
+   BOUTONS DE LA MODALE
+   ========================================================== */
+
+.modal-cancel,
+.modal-save,
+.modal-resolve {
+    min-height: 40px;
+
+    padding: 0 15px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    border-radius: 7px;
+
+    font-size: .76rem;
+    font-weight: 650;
+
+    transition:
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition),
+        transform var(--transition),
+        box-shadow var(--transition);
+}
+
+
+/* FERMER */
+
+.modal-cancel {
+    color: var(--soft);
+    background: transparent;
+
+    border: 1px solid var(--border);
+}
+
+.modal-cancel:hover {
+    color: var(--text);
+    background: var(--surface-hover);
+
+    border-color: var(--border-strong);
+
+    transform: translateY(-1px);
+}
+
+
+/* ENREGISTRER */
+
+.modal-save {
+    color: var(--text);
+    background: var(--surface-2);
+
+    border: 1px solid var(--border-strong);
+}
+
+.modal-save:hover {
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 40%,
+            transparent
+        );
+
+    transform: translateY(-1px);
+}
+
+
+/* MARQUER COMME RÉSOLUE */
+
+.modal-resolve {
+    color: #132016;
+    background: var(--green);
+
+    border: 1px solid var(--green);
+
+    box-shadow:
+        0 4px 12px
+        color-mix(
+            in srgb,
+            var(--green) 15%,
+            transparent
+        );
+}
+
+.modal-resolve:hover,
+.modal-resolve:focus {
+    color: #132016;
+    background: var(--green);
+
+    border-color: var(--green);
+
+    opacity: .92;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 6px 16px
+        color-mix(
+            in srgb,
+            var(--green) 20%,
+            transparent
+        );
+}
+
+.modal-cancel:focus-visible,
+.modal-save:focus-visible,
+.modal-resolve:focus-visible {
+    outline: none;
+
+    box-shadow:
+        0 0 0 3px var(--accent-soft);
+}
+
+
+/* ==========================================================
+   TOAST
+   ========================================================== */
+
+.finance-toast {
+    color: var(--soft);
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: 9px;
+
+    box-shadow:
+        0 14px 35px rgba(0, 0, 0, .2);
+}
+
+.finance-toast .toast-body {
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    font-size: .76rem;
+}
+
+.finance-toast .toast-body > i {
+    color: var(--green);
+
+    font-size: .9rem;
+}
+
+
+/* ==========================================================
+   RESPONSIVE — GRANDES TABLETTES
+   ========================================================== */
+
+@media (max-width: 1399.98px) {
+
+    .anomaly-kpi-grid,
+    .anomaly-type-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .anomaly-filters {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .anomaly-search {
+        grid-column: 1 / -1;
+    }
+
+    .reset-filter-button {
+        width: 100%;
+        min-width: 0;
+    }
+}
+
+
+/* ==========================================================
+   RESPONSIVE — TABLETTE
+   ========================================================== */
+
+@media (max-width: 991.98px) {
+
+    .anomalies-header {
+        margin-top: 5px;
+    }
+
+    .anomaly-detail-grid,
+    .anomaly-diagnostic {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+/* ==========================================================
+   RESPONSIVE — PETITE TABLETTE
+   ========================================================== */
+
+@media (max-width: 767.98px) {
+
+    .anomalies-header h1 {
+        font-size: 1.4rem;
+    }
+
+    .anomalies-header p {
+        font-size: .82rem;
+    }
+
+    .anomaly-kpi-grid,
+    .anomaly-type-grid,
+    .anomaly-filters {
+        grid-template-columns: 1fr;
+    }
+
+    .anomaly-search {
+        grid-column: auto;
+    }
+
+    .reset-filter-button {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .anomalies-list-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .anomaly-result-count {
+        align-self: flex-start;
+    }
+
+    .anomaly-modal-status-row {
+        grid-template-columns: 1fr;
+    }
+
+    .finance-modal .modal-footer {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .finance-modal .modal-footer .btn {
+        width: 100%;
+    }
+}
+
+
+/* ==========================================================
+   RESPONSIVE — MOBILE
+   ========================================================== */
+
+@media (max-width: 575.98px) {
+
+    .anomalies-header h1 {
+        font-size: 1.3rem;
+    }
+
+    .anomalies-header p {
+        font-size: .8rem;
+    }
+
+    .anomaly-kpi {
+        min-height: 105px;
+        padding: 14px;
+    }
+
+    .anomaly-kpi span {
+        font-size: .66rem;
+    }
+
+    .anomaly-kpi strong {
+        font-size: 1.15rem;
+    }
+
+    .anomaly-kpi small {
+        font-size: .7rem;
+    }
+
+    .anomaly-type-card strong {
+        font-size: .76rem;
+    }
+
+    .anomaly-type-card span {
+        font-size: .67rem;
+    }
+
+    .anomaly-search input,
+    .anomaly-filter-control select {
+        font-size: .76rem;
+    }
+
+    .reset-filter-button {
+        font-size: .74rem;
+    }
+
+    .anomalies-list-header {
+        padding: 15px;
+    }
+
+    .anomalies-table th {
+        font-size: .67rem;
+    }
+
+    .anomalies-table td {
+        font-size: .74rem;
+    }
+
+    .finance-modal .modal-body {
+        padding: 14px;
+    }
+
+    .anomaly-detail-grid,
+    .anomaly-diagnostic {
+        grid-template-columns: 1fr;
+    }
+
+    .anomaly-detail-grid strong {
+        font-size: .78rem;
+    }
+
+    .anomaly-detail-block,
+    .anomaly-treatment {
+        padding: 12px;
+    }
+
+    .anomaly-detail-note p {
+        font-size: .7rem;
+    }
+}

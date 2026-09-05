@@ -1,0 +1,1465 @@
+{% load static %}
+
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Anomalies | AcademicPay</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    >
+
+    <!-- CSS global Finance -->
+    <link rel="stylesheet" href="{% static 'css/espace_finance/finance-dashboard.css' %}">
+
+    <!-- CSS page -->
+    <link rel="stylesheet" href="{% static 'css/espace_finance/finance-anomalies.css' %}">
+</head>
+
+
+<body>
+
+<div class="finance-layout">
+
+    <!-- =====================================================
+         SIDEBAR DESKTOP
+    ====================================================== -->
+
+    <aside class="finance-sidebar d-none d-xl-flex">
+
+        <a href="{% url 'finance_dashboard' %}" class="sidebar-brand">
+
+            <div class="brand-icon">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+            <div>
+                <strong>AcademicPay</strong>
+                <span>FINANCE</span>
+            </div>
+
+        </a>
+
+
+        <nav class="sidebar-nav">
+
+            <div class="nav-section-label">
+                PRINCIPAL
+            </div>
+
+            <a href="{% url 'finance_dashboard' %}" class="sidebar-link">
+                <i class="bi bi-house-door"></i>
+                <span>ACCUEIL</span>
+            </a>
+
+            <a href="{% url 'finance_payments' %}" class="sidebar-link">
+                <i class="bi bi-credit-card-fill"></i>
+                <span>PAIEMENTS</span>
+            </a>
+
+            <a href="{% url 'finance_statements' %}" class="sidebar-link">
+                <i class="bi bi-bank"></i>
+                <span>EXTRAITS BANCAIRES</span>
+            </a>
+
+            <a href="{% url 'finance_schedule' %}" class="sidebar-link">
+                <i class="bi bi-calendar3"></i>
+                <span>ÉCHÉANCIER</span>
+            </a>
+
+
+            <div class="nav-section-label">
+                SUIVI FINANCIER
+            </div>
+
+            <a href="{% url 'finance_students' %}" class="sidebar-link">
+                <i class="bi bi-people"></i>
+                <span>SITUATIONS FINANCIÈRES</span>
+            </a>
+
+            <a href="{% url 'finance_reconciliation' %}" class="sidebar-link">
+                <i class="bi bi-arrow-left-right"></i>
+                <span>RAPPROCHEMENT GLOBAL</span>
+            </a>
+
+            <a href="{% url 'finance_anomalies' %}" class="sidebar-link active">
+
+                <i class="bi bi-exclamation-triangle"></i>
+
+                <span>ANOMALIES</span>
+
+                <span class="nav-badge" id="sidebarAnomalyCount">
+                    {{ pending_anomalies }}
+                </span>
+
+            </a>
+
+
+            <div class="nav-section-label">
+                ANALYSE
+            </div>
+
+            <a href="{% url 'finance_reports' %}" class="sidebar-link">
+                <i class="bi bi-bar-chart-line"></i>
+                <span>RAPPORTS</span>
+            </a>
+
+            <a href="{% url 'finance_history' %}" class="sidebar-link">
+                <i class="bi bi-clock-history"></i>
+                <span>HISTORIQUE</span>
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a href="{% url 'finance_profile' %}" class="finance-user">
+
+                <div class="user-avatar">
+                    {% with initials=user.full_congolese_name|slice:":2" %}
+                        {{ initials|upper }}
+                    {% endwith %}
+                </div>
+
+                <div class="user-information">
+                    <strong>{{ user.full_congolese_name }}</strong>
+                    <span>{{ user.get_staff_role_display|default:"Responsable financier" }}</span>
+                </div>
+
+                <i class="bi bi-chevron-right"></i>
+
+            </a>
+
+
+            <div class="sidebar-actions">
+
+                <button
+                    type="button"
+                    class="sidebar-action-btn"
+                    id="themeButton"
+                    title="Changer de thème"
+                >
+                    <i class="bi bi-sun"></i>
+                </button>
+
+                <a
+                    href="{% url 'finance_profile' %}"
+                    class="sidebar-action-btn"
+                    title="Paramètres"
+                >
+                    <i class="bi bi-gear"></i>
+                </a>
+
+                <a
+                    href="{% url 'logout' %}"
+                    class="sidebar-action-btn"
+                    title="Déconnexion"
+                >
+                    <i class="bi bi-box-arrow-right"></i>
+                </a>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         CONTENU PRINCIPAL
+    ====================================================== -->
+
+    <main class="finance-main">
+
+        <!-- HEADER MOBILE -->
+
+        <div class="mobile-header d-xl-none">
+
+            <button
+                class="mobile-menu-button"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#financeMobileMenu"
+                aria-label="Ouvrir le menu"
+            >
+                <i class="bi bi-list"></i>
+            </button>
+
+            <div class="mobile-brand">
+                <strong>AcademicPay</strong>
+                <span>FINANCE</span>
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             HEADER PAGE
+        ================================================== -->
+
+        <header class="anomalies-header">
+
+            <div>
+
+                <span class="page-eyebrow">
+                    CONTRÔLE FINANCIER
+                </span>
+
+                <h1>Anomalies</h1>
+
+                <p>
+                    Identifiez et suivez les incohérences détectées
+                    entre les déclarations des étudiants et les
+                    mouvements bancaires.
+                </p>
+
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             KPI
+        ================================================== -->
+
+        <section class="anomaly-kpi-grid">
+
+            <article class="anomaly-kpi">
+
+                <div class="anomaly-kpi-icon">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+
+                <div>
+                    <span>TOTAL ANOMALIES</span>
+                    <strong id="totalAnomaliesKpi">{{ total_anomalies }}</strong>
+                    <small>Détectées sur la période</small>
+                </div>
+
+            </article>
+
+
+            <article class="anomaly-kpi">
+
+                <div class="anomaly-kpi-icon danger">
+                    <i class="bi bi-hourglass-split"></i>
+                </div>
+
+                <div>
+                    <span>À TRAITER</span>
+                    <strong id="pendingAnomaliesKpi">{{ pending_anomalies }}</strong>
+                    <small>Intervention nécessaire</small>
+                </div>
+
+            </article>
+
+
+            <article class="anomaly-kpi">
+
+                <div class="anomaly-kpi-icon warning">
+                    <i class="bi bi-arrow-repeat"></i>
+                </div>
+
+                <div>
+                    <span>EN COURS</span>
+                    <strong id="processingAnomaliesKpi">{{ processing_anomalies }}</strong>
+                    <small>Cas actuellement examinés</small>
+                </div>
+
+            </article>
+
+
+            <article class="anomaly-kpi">
+
+                <div class="anomaly-kpi-icon success">
+                    <i class="bi bi-check2-circle"></i>
+                </div>
+
+                <div>
+                    <span>RÉSOLUES</span>
+                    <strong id="resolvedAnomaliesKpi">{{ resolved_anomalies }}</strong>
+                    <small>Anomalies clôturées</small>
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- =================================================
+             RÉPARTITION PAR TYPE
+        ================================================== -->
+
+        <section class="anomaly-type-grid">
+
+            <button
+                type="button"
+                class="anomaly-type-card"
+                data-type-filter="difference"
+            >
+
+                <div class="anomaly-type-icon warning">
+                    <i class="bi bi-currency-dollar"></i>
+                </div>
+
+                <div>
+                    <strong>Montants incohérents</strong>
+                    <span id="differenceCount">{{ difference_count }} anomalies</span>
+                </div>
+
+                <i class="bi bi-chevron-right"></i>
+
+            </button>
+
+
+            <button
+                type="button"
+                class="anomaly-type-card"
+                data-type-filter="unassigned"
+            >
+
+                <div class="anomaly-type-icon">
+                    <i class="bi bi-person-question"></i>
+                </div>
+
+                <div>
+                    <strong>Transactions non attribuées</strong>
+                    <span id="unassignedCount">{{ unassigned_count }} anomalies</span>
+                </div>
+
+                <i class="bi bi-chevron-right"></i>
+
+            </button>
+
+
+            <button
+                type="button"
+                class="anomaly-type-card"
+                data-type-filter="missing"
+            >
+
+                <div class="anomaly-type-icon danger">
+                    <i class="bi bi-search"></i>
+                </div>
+
+                <div>
+                    <strong>Références introuvables</strong>
+                    <span id="missingCount">{{ missing_count }} anomalies</span>
+                </div>
+
+                <i class="bi bi-chevron-right"></i>
+
+            </button>
+
+
+            <button
+                type="button"
+                class="anomaly-type-card"
+                data-type-filter="duplicate"
+            >
+
+                <div class="anomaly-type-icon accent">
+                    <i class="bi bi-files"></i>
+                </div>
+
+                <div>
+                    <strong>Doublons</strong>
+                    <span id="duplicateCount">{{ duplicate_count }} anomalies</span>
+                </div>
+
+                <i class="bi bi-chevron-right"></i>
+
+            </button>
+
+        </section>
+
+
+        <!-- =================================================
+             FILTRES
+        ================================================== -->
+
+        <section class="anomaly-filters">
+
+            <div class="anomaly-search">
+
+                <i class="bi bi-search"></i>
+
+                <input
+                    type="search"
+                    id="anomalySearch"
+                    placeholder="Rechercher étudiant, matricule ou référence..."
+                    autocomplete="off"
+                    value="{{ search_query }}"
+                >
+
+            </div>
+
+
+            <div class="anomaly-filter-control">
+
+                <i class="bi bi-bank"></i>
+
+                <select id="bankFilter">
+
+                    <option value="all" {% if bank_filter == 'all' %}selected{% endif %}>
+                        Toutes les banques
+                    </option>
+
+                    {% for bank in banks %}
+                    <option value="{{ bank.code|lower }}" {% if bank_filter == bank.code|lower %}selected{% endif %}>
+                        {{ bank.name }}
+                    </option>
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <div class="anomaly-filter-control">
+
+                <i class="bi bi-funnel"></i>
+
+                <select id="typeFilter">
+
+                    <option value="all" {% if type_filter == 'all' %}selected{% endif %}>
+                        Tous les types
+                    </option>
+
+                    <option value="difference" {% if type_filter == 'difference' %}selected{% endif %}>
+                        Montant incohérent
+                    </option>
+
+                    <option value="unassigned" {% if type_filter == 'unassigned' %}selected{% endif %}>
+                        Transaction non attribuée
+                    </option>
+
+                    <option value="missing" {% if type_filter == 'missing' %}selected{% endif %}>
+                        Référence introuvable
+                    </option>
+
+                    <option value="duplicate" {% if type_filter == 'duplicate' %}selected{% endif %}>
+                        Doublon
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="anomaly-filter-control">
+
+                <i class="bi bi-activity"></i>
+
+                <select id="statusFilter">
+
+                    <option value="all" {% if status_filter == 'all' %}selected{% endif %}>
+                        Tous les statuts
+                    </option>
+
+                    <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>
+                        À traiter
+                    </option>
+
+                    <option value="processing" {% if status_filter == 'processing' %}selected{% endif %}>
+                        En cours
+                    </option>
+
+                    <option value="resolved" {% if status_filter == 'resolved' %}selected{% endif %}>
+                        Résolue
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="anomaly-filter-control">
+
+                <i class="bi bi-flag"></i>
+
+                <select id="priorityFilter">
+
+                    <option value="all" {% if priority_filter == 'all' %}selected{% endif %}>
+                        Toutes les priorités
+                    </option>
+
+                    <option value="high" {% if priority_filter == 'high' %}selected{% endif %}>
+                        Élevée
+                    </option>
+
+                    <option value="medium" {% if priority_filter == 'medium' %}selected{% endif %}>
+                        Moyenne
+                    </option>
+
+                    <option value="low" {% if priority_filter == 'low' %}selected{% endif %}>
+                        Faible
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="reset-filter-button"
+                id="resetFilters"
+                title="Réinitialiser les filtres"
+            >
+                <i class="bi bi-arrow-counterclockwise"></i>
+            </button>
+
+        </section>
+
+
+        <!-- =================================================
+             LISTE DES ANOMALIES
+        ================================================== -->
+
+        <section class="anomalies-list-card">
+
+            <div class="anomalies-list-header">
+
+                <div>
+
+                    <span class="card-eyebrow">
+                        ANOMALIES DÉTECTÉES
+                    </span>
+
+                    <h2>
+                        Liste des anomalies
+                    </h2>
+
+                </div>
+
+                <span
+                    class="anomaly-result-count"
+                    id="resultCount"
+                >
+                    {{ result_count }} anomalie{{ result_count|pluralize }} affichée{{ result_count|pluralize }}
+                </span>
+
+            </div>
+
+
+            <div class="table-responsive">
+
+                <table class="anomalies-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>Étudiant</th>
+                            <th>Référence</th>
+                            <th>Banque</th>
+                            <th>Type</th>
+                            <th>Montant</th>
+                            <th>Priorité</th>
+                            <th>Statut</th>
+                            <th>Date</th>
+                            <th></th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for anomaly in anomalies %}
+                        <tr
+                            class="anomaly-row"
+                            data-type="{{ anomaly.type }}"
+                            data-bank="{{ anomaly.bank }}"
+                            data-status="
+                                {% if anomaly.status == 'OPEN' and anomaly.status_display == 'En cours' %}processing
+                                {% elif anomaly.status == 'OPEN' %}pending
+                                {% else %}resolved{% endif %}"
+                            data-priority="{{ anomaly.priority }}"
+                        >
+
+                            <td>
+
+                                <div class="student-cell">
+
+                                    <span class="student-avatar">
+                                        {% with initials=anomaly.student_name|slice:":2" %}
+                                            {{ initials|upper }}
+                                        {% endwith %}
+                                    </span>
+
+                                    <div>
+
+                                        <strong>
+                                            {{ anomaly.student_name }}
+                                        </strong>
+
+                                        <small>
+                                            {{ anomaly.student_registration }}
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+
+                            <td class="reference">
+                                {{ anomaly.reference }}
+                            </td>
+
+
+                            <td>
+                                {{ anomaly.bank_name }}
+                            </td>
+
+
+                            <td>
+
+                                <span class="anomaly-type-badge {{ anomaly.type_badge_class }}">
+                                    {{ anomaly.type_label }}
+                                </span>
+
+                            </td>
+
+
+                            <td>
+                                {{ anomaly.amount|floatformat:2 }} $
+                            </td>
+
+
+                            <td>
+
+                                <span class="priority-badge {{ anomaly.priority }}">
+                                    {{ anomaly.priority_label }}
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                <span class="anomaly-status 
+                                    {% if anomaly.status == 'OPEN' and anomaly.status_display == 'En cours' %}processing
+                                    {% elif anomaly.status == 'OPEN' %}pending
+                                    {% else %}resolved{% endif %}">
+                                    {{ anomaly.status_display }}
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                {{ anomaly.date }}
+
+                                <small>
+                                    {{ anomaly.time }}
+                                </small>
+
+                            </td>
+
+
+                            <td>
+
+                                <button
+                                    type="button"
+                                    class="anomaly-view-button"
+                                    title="Examiner"
+                                    data-student="{{ anomaly.student_name }}"
+                                    data-matricule="{{ anomaly.student_registration }}"
+                                    data-reference="{{ anomaly.reference }}"
+                                    data-bank="{{ anomaly.bank_name }}"
+                                    data-type-label="{{ anomaly.type_label }}"
+                                    data-amount="{{ anomaly.amount|floatformat:2 }} $"
+                                    data-priority-label="{{ anomaly.priority_label }}"
+                                    data-status-label="{{ anomaly.status_display }}"
+                                    data-date="{{ anomaly.date }} à {{ anomaly.time }}"
+                                    data-description="{{ anomaly.description }}"
+                                    data-bank-reference="{{ anomaly.bank_reference }}"
+                                    data-bank-amount="{% if anomaly.bank_amount %}{{ anomaly.bank_amount|floatformat:2 }} ${% else %}—{% endif %}"
+                                    data-declared-amount="{{ anomaly.amount|floatformat:2 }} $"
+                                    data-anomaly-id="{{ anomaly.id }}"
+                                    data-claim-id="{{ anomaly.claim_id }}"
+                                    data-status="
+                                        {% if anomaly.status == 'OPEN' and anomaly.status_display == 'En cours' %}processing
+                                        {% elif anomaly.status == 'OPEN' %}pending
+                                        {% else %}resolved{% endif %}"
+                                    data-priority="{{ anomaly.priority }}"
+                                    data-note=""
+                                >
+                                    <i class="bi bi-eye"></i>
+                                </button>
+
+                            </td>
+
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="9" class="text-center py-4 text-muted">
+                                <i class="bi bi-check-circle fs-2 d-block mb-2 text-success"></i>
+                                <p class="mb-0">Aucune anomalie trouvée</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- =================================================
+                 PAGINATION
+            ================================================== -->
+
+            {% if anomalies_page.has_other_pages %}
+            <nav aria-label="Navigation des anomalies" class="mt-4">
+                <ul class="pagination justify-content-center">
+
+                    {% if anomalies_page.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ anomalies_page.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if bank_filter != 'all' %}&bank={{ bank_filter }}{% endif %}{% if type_filter != 'all' %}&type={{ type_filter }}{% endif %}{% if status_filter != 'all' %}&status={{ status_filter }}{% endif %}{% if priority_filter != 'all' %}&priority={{ priority_filter }}{% endif %}">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in anomalies_page.paginator.page_range %}
+                        {% if anomalies_page.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% elif num > anomalies_page.number|add:'-3' and num < anomalies_page.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if bank_filter != 'all' %}&bank={{ bank_filter }}{% endif %}{% if type_filter != 'all' %}&type={{ type_filter }}{% endif %}{% if status_filter != 'all' %}&status={{ status_filter }}{% endif %}{% if priority_filter != 'all' %}&priority={{ priority_filter }}{% endif %}">
+                                    {{ num }}
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if anomalies_page.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ anomalies_page.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if bank_filter != 'all' %}&bank={{ bank_filter }}{% endif %}{% if type_filter != 'all' %}&type={{ type_filter }}{% endif %}{% if status_filter != 'all' %}&status={{ status_filter }}{% endif %}{% if priority_filter != 'all' %}&priority={{ priority_filter }}{% endif %}">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                </ul>
+            </nav>
+            {% endif %}
+
+
+            <!-- =================================================
+                 AUCUN RÉSULTAT
+            ================================================== -->
+
+            <div
+                class="anomaly-empty-state"
+                id="emptyState"
+                hidden
+            >
+
+                <i class="bi bi-search"></i>
+
+                <strong>
+                    Aucune anomalie trouvée
+                </strong>
+
+                <span>
+                    Modifiez vos critères de recherche
+                    ou réinitialisez les filtres.
+                </span>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- =====================================================
+     MENU MOBILE
+===================================================== -->
+
+<div
+    class="offcanvas offcanvas-start finance-offcanvas"
+    tabindex="-1"
+    id="financeMobileMenu"
+>
+
+    <div class="offcanvas-header">
+
+        <div class="sidebar-brand">
+
+            <div class="brand-icon">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+            <div>
+                <strong>AcademicPay</strong>
+                <span>FINANCE</span>
+            </div>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="offcanvas"
+            aria-label="Fermer"
+        ></button>
+
+    </div>
+
+
+    <div class="offcanvas-body">
+
+        <nav class="mobile-navigation">
+
+            <a
+                href="{% url 'finance_dashboard' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-house-door-fill"></i>
+                Accueil
+            </a>
+
+
+            <a
+                href="{% url 'finance_payments' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-credit-card"></i>
+                Paiements
+            </a>
+
+
+            <a
+                href="{% url 'finance_statements' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-bank"></i>
+                Extraits bancaires
+            </a>
+
+
+            <a
+                href="{% url 'finance_schedule' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-calendar3"></i>
+                Échéancier
+            </a>
+
+
+            <a
+                href="{% url 'finance_students' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-people"></i>
+                Situations financières
+            </a>
+
+
+            <a
+                href="{% url 'finance_reconciliation' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-arrow-left-right"></i>
+                Rapprochement global
+            </a>
+
+
+            <a
+                href="{% url 'finance_anomalies' %}"
+                class="mobile-nav-link active"
+            >
+                <i class="bi bi-exclamation-triangle"></i>
+
+                Anomalies
+
+                <span
+                    class="mobile-badge"
+                    id="mobileAnomalyCount"
+                >
+                    {{ pending_anomalies }}
+                </span>
+            </a>
+
+
+            <a
+                href="{% url 'finance_reports' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-bar-chart-line"></i>
+                Rapports
+            </a>
+
+
+            <a
+                href="{% url 'finance_history' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-clock-history"></i>
+                Historique
+            </a>
+
+
+            <hr>
+
+
+            <a
+                href="{% url 'finance_profile' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-person"></i>
+                Mon compte
+            </a>
+
+
+            <a
+                href="{% url 'logout' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-box-arrow-right"></i>
+                Déconnexion
+            </a>
+
+        </nav>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     MODALE — EXAMINER UNE ANOMALIE
+===================================================== -->
+
+<div
+    class="modal fade"
+    id="anomalyDetailModal"
+    tabindex="-1"
+    aria-labelledby="anomalyDetailModalLabel"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+
+        <div class="modal-content finance-modal">
+
+            <!-- =================================================
+                 HEADER MODALE
+            ================================================== -->
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span>
+                        ANOMALIE FINANCIÈRE
+                    </span>
+
+                    <h2 id="anomalyDetailModalLabel">
+                        Examiner l'anomalie
+                    </h2>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal"
+                    aria-label="Fermer"
+                ></button>
+
+            </div>
+
+
+            <!-- =================================================
+                 BODY
+            ================================================== -->
+
+            <div class="modal-body">
+
+                <!-- =============================================
+                     STATUT / PRIORITÉ
+                ============================================== -->
+
+                <div class="anomaly-modal-status-row">
+
+                    <div>
+
+                        <span class="anomaly-modal-label">
+                            Statut
+                        </span>
+
+                        <span
+                            class="anomaly-status pending"
+                            id="modalAnomalyStatus"
+                        >
+                            À traiter
+                        </span>
+
+                    </div>
+
+
+                    <div>
+
+                        <span class="anomaly-modal-label">
+                            Priorité
+                        </span>
+
+                        <span
+                            class="priority-badge high"
+                            id="modalAnomalyPriority"
+                        >
+                            Élevée
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =============================================
+                     INFORMATIONS ÉTUDIANT
+                ============================================== -->
+
+                <section class="anomaly-detail-block">
+
+                    <div class="anomaly-detail-block-title">
+
+                        <i class="bi bi-person"></i>
+
+                        <span>
+                            Étudiant
+                        </span>
+
+                    </div>
+
+
+                    <div class="anomaly-detail-grid">
+
+                        <div>
+
+                            <span>
+                                Nom
+                            </span>
+
+                            <strong id="modalStudent">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Matricule
+                            </span>
+
+                            <strong id="modalMatricule">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     DÉCLARATION DE PAIEMENT
+                ============================================== -->
+
+                <section class="anomaly-detail-block">
+
+                    <div class="anomaly-detail-block-title">
+
+                        <i class="bi bi-receipt"></i>
+
+                        <span>
+                            Déclaration de paiement
+                        </span>
+
+                    </div>
+
+
+                    <div class="anomaly-detail-grid">
+
+                        <div>
+
+                            <span>
+                                Référence déclarée
+                            </span>
+
+                            <strong
+                                class="reference"
+                                id="modalReference"
+                            >
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Banque
+                            </span>
+
+                            <strong id="modalBank">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Montant déclaré
+                            </span>
+
+                            <strong id="modalDeclaredAmount">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Date de détection
+                            </span>
+
+                            <strong id="modalDate">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     TRANSACTION BANCAIRE
+                ============================================== -->
+
+                <section class="anomaly-detail-block">
+
+                    <div class="anomaly-detail-block-title">
+
+                        <i class="bi bi-bank"></i>
+
+                        <span>
+                            Transaction bancaire
+                        </span>
+
+                    </div>
+
+
+                    <div class="anomaly-detail-grid">
+
+                        <div>
+
+                            <span>
+                                Référence bancaire
+                            </span>
+
+                            <strong
+                                class="reference"
+                                id="modalBankReference"
+                            >
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Montant bancaire
+                            </span>
+
+                            <strong id="modalBankAmount">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     DIAGNOSTIC
+                ============================================== -->
+
+                <section class="anomaly-detail-block">
+
+                    <div class="anomaly-detail-block-title">
+
+                        <i class="bi bi-exclamation-triangle"></i>
+
+                        <span>
+                            Diagnostic
+                        </span>
+
+                    </div>
+
+
+                    <div class="anomaly-diagnostic">
+
+                        <div>
+
+                            <span>
+                                Type d'anomalie
+                            </span>
+
+                            <strong id="modalAnomalyType">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Montant concerné
+                            </span>
+
+                            <strong id="modalAmount">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="anomaly-description">
+
+                        <span>
+                            Description
+                        </span>
+
+                        <p id="modalDescription">
+                            —
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     TRAITEMENT
+                ============================================== -->
+
+                <section class="anomaly-treatment">
+
+                    <div class="anomaly-detail-block-title">
+
+                        <i class="bi bi-pencil-square"></i>
+
+                        <span>
+                            Traitement de l'anomalie
+                        </span>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label
+                            for="anomalyTreatmentStatus"
+                            class="form-label"
+                        >
+                            Statut
+                        </label>
+
+
+                        <select
+                            class="form-select finance-input"
+                            id="anomalyTreatmentStatus"
+                        >
+
+                            <option value="pending">
+                                À traiter
+                            </option>
+
+                            <option value="processing">
+                                En cours
+                            </option>
+
+                            <option value="resolved">
+                                Résolue
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div>
+
+                        <label
+                            for="anomalyTreatmentNote"
+                            class="form-label"
+                        >
+                            Note de traitement
+                        </label>
+
+
+                        <textarea
+                            class="form-control finance-input"
+                            id="anomalyTreatmentNote"
+                            rows="4"
+                            placeholder="Ajoutez une observation concernant le traitement de cette anomalie..."
+                        ></textarea>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     NOTE
+                ============================================== -->
+
+                <div class="anomaly-detail-note">
+
+                    <i class="bi bi-info-circle"></i>
+
+                    <p>
+                        Vérifiez les informations de la déclaration
+                        et de la transaction bancaire avant de
+                        modifier le statut de l'anomalie.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 FOOTER MODALE
+            ================================================== -->
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn modal-cancel"
+                    data-bs-dismiss="modal"
+                >
+                    Fermer
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn modal-save"
+                    id="saveAnomalyButton"
+                >
+                    <i class="bi bi-floppy"></i>
+                    Enregistrer
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn modal-resolve"
+                    id="resolveAnomalyButton"
+                >
+                    <i class="bi bi-check2-circle"></i>
+                    Marquer comme résolue
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     TOAST
+===================================================== -->
+
+<div
+    class="toast-container position-fixed bottom-0 end-0 p-3"
+>
+
+    <div
+        id="financeToast"
+        class="toast finance-toast"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+    >
+
+        <div class="toast-body">
+
+            <i class="bi bi-check-circle-fill"></i>
+
+            <span id="toastMessage">
+                Opération effectuée.
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<!-- Bootstrap -->
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+></script>
+
+<!-- Page JavaScript -->
+<script src="{% static 'js/espace_finance/finance-anomalies.js' %}"></script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,1303 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>Aide & support | AcademicPay</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    >
+
+    <!-- Styles globaux -->
+    <link rel="stylesheet" href="{% static 'css/espace_etudiant/style.css' %}">
+
+    <!-- Dashboard -->
+    <link rel="stylesheet" href="{% static 'css/espace_etudiant/dashbord.css' %}">
+
+    <!-- Page -->
+    <link rel="stylesheet" href="{% static 'css/espace_etudiant/help.css' %}">
+</head>
+
+
+<body>
+
+<div class="d-flex min-vh-100">
+
+
+    <!-- =====================================================
+         SIDEBAR DESKTOP
+    ====================================================== -->
+
+    <aside
+        class="
+            dashboard-sidebar
+            d-none
+            d-lg-flex
+            flex-column
+            justify-content-between
+            position-fixed
+            top-0
+            start-0
+        "
+    >
+
+        <div>
+
+            <!-- Logo -->
+
+            <a
+                href="{% url 'student_dashboard' %}"
+                class="
+                    dashboard-logo
+                    d-flex
+                    align-items-center
+                    justify-content-center
+                "
+                title="Accueil"
+            >
+                <i class="bi bi-mortarboard-fill"></i>
+            </a>
+
+
+            <!-- Navigation -->
+
+            <nav
+                class="
+                    nav
+                    flex-column
+                    align-items-center
+                    gap-3
+                    mt-4
+                "
+            >
+
+                <a
+                    href="{% url 'student_dashboard' %}"
+                    class="dashboard-nav-icon"
+                    title="Accueil"
+                >
+                    <i class="bi bi-house-door"></i>
+                </a>
+
+
+                <a
+                    href="{% url 'student_payments' %}"
+                    class="dashboard-nav-icon"
+                    title="Mes paiements"
+                >
+                    <i class="bi bi-credit-card"></i>
+                </a>
+
+
+                <a
+                    href="{% url 'student_declare_payment' %}"
+                    class="dashboard-nav-icon"
+                    title="Déclarer un paiement"
+                >
+                    <i class="bi bi-plus-circle"></i>
+                </a>
+
+            </nav>
+
+        </div>
+
+
+        <div>
+
+            <!-- Thème -->
+
+            <div class="d-flex justify-content-center py-4">
+
+                <button
+                    type="button"
+                    class="dashboard-nav-icon border-0"
+                    id="themeToggle"
+                    title="Passer en mode clair"
+                >
+                    <i class="bi bi-sun"></i>
+                </button>
+
+            </div>
+
+
+            <!-- Utilisateur -->
+
+            <div class="dashboard-sidebar-user py-4">
+
+                <div class="dropdown d-flex justify-content-center">
+
+                    <button
+                        class="
+                            dashboard-avatar
+                            border-0
+                            rounded-circle
+                            d-flex
+                            align-items-center
+                            justify-content-center
+                        "
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                    >
+                        {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" alt="{{ user.full_congolese_name }}" class="rounded-circle" width="40" height="40">
+                        {% else %}
+                        <i class="bi bi-person-fill"></i>
+                        {% endif %}
+                    </button>
+
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+
+                        <li>
+                            <a
+                                class="dropdown-item"
+                                href="{% url 'student_profile' %}"
+                            >
+                                <i class="bi bi-person me-2"></i>
+                                Mon compte
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <a
+                                class="dropdown-item active"
+                                href="{% url 'student_help' %}"
+                            >
+                                <i class="bi bi-question-circle me-2"></i>
+                                Aide & support
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+
+                        <li>
+                            <a
+                                class="dropdown-item"
+                                href="{% url 'logout' %}"
+                            >
+                                <i class="bi bi-box-arrow-right me-2"></i>
+                                Déconnexion
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         CONTENU PRINCIPAL
+    ====================================================== -->
+
+    <main class="dashboard-main flex-grow-1">
+
+        <div class="container help-container">
+
+
+            <!-- =================================================
+                 HEADER MOBILE
+            ================================================== -->
+
+            <header
+                class="
+                    mobile-header
+                    d-flex
+                    d-lg-none
+                    justify-content-between
+                    align-items-center
+                "
+            >
+
+                <a
+                    href="{% url 'student_dashboard' %}"
+                    class="mobile-logo"
+                >
+                    <i class="bi bi-mortarboard-fill"></i>
+                </a>
+
+
+                <button
+                    class="mobile-menu-button"
+                    type="button"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#dashboardMobileMenu"
+                >
+                    <i class="bi bi-list"></i>
+                </button>
+
+            </header>
+
+
+            <!-- =================================================
+                 EN-TÊTE
+            ================================================== -->
+
+            <header class="help-page-header">
+
+                <div>
+
+                    <span class="dashboard-eyebrow">
+                        CENTRE D'AIDE
+                    </span>
+
+                    <h1>
+                        Aide & support
+                    </h1>
+
+                    <p>
+                        Retrouvez les réponses aux questions
+                        fréquentes ou signalez un problème lié
+                        à votre paiement.
+                    </p>
+
+                </div>
+
+
+                <div class="help-header-icon">
+
+                    <i class="bi bi-headset"></i>
+
+                </div>
+
+            </header>
+
+
+            <!-- =================================================
+                 ACCÈS RAPIDES
+            ================================================== -->
+
+            <section class="help-quick-grid">
+
+
+                <!-- Déclarer paiement -->
+
+                <a
+                    href="{% url 'student_declare_payment' %}"
+                    class="help-quick-card"
+                >
+
+                    <div class="help-quick-icon">
+
+                        <i class="bi bi-plus-circle"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Déclarer un paiement
+                        </strong>
+
+                        <span>
+                            Enregistrer une nouvelle transaction
+                        </span>
+
+                    </div>
+
+
+                    <i class="bi bi-arrow-right help-arrow"></i>
+
+                </a>
+
+
+                <!-- Mes paiements -->
+
+                <a
+                    href="{% url 'student_payments' %}"
+                    class="help-quick-card"
+                >
+
+                    <div class="help-quick-icon">
+
+                        <i class="bi bi-credit-card"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Mes paiements
+                        </strong>
+
+                        <span>
+                            Consulter l'état de vos transactions
+                        </span>
+
+                    </div>
+
+
+                    <i class="bi bi-arrow-right help-arrow"></i>
+
+                </a>
+
+
+                <!-- Signaler problème -->
+
+                <button
+                    type="button"
+                    class="help-quick-card"
+                    id="openSupportForm"
+                >
+
+                    <div class="help-quick-icon">
+
+                        <i class="bi bi-exclamation-circle"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Signaler un problème
+                        </strong>
+
+                        <span>
+                            Demander une vérification
+                        </span>
+
+                    </div>
+
+
+                    <i class="bi bi-arrow-right help-arrow"></i>
+
+                </button>
+
+            </section>
+
+
+            <!-- =================================================
+                 CONTENU
+            ================================================== -->
+
+            <div class="help-content-grid">
+
+
+                <!-- =============================================
+                     FAQ
+                ============================================== -->
+
+                <section class="help-card">
+
+                    <header class="help-card-header">
+
+                        <div>
+
+                            <span class="dashboard-eyebrow">
+                                QUESTIONS FRÉQUENTES
+                            </span>
+
+                            <h2>
+                                Comment pouvons-nous vous aider ?
+                            </h2>
+
+                        </div>
+
+
+                        <div class="help-card-icon">
+
+                            <i class="bi bi-question-lg"></i>
+
+                        </div>
+
+                    </header>
+
+
+                    <div class="help-card-body">
+
+
+                        <!-- Recherche -->
+
+                        <div class="help-search">
+
+                            <i class="bi bi-search"></i>
+
+
+                            <input
+                                type="search"
+                                id="faqSearch"
+                                placeholder="Rechercher une question..."
+                                autocomplete="off"
+                                aria-label="Rechercher dans l'aide"
+                            >
+
+                        </div>
+
+
+                        <!-- FAQ -->
+
+                        <div
+                            class="accordion help-accordion"
+                            id="helpAccordion"
+                        >
+
+
+                            <!-- Question 1 -->
+
+                            <div
+                                class="accordion-item faq-item"
+                                data-search="
+                                    déclarer paiement
+                                    transaction référence banque
+                                "
+                            >
+
+                                <h2 class="accordion-header">
+
+                                    <button
+                                        class="
+                                            accordion-button
+                                            collapsed
+                                        "
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#faqOne"
+                                    >
+                                        Comment déclarer un paiement ?
+                                    </button>
+
+                                </h2>
+
+
+                                <div
+                                    id="faqOne"
+                                    class="
+                                        accordion-collapse
+                                        collapse
+                                    "
+                                    data-bs-parent="#helpAccordion"
+                                >
+
+                                    <div class="accordion-body">
+
+                                        Après avoir effectué votre
+                                        paiement auprès d'une banque
+                                        partenaire, ouvrez la page
+                                        <strong>
+                                            Déclarer un paiement
+                                        </strong>.
+
+                                        Saisissez la banque, la
+                                        référence de transaction, le
+                                        montant, la date et le semestre
+                                        concerné.
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Question 2 -->
+
+                            <div
+                                class="accordion-item faq-item"
+                                data-search="
+                                    référence transaction bancaire
+                                    trouver référence
+                                "
+                            >
+
+                                <h2 class="accordion-header">
+
+                                    <button
+                                        class="
+                                            accordion-button
+                                            collapsed
+                                        "
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#faqTwo"
+                                    >
+                                        Où trouver ma référence de
+                                        transaction ?
+                                    </button>
+
+                                </h2>
+
+
+                                <div
+                                    id="faqTwo"
+                                    class="
+                                        accordion-collapse
+                                        collapse
+                                    "
+                                    data-bs-parent="#helpAccordion"
+                                >
+
+                                    <div class="accordion-body">
+
+                                        La référence est fournie par
+                                        la banque lors du paiement.
+                                        Recopiez-la exactement telle
+                                        qu'elle apparaît sur votre
+                                        preuve de transaction.
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Question 3 -->
+
+                            <div
+                                class="accordion-item faq-item"
+                                data-search="
+                                    paiement attente pending
+                                    rapprochement validation
+                                "
+                            >
+
+                                <h2 class="accordion-header">
+
+                                    <button
+                                        class="
+                                            accordion-button
+                                            collapsed
+                                        "
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#faqThree"
+                                    >
+                                        Pourquoi mon paiement est-il
+                                        en attente ?
+                                    </button>
+
+                                </h2>
+
+
+                                <div
+                                    id="faqThree"
+                                    class="
+                                        accordion-collapse
+                                        collapse
+                                    "
+                                    data-bs-parent="#helpAccordion"
+                                >
+
+                                    <div class="accordion-body">
+
+                                        Un paiement déclaré reste en
+                                        attente tant que le système
+                                        n'a pas trouvé et vérifié la
+                                        transaction correspondante
+                                        dans les données bancaires.
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Question 4 -->
+
+                            <div
+                                class="accordion-item faq-item"
+                                data-search="
+                                    anomalie paiement problème
+                                    montant référence date
+                                "
+                            >
+
+                                <h2 class="accordion-header">
+
+                                    <button
+                                        class="
+                                            accordion-button
+                                            collapsed
+                                        "
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#faqFour"
+                                    >
+                                        Que signifie « Anomalie » ?
+                                    </button>
+
+                                </h2>
+
+
+                                <div
+                                    id="faqFour"
+                                    class="
+                                        accordion-collapse
+                                        collapse
+                                    "
+                                    data-bs-parent="#helpAccordion"
+                                >
+
+                                    <div class="accordion-body">
+
+                                        Une anomalie indique qu'un
+                                        problème empêche la validation
+                                        automatique du paiement.
+
+                                        Il peut par exemple exister
+                                        une différence entre les
+                                        informations déclarées et
+                                        celles de la transaction
+                                        bancaire.
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Question 5 -->
+
+                            <div
+                                class="accordion-item faq-item"
+                                data-search="
+                                    solde paiement validé mise à jour
+                                "
+                            >
+
+                                <h2 class="accordion-header">
+
+                                    <button
+                                        class="
+                                            accordion-button
+                                            collapsed
+                                        "
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#faqFive"
+                                    >
+                                        Quand mon solde est-il mis à
+                                        jour ?
+                                    </button>
+
+                                </h2>
+
+
+                                <div
+                                    id="faqFive"
+                                    class="
+                                        accordion-collapse
+                                        collapse
+                                    "
+                                    data-bs-parent="#helpAccordion"
+                                >
+
+                                    <div class="accordion-body">
+
+                                        Le solde est mis à jour après
+                                        validation du paiement par le
+                                        système.
+
+                                        Un paiement encore en attente
+                                        ou présentant une anomalie ne
+                                        doit pas être considéré comme
+                                        définitivement validé.
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Question 6 -->
+
+                            <div
+                                class="accordion-item faq-item"
+                                data-search="
+                                    reçu pdf télécharger exporter
+                                    paiement validé
+                                "
+                            >
+
+                                <h2 class="accordion-header">
+
+                                    <button
+                                        class="
+                                            accordion-button
+                                            collapsed
+                                        "
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#faqSix"
+                                    >
+                                        Comment obtenir mon reçu ?
+                                    </button>
+
+                                </h2>
+
+
+                                <div
+                                    id="faqSix"
+                                    class="
+                                        accordion-collapse
+                                        collapse
+                                    "
+                                    data-bs-parent="#helpAccordion"
+                                >
+
+                                    <div class="accordion-body">
+
+                                        Ouvrez un paiement validé
+                                        depuis la page
+                                        <strong>Mes paiements</strong>,
+                                        puis utilisez le bouton
+                                        d'exportation du reçu en PDF.
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Aucun résultat -->
+
+                        <div
+                            class="faq-empty d-none"
+                            id="faqEmpty"
+                        >
+
+                            <i class="bi bi-search"></i>
+
+                            <strong>
+                                Aucun résultat
+                            </strong>
+
+                            <span>
+                                Essayez avec d'autres mots-clés.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     PANNEAU SUPPORT
+                ============================================== -->
+
+                <aside class="help-side-column">
+
+
+                    <!-- Assistance -->
+
+                    <section class="support-card">
+
+                        <div class="support-card-icon">
+
+                            <i class="bi bi-chat-dots"></i>
+
+                        </div>
+
+
+                        <span class="dashboard-eyebrow">
+                            BESOIN D'AIDE ?
+                        </span>
+
+
+                        <h2>
+                            Un problème avec un paiement ?
+                        </h2>
+
+
+                        <p>
+                            Si votre paiement reste en attente,
+                            présente une anomalie ou contient une
+                            information incorrecte, vous pouvez
+                            demander une vérification.
+                        </p>
+
+
+                        <button
+                            type="button"
+                            class="support-primary-button"
+                            id="openSupportFormSecondary"
+                        >
+
+                            <i class="bi bi-chat-left-text"></i>
+
+                            Signaler un problème
+
+                        </button>
+
+                    </section>
+
+
+                    <!-- Conseil -->
+
+                    <section class="support-tip-card">
+
+                        <i class="bi bi-lightbulb"></i>
+
+
+                        <div>
+
+                            <strong>
+                                Avant de signaler
+                            </strong>
+
+                            <p>
+                                Vérifiez la référence, le montant
+                                et la date de votre transaction dans
+                                le détail du paiement.
+                            </p>
+
+                        </div>
+
+                    </section>
+
+                </aside>
+
+            </div>
+
+
+            <!-- =================================================
+                 FOOTER
+            ================================================== -->
+
+            <footer class="dashboard-footer">
+
+                <span>
+                    © 2026 AcademicPay
+                </span>
+
+                <span>
+                    Gestion des paiements académiques
+                </span>
+
+            </footer>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- =========================================================
+     MODAL — SIGNALER UN PROBLÈME
+========================================================= -->
+
+<div
+    class="modal fade"
+    id="supportModal"
+    tabindex="-1"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content support-modal">
+
+
+            <!-- Header -->
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="dashboard-eyebrow">
+                        SUPPORT
+                    </span>
+
+                    <h2 class="modal-title">
+                        Signaler un problème
+                    </h2>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Fermer"
+                ></button>
+
+            </div>
+
+
+            <!-- Formulaire -->
+
+            <form
+                id="supportForm"
+                method="post"
+                action="{% url 'student_help' %}"
+                novalidate
+            >
+                {% csrf_token %}
+
+                <div class="modal-body">
+
+
+                    <!-- Type -->
+
+                    <div class="support-field">
+
+                        <label for="issueType">
+                            Type de problème
+                            <span>*</span>
+                        </label>
+
+
+                        <div class="support-input">
+
+                            <i class="bi bi-exclamation-circle"></i>
+
+
+                            <select
+                                id="issueType"
+                                name="issue_type"
+                                required
+                            >
+
+                                <option value="">
+                                    Sélectionner
+                                </option>
+
+                                <option value="pending">
+                                    Paiement toujours en attente
+                                </option>
+
+                                <option value="anomaly">
+                                    Paiement en anomalie
+                                </option>
+
+                                <option value="incorrect">
+                                    Informations incorrectes
+                                </option>
+
+                                <option value="receipt">
+                                    Problème avec le reçu
+                                </option>
+
+                                <option value="other">
+                                    Autre problème
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <small
+                            class="support-error"
+                            id="issueTypeError"
+                        ></small>
+
+                    </div>
+
+
+                    <!-- Référence -->
+
+                    <div class="support-field">
+
+                        <label for="supportReference">
+                            Référence du paiement
+                        </label>
+
+
+                        <div class="support-input">
+
+                            <i class="bi bi-hash"></i>
+
+
+                            <input
+                                type="text"
+                                id="supportReference"
+                                name="reference"
+                                placeholder="Ex. TRX8291457"
+                                autocomplete="off"
+                            >
+
+                        </div>
+
+
+                        <small class="support-help">
+                            Facultatif si votre demande ne concerne
+                            pas une transaction précise.
+                        </small>
+
+                    </div>
+
+
+                    <!-- Message -->
+
+                    <div class="support-field">
+
+                        <label for="supportMessage">
+                            Décrivez le problème
+                            <span>*</span>
+                        </label>
+
+
+                        <textarea
+                            id="supportMessage"
+                            name="message"
+                            rows="5"
+                            maxlength="500"
+                            placeholder="Expliquez brièvement le problème rencontré..."
+                            required
+                        ></textarea>
+
+
+                        <div class="support-message-meta">
+
+                            <small
+                                class="support-error"
+                                id="supportMessageError"
+                            ></small>
+
+
+                            <small id="supportCharacterCount">
+                                0 / 500
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Actions -->
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="support-cancel-button"
+                        data-bs-dismiss="modal"
+                    >
+                        Annuler
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="support-submit-button"
+                        id="submitSupportButton"
+                    >
+
+                        <i class="bi bi-send"></i>
+
+                        Envoyer la demande
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     CONFIRMATION
+========================================================= -->
+
+<div
+    class="support-toast"
+    id="supportToast"
+    role="status"
+    aria-live="polite"
+>
+
+    <div class="support-toast-icon">
+
+        <i class="bi bi-check-lg"></i>
+
+    </div>
+
+
+    <div>
+
+        <strong>
+            Demande envoyée
+        </strong>
+
+        <span>
+            Votre problème a été transmis pour vérification.
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     MENU MOBILE
+========================================================= -->
+
+<div
+    class="
+        offcanvas
+        offcanvas-start
+        dashboard-offcanvas
+    "
+    tabindex="-1"
+    id="dashboardMobileMenu"
+>
+
+    <div class="offcanvas-header">
+
+        <div class="mobile-menu-brand">
+
+            <div class="mobile-menu-logo">
+
+                <i class="bi bi-mortarboard-fill"></i>
+
+            </div>
+
+            <strong>
+                AcademicPay
+            </strong>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="offcanvas"
+            aria-label="Fermer"
+        ></button>
+
+    </div>
+
+
+    <div class="offcanvas-body">
+
+        <nav class="mobile-navigation">
+
+            <a
+                href="{% url 'student_dashboard' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-house-door"></i>
+                <span>Accueil</span>
+            </a>
+
+
+            <a
+                href="{% url 'student_payments' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-credit-card"></i>
+                <span>Mes paiements</span>
+            </a>
+
+
+            <a
+                href="{% url 'student_declare_payment' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-plus-circle"></i>
+                <span>Déclarer un paiement</span>
+            </a>
+
+
+            <div class="mobile-nav-divider"></div>
+
+
+            <button
+                type="button"
+                class="mobile-nav-link"
+                id="mobileThemeToggle"
+            >
+                <i class="bi bi-sun"></i>
+
+                <span>
+                    Passer en mode clair
+                </span>
+            </button>
+
+
+            <a
+                href="{% url 'student_profile' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-person"></i>
+                <span>Mon compte</span>
+            </a>
+
+
+            <a
+                href="{% url 'student_help' %}"
+                class="mobile-nav-link active"
+            >
+                <i class="bi bi-question-circle-fill"></i>
+                <span>Aide & support</span>
+            </a>
+
+
+            <a
+                href="{% url 'logout' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Déconnexion</span>
+            </a>
+
+        </nav>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     SCRIPTS
+========================================================= -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+></script>
+
+<script src="{% static 'js/espace_etudiant/dashboard.js' %}"></script>
+
+<script src="{% static 'js/espace_etudiant/help.js' %}"></script>
+
+</body>
+</html>

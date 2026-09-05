@@ -7,25 +7,27 @@ from .models import PaymentClaim
 User = get_user_model()
 
 class EmailUsernameRegAuthForm(AuthenticationForm):
+    # Add the checkbox field to the form
+    remember_me = forms.BooleanField(required=False, initial=False)
+
     def clean(self):
         username_input = self.cleaned_data.get('username')
         
         if username_input:
-            # Search if the input matches a username, email, or registration number
             try:
                 user = User.objects.get(
                     Q(username__iexact=username_input) | 
                     Q(email__iexact=username_input) | 
                     Q(registration_num__iexact=username_input)
                 )
-                # Replace the input value with the actual username so Django's default validator succeeds
                 self.cleaned_data['username'] = user.username
             except User.DoesNotExist:
-                pass  # Let Django handle the standard invalid login error
+                pass  
             except User.MultipleObjectsReturned:
                 pass
 
         return super().clean()
+
 
 
 class PaymentClaimForm(forms.ModelForm):

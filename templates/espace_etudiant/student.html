@@ -1,0 +1,975 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>Mes paiements | AcademicPay</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    >
+
+    <!-- CSS principal -->
+    <link rel="stylesheet" href="{% static 'css/espace_etudiant/style.css' %}">
+
+    <!-- CSS dashboard partagé -->
+    <link rel="stylesheet" href="{% static 'css/espace_etudiant/dashbord.css' %}">
+
+    <!-- CSS spécifique -->
+    <link rel="stylesheet" href="{% static 'css/espace_etudiant/student.css' %}">
+</head>
+
+
+<body>
+
+<div class="d-flex min-vh-100">
+
+
+    <!-- =====================================================
+         SIDEBAR DESKTOP
+    ====================================================== -->
+
+    <aside
+        class="
+            dashboard-sidebar
+            d-none
+            d-lg-flex
+            flex-column
+            justify-content-between
+            position-fixed
+            top-0
+            start-0
+        "
+    >
+
+        <div>
+
+            <!-- Logo -->
+
+            <a
+                href="{% url 'student_dashboard' %}"
+                class="
+                    dashboard-logo
+                    d-flex
+                    align-items-center
+                    justify-content-center
+                    text-decoration-none
+                "
+                title="Accueil"
+                aria-label="Accueil"
+            >
+                <i class="bi bi-mortarboard-fill"></i>
+            </a>
+
+
+            <!-- Navigation -->
+
+            <nav
+                class="
+                    nav
+                    flex-column
+                    align-items-center
+                    gap-3
+                    mt-4
+                "
+            >
+
+                <a
+                    href="{% url 'student_dashboard' %}"
+                    class="dashboard-nav-icon"
+                    title="Accueil"
+                    aria-label="Accueil"
+                >
+                    <i class="bi bi-house-door"></i>
+                </a>
+
+
+                <a
+                    href="{% url 'student_payments' %}"
+                    class="dashboard-nav-icon active"
+                    title="Mes paiements"
+                    aria-label="Mes paiements"
+                    aria-current="page"
+                >
+                    <i class="bi bi-credit-card-fill"></i>
+                </a>
+
+
+                <a
+                    href="{% url 'student_declare_payment' %}"
+                    class="dashboard-nav-icon"
+                    title="Déclarer un paiement"
+                    aria-label="Déclarer un paiement"
+                >
+                    <i class="bi bi-plus-circle"></i>
+                </a>
+
+            </nav>
+
+        </div>
+
+
+        <div>
+
+            <!-- Thème -->
+
+            <div class="d-flex justify-content-center py-4">
+
+                <button
+                    type="button"
+                    class="dashboard-nav-icon border-0"
+                    id="themeToggle"
+                    title="Passer en mode clair"
+                    aria-label="Passer en mode clair"
+                >
+                    <i class="bi bi-sun"></i>
+                </button>
+
+            </div>
+
+
+            <!-- Utilisateur -->
+
+            <div class="dashboard-sidebar-user py-4">
+
+                <div class="dropdown d-flex justify-content-center">
+
+                    <button
+                        class="
+                            dashboard-avatar
+                            border-0
+                            rounded-circle
+                            d-flex
+                            align-items-center
+                            justify-content-center
+                        "
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        aria-label="Menu utilisateur"
+                    >
+                        {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" alt="{{ user.full_congolese_name }}" class="rounded-circle" width="40" height="40">
+                        {% else %}
+                        <i class="bi bi-person-fill"></i>
+                        {% endif %}
+                    </button>
+
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+
+                        <li>
+                            <a
+                                class="dropdown-item"
+                                href="{% url 'student_profile' %}"
+                            >
+                                <i class="bi bi-person me-2"></i>
+                                Mon compte
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <a
+                                class="dropdown-item"
+                                href="{% url 'student_help' %}"
+                            >
+                                <i class="bi bi-question-circle me-2"></i>
+                                Aide & support
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+
+                        <li>
+                            <a
+                                class="dropdown-item"
+                                href="{% url 'logout' %}"
+                            >
+                                <i class="bi bi-box-arrow-right me-2"></i>
+                                Déconnexion
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         CONTENU PRINCIPAL
+    ====================================================== -->
+
+    <main class="dashboard-main flex-grow-1">
+
+        <div class="container payments-container">
+
+
+            <!-- =================================================
+                 HEADER MOBILE
+            ================================================== -->
+
+            <header
+                class="
+                    mobile-header
+                    d-flex
+                    d-lg-none
+                    justify-content-between
+                    align-items-center
+                "
+            >
+
+                <a
+                    href="{% url 'student_dashboard' %}"
+                    class="mobile-logo"
+                    aria-label="AcademicPay"
+                >
+                    <i class="bi bi-mortarboard-fill"></i>
+                </a>
+
+
+                <button
+                    class="mobile-menu-button"
+                    type="button"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#dashboardMobileMenu"
+                    aria-controls="dashboardMobileMenu"
+                    aria-label="Ouvrir le menu"
+                >
+                    <i class="bi bi-list"></i>
+                </button>
+
+            </header>
+
+
+            <!-- =================================================
+                 TITRE
+            ================================================== -->
+
+            <header class="payments-page-header">
+
+                <div>
+
+                    <span class="dashboard-eyebrow">
+                        HISTORIQUE FINANCIER
+                    </span>
+
+                    <h1>
+                        Mes paiements
+                    </h1>
+
+                    <p>
+                        Retrouvez et consultez l'ensemble de vos
+                        paiements académiques.
+                    </p>
+
+                </div>
+
+
+                <a
+                    href="{% url 'student_declare_payment' %}"
+                    class="declare-payment-button"
+                >
+                    <i class="bi bi-plus-lg"></i>
+
+                    <span>
+                        Déclarer un paiement
+                    </span>
+                </a>
+
+            </header>
+
+
+            <!-- =================================================
+                 RÉSUMÉ RAPIDE
+            ================================================== -->
+
+            <section class="payments-summary">
+
+
+                <!-- Total -->
+
+                <article class="payment-summary-card">
+
+                    <div class="summary-icon green">
+                        <i class="bi bi-wallet2"></i>
+                    </div>
+
+                    <div>
+                        <span>
+                            Total payé
+                        </span>
+
+                        <strong>
+                            {{ total_paid|floatformat:2 }} $
+                        </strong>
+                    </div>
+
+                </article>
+
+
+                <!-- Validés -->
+
+                <article class="payment-summary-card">
+
+                    <div class="summary-icon green">
+                        <i class="bi bi-check2-circle"></i>
+                    </div>
+
+                    <div>
+                        <span>
+                            Validés
+                        </span>
+
+                        <strong>
+                            {{ validated_count }}
+                        </strong>
+                    </div>
+
+                </article>
+
+
+                <!-- En attente -->
+
+                <article class="payment-summary-card">
+
+                    <div class="summary-icon warning">
+                        <i class="bi bi-clock"></i>
+                    </div>
+
+                    <div>
+                        <span>
+                            En attente
+                        </span>
+
+                        <strong>
+                            {{ pending_count }}
+                        </strong>
+                    </div>
+
+                </article>
+
+
+                <!-- Anomalies -->
+
+                <article class="payment-summary-card">
+
+                    <div class="summary-icon danger">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </div>
+
+                    <div>
+                        <span>
+                            Anomalies
+                        </span>
+
+                        <strong>
+                            {{ anomaly_count }}
+                        </strong>
+                    </div>
+
+                </article>
+
+            </section>
+
+
+            <!-- =================================================
+                 FILTRES
+            ================================================== -->
+
+            <section class="payments-filter-card">
+
+                <div class="filter-heading">
+
+                    <div>
+                        <span class="filter-label">
+                            RECHERCHE & FILTRES
+                        </span>
+
+                        <h2>
+                            Trouver un paiement
+                        </h2>
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="reset-filters-button"
+                        id="resetFilters"
+                    >
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        Réinitialiser
+                    </button>
+
+                </div>
+
+
+                <div class="payments-filter-grid">
+
+
+                    <!-- Recherche -->
+
+                    <div class="payment-filter-group search-group">
+
+                        <label for="paymentSearch">
+                            Référence
+                        </label>
+
+                        <div class="payment-search-box">
+
+                            <i class="bi bi-search"></i>
+
+                            <input
+                                type="search"
+                                id="paymentSearch"
+                                placeholder="Ex. PAY08421"
+                                autocomplete="off"
+                                value="{{ search_query }}"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Statut -->
+
+                    <div class="payment-filter-group">
+
+                        <label for="statusFilter">
+                            Statut
+                        </label>
+
+                        <select id="statusFilter">
+
+                            <option value="all" {% if status_filter == 'all' %}selected{% endif %}>
+                                Tous les statuts
+                            </option>
+
+                            <option value="validated" {% if status_filter == 'validated' %}selected{% endif %}>
+                                Validé
+                            </option>
+
+                            <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>
+                                En attente
+                            </option>
+
+                            <option value="anomaly" {% if status_filter == 'anomaly' %}selected{% endif %}>
+                                Anomalie
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Semestre -->
+
+                    <div class="payment-filter-group">
+
+                        <label for="semesterFilter">
+                            Semestre
+                        </label>
+
+                        <select id="semesterFilter">
+
+                            <option value="all" {% if semester_filter == 'all' %}selected{% endif %}>
+                                Tous les semestres
+                            </option>
+
+                            <option value="1" {% if semester_filter == '1' %}selected{% endif %}>
+                                Semestre 1
+                            </option>
+
+                            <option value="2" {% if semester_filter == '2' %}selected{% endif %}>
+                                Semestre 2
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Année -->
+
+                    <div class="payment-filter-group">
+
+                        <label for="yearFilter">
+                            Année académique
+                        </label>
+
+                        <select id="yearFilter">
+
+                            <option value="{{ current_academic_year }}" selected>
+                                {{ current_academic_year }}
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 LISTE
+            ================================================== -->
+
+            <section class="payments-list-section">
+
+
+                <!-- Header liste -->
+
+                <div class="payments-list-header">
+
+                    <div>
+
+                        <span class="dashboard-eyebrow">
+                            TRANSACTIONS
+                        </span>
+
+                        <h2>
+                            Historique des paiements
+                        </h2>
+
+                    </div>
+
+
+                    <span
+                        class="payments-result-count"
+                        id="paymentsResultCount"
+                    >
+                        {{ result_count }} paiement{{ result_count|pluralize }}
+                    </span>
+
+                </div>
+
+
+                <!-- =================================================
+                     TABLE DESKTOP
+                ================================================== -->
+
+                <div class="payments-table-wrapper">
+
+                    <table class="payments-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Référence
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                                <th>
+                                    Semestre
+                                </th>
+
+                                <th>
+                                    Montant
+                                </th>
+
+                                <th>
+                                    Statut
+                                </th>
+
+                                <th>
+                                    Reçu
+                                </th>
+
+                                <th aria-label="Actions"></th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="paymentsTableBody">
+
+                            {% for payment in payments %}
+                            <tr
+                                class="payment-table-row"
+                                data-reference="{{ payment.reference }}"
+                                data-status="
+                                    {% if payment.is_validated %}validated
+                                    {% elif payment.is_pending %}pending
+                                    {% else %}anomaly{% endif %}"
+                                data-semester="
+                                    {% if payment.semester == 'S1' %}1
+                                    {% elif payment.semester == 'S2' %}2
+                                    {% else %}all{% endif %}"
+                                data-year="{{ payment.year }}"
+                            >
+
+                                <td>
+
+                                    <a
+                                        href="{{ payment.url }}"
+                                        class="table-reference"
+                                    >
+                                        #{{ payment.reference }}
+                                    </a>
+
+                                </td>
+
+
+                                <td>
+                                    {{ payment.date|date:"d M Y" }}
+                                </td>
+
+
+                                <td>
+                                    Semestre {{ payment.semester|slice:"-1:" }}
+                                </td>
+
+
+                                <td>
+                                    <strong>
+                                        {{ payment.amount|floatformat:2 }} $
+                                    </strong>
+                                </td>
+
+
+                                <td>
+
+                                    <span class="payment-status 
+                                        {% if payment.is_validated %}valid
+                                        {% elif payment.is_pending %}pending
+                                        {% else %}error{% endif %}">
+
+                                        <i class="bi bi-circle-fill"></i>
+
+                                        {{ payment.status_display }}
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <!-- In the table -->
+                                    {% if payment.receipt_available %}
+                                    <a
+                                        href="{% url 'student_payment_receipt' payment.id %}"
+                                        class="receipt-button"
+                                        target="_blank"
+                                        title="Télécharger le reçu"
+                                    >
+                                        <i class="bi bi-file-earmark-pdf"></i>
+                                        PDF
+                                    </a>
+                                    {% else %}
+                                    <span class="receipt-unavailable">—</span>
+                                    {% endif %}
+
+                                </td>
+
+
+                                <td>
+
+                                    <a
+                                        href="{{ payment.url }}"
+                                        class="payment-detail-button"
+                                        title="Voir le paiement"
+                                        aria-label="Voir le paiement {{ payment.reference }}"
+                                    >
+                                        <i class="bi bi-chevron-right"></i>
+                                    </a>
+
+                                </td>
+
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-4">
+                                    <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                                    <p class="mb-0">Aucun paiement trouvé</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <!-- =================================================
+                     PAGINATION
+                ================================================== -->
+
+                {% if payments.has_other_pages %}
+                <nav aria-label="Navigation des paiements" class="mt-4">
+                    <ul class="pagination justify-content-center">
+
+                        {% if payments.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ payments.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter != 'all' %}&status={{ status_filter }}{% endif %}{% if semester_filter != 'all' %}&semester={{ semester_filter }}{% endif %}">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% for num in payments.paginator.page_range %}
+                            {% if payments.number == num %}
+                                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                            {% elif num > payments.number|add:'-3' and num < payments.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter != 'all' %}&status={{ status_filter }}{% endif %}{% if semester_filter != 'all' %}&semester={{ semester_filter }}{% endif %}">
+                                        {{ num }}
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if payments.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ payments.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter != 'all' %}&status={{ status_filter }}{% endif %}{% if semester_filter != 'all' %}&semester={{ semester_filter }}{% endif %}">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                    </ul>
+                </nav>
+                {% endif %}
+
+
+                <!-- =================================================
+                     ÉTAT VIDE
+                ================================================== -->
+
+                <div
+                    class="payments-empty-state d-none"
+                    id="paymentsEmptyState"
+                >
+
+                    <div class="empty-state-icon">
+                        <i class="bi bi-search"></i>
+                    </div>
+
+                    <h3>
+                        Aucun paiement trouvé
+                    </h3>
+
+                    <p>
+                        Aucun paiement ne correspond aux
+                        critères sélectionnés.
+                    </p>
+
+                    <button
+                        type="button"
+                        id="emptyResetFilters"
+                    >
+                        Réinitialiser les filtres
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 FOOTER
+            ================================================== -->
+
+            <footer class="dashboard-footer">
+
+                <span>
+                    © 2026 AcademicPay
+                </span>
+
+                <span>
+                    Gestion des paiements académiques
+                </span>
+
+            </footer>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- =========================================================
+     MENU MOBILE
+========================================================= -->
+
+<div
+    class="
+        offcanvas
+        offcanvas-start
+        dashboard-offcanvas
+    "
+    tabindex="-1"
+    id="dashboardMobileMenu"
+>
+
+    <div class="offcanvas-header">
+
+        <div class="mobile-menu-brand">
+
+            <div class="mobile-menu-logo">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+            <strong>
+                AcademicPay
+            </strong>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="offcanvas"
+            aria-label="Fermer"
+        ></button>
+
+    </div>
+
+
+    <div class="offcanvas-body">
+
+        <nav class="mobile-navigation">
+
+            <a
+                href="{% url 'student_dashboard' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-house-door"></i>
+                <span>Accueil</span>
+            </a>
+
+
+            <a
+                href="{% url 'student_payments' %}"
+                class="mobile-nav-link active"
+            >
+                <i class="bi bi-credit-card-fill"></i>
+                <span>Mes paiements</span>
+            </a>
+
+
+            <a
+                href="{% url 'student_declare_payment' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-plus-circle"></i>
+                <span>Déclarer un paiement</span>
+            </a>
+
+
+            <div class="mobile-nav-divider"></div>
+
+
+            <button
+                type="button"
+                class="mobile-nav-link mobile-theme-button"
+                id="mobileThemeToggle"
+            >
+                <i class="bi bi-sun"></i>
+
+                <span>
+                    Passer en mode clair
+                </span>
+            </button>
+
+
+            <a
+                href="{% url 'student_profile' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-person"></i>
+                <span>Mon compte</span>
+            </a>
+
+
+            <a
+                href="help.html"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-question-circle"></i>
+                <span>Aide & support</span>
+            </a>
+
+
+            <a
+                href="{% url 'logout' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Déconnexion</span>
+            </a>
+
+        </nav>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     LIBRAIRIE PDF
+========================================================= -->
+
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js">
+</script>
+
+
+<!-- Bootstrap -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+<!--
+    On réutilise dashbord.js pour le thème.
+-->
+
+<script src="{% static 'js/espace_etudiant/dashboard.js' %}"></script>
+
+
+<!-- Fonctionnalités de cette page -->
+
+<script src="{% static 'js/espace_etudiant/student.js' %}"></script>
+
+
+</body>
+</html>

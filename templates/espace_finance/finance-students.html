@@ -1,0 +1,1464 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Situations financières | AcademicPay</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    >
+
+    <!-- CSS GLOBAL -->
+    <link rel="stylesheet" href="{% static 'css/espace_finance/finance-dashboard.css' %}">
+
+    <!-- CSS PAGE -->
+    <link rel="stylesheet" href="{% static 'css/espace_finance/finance-students.css' %}">
+</head>
+
+
+<body
+    data-export-csv-url="{% url 'finance_students_export_csv' %}"
+    data-students-list-url="{% url 'finance_students' %}"
+    data-student-detail-url-template="{% url 'finance_student_detail' student_id=0 %}"
+>
+
+<div class="finance-layout">
+
+    <!-- =====================================================
+         SIDEBAR DESKTOP
+    ====================================================== -->
+
+    <aside class="finance-sidebar d-none d-xl-flex">
+
+        <a href="{% url 'finance_dashboard' %}" class="sidebar-brand">
+
+            <div class="brand-icon">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+            <div>
+                <strong>AcademicPay</strong>
+                <span>FINANCE</span>
+            </div>
+
+        </a>
+
+
+        <nav class="sidebar-nav">
+
+            <div class="nav-section-label">
+                PRINCIPAL
+            </div>
+
+            <a href="{% url 'finance_dashboard' %}" class="sidebar-link">
+                <i class="bi bi-house-door"></i>
+                <span>ACCUEIL</span>
+            </a>
+
+            <a href="{% url 'finance_payments' %}" class="sidebar-link">
+                <i class="bi bi-credit-card-fill"></i>
+                <span>PAIEMENTS</span>
+            </a>
+
+            <a href="{% url 'finance_statements' %}" class="sidebar-link">
+                <i class="bi bi-bank"></i>
+                <span>EXTRAITS BANCAIRES</span>
+            </a>
+
+            <a href="{% url 'finance_schedule' %}" class="sidebar-link">
+                <i class="bi bi-calendar3"></i>
+                <span>ÉCHÉANCIER</span>
+            </a>
+
+
+            <div class="nav-section-label">
+                SUIVI FINANCIER
+            </div>
+
+            <a
+                href="{% url 'finance_students' %}"
+                class="sidebar-link active"
+            >
+                <i class="bi bi-people"></i>
+                <span>SITUATIONS FINANCIÈRES</span>
+            </a>
+
+            <a
+                href="{% url 'finance_reconciliation' %}"
+                class="sidebar-link"
+            >
+                <i class="bi bi-arrow-left-right"></i>
+                <span>RAPPROCHEMENT GLOBAL</span>
+            </a>
+
+            <a
+                href="{% url 'finance_anomalies' %}"
+                class="sidebar-link"
+            >
+                <i class="bi bi-exclamation-triangle"></i>
+                <span>ANOMALIES</span>
+
+                <span class="nav-badge">
+                    24
+                </span>
+            </a>
+
+
+            <div class="nav-section-label">
+                ANALYSE
+            </div>
+
+            <a href="{% url 'finance_reports' %}" class="sidebar-link">
+                <i class="bi bi-bar-chart-line"></i>
+                <span>RAPPORTS</span>
+            </a>
+
+            <a href="{% url 'finance_history' %}" class="sidebar-link">
+                <i class="bi bi-clock-history"></i>
+                <span>HISTORIQUE</span>
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a href="{% url 'finance_profile' %}" class="finance-user">
+
+                <div class="user-avatar">
+                    RF
+                </div>
+
+                <div class="user-information">
+
+                    <strong>
+                        Responsable financier
+                    </strong>
+
+                    <span>
+                        Chef du service financier
+                    </span>
+
+                </div>
+
+                <i class="bi bi-chevron-right"></i>
+
+            </a>
+
+
+            <div class="sidebar-actions">
+
+                <button
+                    type="button"
+                    class="sidebar-action-btn"
+                    id="themeButton"
+                    title="Changer de thème"
+                >
+                    <i class="bi bi-sun"></i>
+                </button>
+
+                <a
+                    href="{% url 'finance_profile' %}"
+                    class="sidebar-action-btn"
+                    title="Paramètres"
+                >
+                    <i class="bi bi-gear"></i>
+                </a>
+
+                <a
+                    href="{% url 'logout' %}"
+                    class="sidebar-action-btn"
+                    title="Déconnexion"
+                >
+                    <i class="bi bi-box-arrow-right"></i>
+                </a>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         CONTENU PRINCIPAL
+    ====================================================== -->
+
+    <main class="finance-main">
+
+
+        <!-- =================================================
+             MOBILE HEADER
+        ================================================== -->
+
+        <div class="mobile-header d-xl-none">
+
+            <button
+                class="mobile-menu-button"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#financeMobileMenu"
+                aria-controls="financeMobileMenu"
+                aria-label="Ouvrir le menu"
+            >
+                <i class="bi bi-list"></i>
+            </button>
+
+            <div class="mobile-brand">
+                <strong>AcademicPay</strong>
+                <span>FINANCE</span>
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <header class="students-header">
+
+            <div class="students-header-copy">
+
+                <span class="page-eyebrow">
+                    SUIVI FINANCIER
+                </span>
+
+                <h1>
+                    Situations financières
+                </h1>
+
+                <p>
+                    Consultez la situation financière des étudiants
+                    selon leur parcours académique, leur échéancier
+                    et les paiements effectivement validés.
+                </p>
+
+            </div>
+
+
+            <div class="students-header-actions">
+
+                <div class="filter-control">
+
+                    <i class="bi bi-calendar3"></i>
+
+                    <select
+                        id="academicYearFilter"
+                        aria-label="Année académique"
+                    >
+                        {% for year in academic_year_choices %}
+                        <option
+                            value="{{ year }}"
+                            {% if year == academic_year %}selected{% endif %}
+                        >
+                            {{ year }}
+                        </option>
+                        {% endfor %}
+                    </select>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="students-export-button"
+                    id="exportStudentsButton"
+                >
+                    <i class="bi bi-download"></i>
+                    <span>Exporter</span>
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             KPI
+        ================================================== -->
+
+        <section
+            class="students-kpi-grid"
+            aria-label="Indicateurs financiers"
+        >
+
+            <article class="students-kpi">
+
+                <div class="students-kpi-icon">
+                    <i class="bi bi-people"></i>
+                </div>
+
+                <div>
+                    <span>ÉTUDIANTS</span>
+
+                    <strong id="totalStudents">
+                        0
+                    </strong>
+
+                    <small>
+                        Étudiants suivis
+                    </small>
+                </div>
+
+            </article>
+
+
+            <article class="students-kpi">
+
+                <div class="students-kpi-icon success">
+                    <i class="bi bi-check2-circle"></i>
+                </div>
+
+                <div>
+                    <span>EN ORDRE À CE JOUR</span>
+
+                    <strong id="studentsUpToDate">
+                        0
+                    </strong>
+
+                    <small id="studentsUpToDatePercentage">
+                        0 % des étudiants
+                    </small>
+                </div>
+
+            </article>
+
+
+            <article class="students-kpi">
+
+                <div class="students-kpi-icon warning">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+
+                <div>
+                    <span>EN RETARD</span>
+
+                    <strong id="studentsLate">
+                        0
+                    </strong>
+
+                    <small>
+                        Exigible non couvert
+                    </small>
+                </div>
+
+            </article>
+
+
+            <article class="students-kpi">
+
+                <div class="students-kpi-icon danger">
+                    <i class="bi bi-cash-stack"></i>
+                </div>
+
+                <div>
+                    <span>RETARD FINANCIER</span>
+
+                    <strong id="totalOverdueAmount">
+                        0 $
+                    </strong>
+
+                    <small>
+                        Montant exigible non couvert
+                    </small>
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- =================================================
+             SYNTHÈSE FINANCIÈRE
+        ================================================== -->
+
+        <section class="students-financial-summary">
+
+            <div class="financial-summary-main">
+
+                <div class="financial-summary-heading">
+
+                    <div>
+
+                        <span class="card-eyebrow">
+                            SYNTHÈSE
+                        </span>
+
+                        <h2>
+                            État financier des étudiants
+                        </h2>
+
+                    </div>
+
+
+                    <span
+                        class="summary-period"
+                        id="summaryPeriod"
+                    >
+                        2026 - 2027
+                    </span>
+
+                </div>
+
+
+                <div class="financial-summary-values">
+
+                    <div>
+                        <span>
+                            FRAIS ANNUELS ATTENDUS
+                        </span>
+
+                        <strong id="totalExpected">
+                            0 $
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>
+                            PAIEMENTS VALIDÉS
+                        </span>
+
+                        <strong id="totalPaid">
+                            0 $
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>
+                            SOLDE ANNUEL RESTANT
+                        </span>
+
+                        <strong id="totalRemaining">
+                            0 $
+                        </strong>
+                    </div>
+
+                </div>
+
+
+                <div class="students-progress">
+
+                    <div class="students-progress-header">
+
+                        <span>
+                            Taux global de recouvrement
+                        </span>
+
+                        <strong id="collectionRate">
+                            0 %
+                        </strong>
+
+                    </div>
+
+
+                    <div class="students-progress-track">
+
+                        <div
+                            class="students-progress-bar"
+                            id="collectionProgress"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="financial-summary-side">
+
+                <span>
+                    EXIGIBLE À CE JOUR
+                </span>
+
+                <strong id="totalCurrentlyRequired">
+                    0 $
+                </strong>
+
+
+                <div class="summary-side-row">
+
+                    <span>
+                        Couvert
+                    </span>
+
+                    <strong id="requiredCovered">
+                        0 $
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-side-row overdue">
+
+                    <span>
+                        Non couvert
+                    </span>
+
+                    <strong id="requiredMissing">
+                        0 $
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             FILTRES
+        ================================================== -->
+
+        <section class="students-filters">
+
+            <div class="students-search">
+
+                <i class="bi bi-search"></i>
+
+                <input
+                    type="search"
+                    id="studentSearch"
+                    placeholder="Nom, matricule ou référence de paiement..."
+                    autocomplete="off"
+                >
+
+                <button
+                    type="button"
+                    id="clearStudentSearch"
+                    title="Effacer la recherche"
+                    aria-label="Effacer la recherche"
+                >
+                    <i class="bi bi-x-lg"></i>
+                </button>
+
+            </div>
+
+
+            <!-- FACULTY -->
+
+            <div class="students-filter">
+
+                <label for="facultyFilter">
+                    Faculté
+                </label>
+
+                <select id="facultyFilter">
+                    <option value="">
+                        Toutes les facultés
+                    </option>
+                </select>
+
+            </div>
+
+
+            <!-- DEPARTMENT -->
+
+            <div class="students-filter">
+
+                <label for="departmentFilter">
+                    Département
+                </label>
+
+                <select
+                    id="departmentFilter"
+                    disabled
+                >
+                    <option value="">
+                        Tous les départements
+                    </option>
+                </select>
+
+            </div>
+
+
+            <!-- PROGRAM -->
+
+            <div class="students-filter">
+
+                <label for="programFilter">
+                    Programme
+                </label>
+
+                <select
+                    id="programFilter"
+                    disabled
+                >
+                    <option value="">
+                        Tous les programmes
+                    </option>
+                </select>
+
+            </div>
+
+
+            <!-- ACADEMIC PROGRAM -->
+
+            <div class="students-filter">
+
+                <label for="academicProgramFilter">
+                    Parcours académique
+                </label>
+
+                <select
+                    id="academicProgramFilter"
+                    disabled
+                >
+                    <option value="">
+                        Tous les parcours
+                    </option>
+                </select>
+
+            </div>
+
+
+            <!-- SITUATION -->
+
+            <div class="students-filter">
+
+                <label for="financialStatusFilter">
+                    Situation
+                </label>
+
+                <select id="financialStatusFilter">
+
+                    <option value="">
+                        Toutes
+                    </option>
+
+                    <option value="En ordre">
+                        En ordre
+                    </option>
+
+                    <option value="En avance">
+                        En avance
+                    </option>
+
+                    <option value="En retard">
+                        En retard
+                    </option>
+
+                    <option value="Non configuré">
+                        Non configuré
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- BANQUE -->
+
+            <div class="students-filter">
+
+                <label for="bankFilter">
+                    Banque
+                </label>
+
+                <select id="bankFilter">
+
+                    <option value="">
+                        Toutes les banques
+                    </option>
+
+                    {% for bank in banks %}
+                    <option value="{{ bank.name }}">
+                        {{ bank.name }}
+                    </option>
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="reset-student-filters"
+                id="resetStudentFilters"
+            >
+                <i class="bi bi-arrow-counterclockwise"></i>
+                Réinitialiser
+            </button>
+
+        </section>
+
+
+        <!-- =================================================
+             TABLE
+        ================================================== -->
+
+        <section class="students-table-card">
+
+            <div class="students-table-heading">
+
+                <div>
+
+                    <span class="card-eyebrow">
+                        ÉTUDIANTS
+                    </span>
+
+                    <h2>
+                        Situation par étudiant
+                    </h2>
+
+                </div>
+
+
+                <div class="students-result-count">
+
+                    <strong id="studentResultCount">
+                        0
+                    </strong>
+
+                    <span>
+                        résultat(s)
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="students-table-wrapper">
+
+                <table class="students-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Étudiant</th>
+
+                            <th>Parcours académique</th>
+
+                            <th>Frais annuels</th>
+
+                            <th>Exigible</th>
+
+                            <th>Payé</th>
+
+                            <th>Solde</th>
+
+                            <th>Retard</th>
+
+                            <th>Situation</th>
+
+                            <th aria-label="Actions"></th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="studentsTableBody">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <div
+                class="students-empty"
+                id="studentsEmpty"
+                hidden
+            >
+
+                <div class="students-empty-icon">
+                    <i class="bi bi-search"></i>
+                </div>
+
+                <strong>
+                    Aucun étudiant trouvé
+                </strong>
+
+                <p>
+                    Aucun étudiant ne correspond aux critères sélectionnés.
+                </p>
+
+                <button
+                    type="button"
+                    id="studentsEmptyReset"
+                >
+                    Réinitialiser les filtres
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- =========================================================
+     OFFCANVAS MOBILE
+========================================================= -->
+
+<div
+    class="offcanvas offcanvas-start finance-mobile-menu"
+    tabindex="-1"
+    id="financeMobileMenu"
+>
+
+    <div class="offcanvas-header">
+
+        <div class="mobile-offcanvas-brand">
+
+            <div class="brand-icon">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+            <div>
+                <strong>AcademicPay</strong>
+                <span>FINANCE</span>
+            </div>
+
+        </div>
+
+        <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="offcanvas"
+            aria-label="Fermer"
+        ></button>
+
+    </div>
+
+
+    <div class="offcanvas-body">
+
+        <nav class="mobile-finance-nav">
+
+            <span class="nav-section-label">
+                PRINCIPAL
+            </span>
+
+            <a href="{% url 'finance_dashboard' %}">
+                <i class="bi bi-house-door"></i>
+                Accueil
+            </a>
+
+            <a href="{% url 'finance_payments' %}">
+                <i class="bi bi-credit-card-fill"></i>
+                Paiements
+            </a>
+
+            <a href="{% url 'finance_statements' %}">
+                <i class="bi bi-bank"></i>
+                Extraits bancaires
+            </a>
+
+            <a href="{% url 'finance_schedule' %}">
+                <i class="bi bi-calendar3"></i>
+                Échéancier
+            </a>
+
+
+            <span class="nav-section-label">
+                SUIVI FINANCIER
+            </span>
+
+            <a
+                href="{% url 'finance_students' %}"
+                class="active"
+            >
+                <i class="bi bi-people"></i>
+                Situations financières
+            </a>
+
+            <a href="{% url 'finance_reconciliation' %}">
+                <i class="bi bi-arrow-left-right"></i>
+                Rapprochement global
+            </a>
+
+            <a href="{% url 'finance_anomalies' %}">
+                <i class="bi bi-exclamation-triangle"></i>
+                Anomalies
+            </a>
+
+
+            <span class="nav-section-label">
+                ANALYSE
+            </span>
+
+            <a href="{% url 'finance_reports' %}">
+                <i class="bi bi-bar-chart-line"></i>
+                Rapports
+            </a>
+
+            <a href="{% url 'finance_history' %}">
+                <i class="bi bi-clock-history"></i>
+                Historique
+            </a>
+
+        </nav>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     MODALE SITUATION INDIVIDUELLE
+========================================================= -->
+
+<div
+    class="modal fade"
+    id="studentFinancialModal"
+    tabindex="-1"
+    aria-hidden="true"
+>
+
+    <div
+        class="
+            modal-dialog
+            modal-xl
+            modal-dialog-centered
+            modal-dialog-scrollable
+        "
+    >
+
+        <div class="modal-content finance-modal">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="modal-eyebrow">
+                        SITUATION INDIVIDUELLE
+                    </span>
+
+                    <h2
+                        class="modal-title"
+                        id="studentModalTitle"
+                    >
+                        Étudiant
+                    </h2>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Fermer"
+                ></button>
+
+            </div>
+
+
+            <div class="modal-body student-financial-modal-body">
+
+                <!-- PROFIL -->
+
+                <section class="student-profile-summary">
+
+                    <div
+                        class="student-profile-avatar"
+                        id="studentProfileAvatar"
+                    >
+                        --
+                    </div>
+
+
+                    <div class="student-profile-main">
+
+                        <h3 id="studentProfileName">
+                            —
+                        </h3>
+
+                        <span id="studentProfileMatricule">
+                            —
+                        </span>
+
+                        <div class="student-profile-tags">
+
+                            <span id="studentProfileFaculty">
+                                —
+                            </span>
+
+                            <span id="studentProfileDepartment">
+                                —
+                            </span>
+
+                            <span id="studentProfileProgram">
+                                —
+                            </span>
+
+                            <span id="studentProfileAcademicProgram">
+                                —
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="student-profile-status">
+
+                        <span>
+                            SITUATION
+                        </span>
+
+                        <strong id="studentProfileStatus">
+                            —
+                        </strong>
+
+                        <small id="studentProfileYear">
+                            —
+                        </small>
+
+                    </div>
+
+                </section>
+
+
+                <!-- MONTANTS -->
+
+                <section class="student-financial-numbers">
+
+                    <article>
+
+                        <span>
+                            FRAIS ANNUELS
+                        </span>
+
+                        <strong id="studentAnnualAmount">
+                            0 $
+                        </strong>
+
+                    </article>
+
+
+                    <article>
+
+                        <span>
+                            EXIGIBLE À CE JOUR
+                        </span>
+
+                        <strong id="studentRequiredAmount">
+                            0 $
+                        </strong>
+
+                    </article>
+
+
+                    <article class="positive">
+
+                        <span>
+                            PAIEMENTS VALIDÉS
+                        </span>
+
+                        <strong id="studentPaidAmount">
+                            0 $
+                        </strong>
+
+                    </article>
+
+
+                    <article>
+
+                        <span>
+                            SOLDE ANNUEL
+                        </span>
+
+                        <strong id="studentRemainingAmount">
+                            0 $
+                        </strong>
+
+                    </article>
+
+
+                    <article class="negative">
+
+                        <span>
+                            RETARD
+                        </span>
+
+                        <strong id="studentOverdueAmount">
+                            0 $
+                        </strong>
+
+                    </article>
+
+                </section>
+
+
+                <!-- PROGRESSION -->
+
+                <section class="student-detail-card">
+
+                    <div class="student-detail-heading">
+
+                        <div>
+                            <span class="card-eyebrow">
+                                RECOUVREMENT
+                            </span>
+
+                            <h3>
+                                Progression annuelle
+                            </h3>
+                        </div>
+
+                        <strong id="studentPaymentPercentage">
+                            0 %
+                        </strong>
+
+                    </div>
+
+
+                    <div class="students-progress-track">
+
+                        <div
+                            class="students-progress-bar"
+                            id="studentPaymentProgressBar"
+                        ></div>
+
+                    </div>
+
+
+                    <div class="student-progress-meta">
+
+                        <span id="studentPaymentProgressText">
+                            0 $ sur 0 $
+                        </span>
+
+                        <span id="studentDeadlineState">
+                            —
+                        </span>
+
+                    </div>
+
+                </section>
+
+
+                <div class="student-detail-grid">
+
+                    <!-- ÉCHÉANCIER -->
+
+                    <section class="student-detail-card">
+
+                        <div class="student-detail-heading">
+
+                            <div>
+
+                                <span class="card-eyebrow">
+                                    FEE SCHEDULE
+                                </span>
+
+                                <h3>
+                                    Échéancier
+                                </h3>
+
+                            </div>
+
+                            <i class="bi bi-calendar3"></i>
+
+                        </div>
+
+
+                        <div
+                            class="student-schedule-timeline"
+                            id="studentScheduleTimeline"
+                        ></div>
+
+                    </section>
+
+
+                    <!-- PAIEMENTS -->
+
+                    <section class="student-detail-card">
+
+                        <div class="student-detail-heading">
+
+                            <div>
+
+                                <span class="card-eyebrow">
+                                    PAYMENT
+                                </span>
+
+                                <h3>
+                                    Paiements validés
+                                </h3>
+
+                            </div>
+
+                            <i class="bi bi-receipt"></i>
+
+                        </div>
+
+
+                        <div
+                            class="student-payments-list"
+                            id="studentPaymentsList"
+                        ></div>
+
+                    </section>
+
+                </div>
+
+
+                <!-- ANALYSE -->
+
+                <section
+                    class="student-financial-analysis"
+                    id="studentFinancialAnalysis"
+                >
+
+                    <div class="student-analysis-icon">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+
+                    <div>
+
+                        <strong id="studentAnalysisTitle">
+                            Situation financière
+                        </strong>
+
+                        <p id="studentAnalysisText">
+                            —
+                        </p>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="student-modal-secondary"
+                    id="printStudentStatement"
+                >
+                    <i class="bi bi-printer"></i>
+                    Imprimer
+                </button>
+
+
+                <button
+                    type="button"
+                    class="student-modal-primary"
+                    id="exportStudentStatement"
+                >
+                    <i class="bi bi-file-earmark-pdf"></i>
+                    Exporter PDF
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     MODALE EXPORT GLOBAL
+========================================================= -->
+
+<div
+    class="modal fade"
+    id="studentsExportModal"
+    tabindex="-1"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content finance-modal">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="modal-eyebrow">
+                        EXPORTATION
+                    </span>
+
+                    <h2 class="modal-title">
+                        Exporter les situations
+                    </h2>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Fermer"
+                ></button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <p class="export-description">
+                    Les données actuellement filtrées seront exportées.
+                </p>
+
+
+                <div class="export-format-list">
+
+                    <label class="export-format-option">
+
+                        <input
+                            type="radio"
+                            name="studentExportFormat"
+                            value="csv"
+                            checked
+                        >
+
+                        <span class="export-format-icon">
+                            <i class="bi bi-filetype-csv"></i>
+                        </span>
+
+                        <span>
+                            <strong>CSV</strong>
+                            <small>
+                                Données exploitables dans un tableur
+                            </small>
+                        </span>
+
+                    </label>
+
+
+                    <label class="export-format-option">
+
+                        <input
+                            type="radio"
+                            name="studentExportFormat"
+                            value="pdf"
+                        >
+
+                        <span class="export-format-icon">
+                            <i class="bi bi-file-earmark-pdf"></i>
+                        </span>
+
+                        <span>
+                            <strong>PDF</strong>
+                            <small>
+                                Rapport financier prêt à imprimer
+                            </small>
+                        </span>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="student-modal-secondary"
+                    data-bs-dismiss="modal"
+                >
+                    Annuler
+                </button>
+
+                <button
+                    type="button"
+                    class="student-modal-primary"
+                    id="confirmStudentsExport"
+                >
+                    <i class="bi bi-download"></i>
+                    Exporter
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     TOAST
+========================================================= -->
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+
+    <div
+        id="financeToast"
+        class="toast finance-toast"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+    >
+
+        <div class="toast-body">
+
+            <i class="bi bi-check-circle"></i>
+
+            <span id="toastMessage">
+                Opération effectuée.
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     DONNÉES SERVEUR (calculées dans finance_students /
+     finance_student_detail, injectées une seule fois au
+     chargement — aucun appel fetch() supplémentaire requis)
+========================================================= -->
+
+<script
+    id="finance-students-bootstrap"
+    type="application/json"
+>{{ bootstrap_data|safe }}</script>
+
+{% if open_student_id %}
+<script id="finance-students-open-id" type="application/json">{{ open_student_id }}</script>
+{% endif %}
+
+
+<!-- =========================================================
+     SCRIPTS
+========================================================= -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js">
+</script>
+
+<script
+    src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js">
+</script>
+
+<script
+    src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js">
+</script>
+
+<script src="{% static 'js/espace_finance/finance-students.js' %}"></script>
+
+</body>
+</html>

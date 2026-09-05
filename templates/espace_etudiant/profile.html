@@ -1,0 +1,1218 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>Mon compte | AcademicPay</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    >
+
+    <!-- Styles globaux -->
+    <link rel="stylesheet" href="{% static 'css/espace_etudiant/style.css' %}">
+
+    <!-- Dashboard -->
+    <link rel="stylesheet" href="{% static 'css/espace_etudiant/dashbord.css' %}">
+
+    <!-- Page profil -->
+    <link rel="stylesheet" href="{% static 'css/espace_etudiant/profile.css' %}">
+</head>
+
+
+<body>
+
+<div class="d-flex min-vh-100">
+
+
+    <!-- =====================================================
+         SIDEBAR DESKTOP
+    ====================================================== -->
+
+    <aside
+        class="
+            dashboard-sidebar
+            d-none
+            d-lg-flex
+            flex-column
+            justify-content-between
+            position-fixed
+            top-0
+            start-0
+        "
+    >
+
+        <div>
+
+            <!-- Logo -->
+
+            <a
+                href="{% url 'student_dashboard' %}"
+                class="
+                    dashboard-logo
+                    d-flex
+                    align-items-center
+                    justify-content-center
+                "
+                title="Accueil"
+            >
+                <i class="bi bi-mortarboard-fill"></i>
+            </a>
+
+
+            <!-- Navigation -->
+
+            <nav
+                class="
+                    nav
+                    flex-column
+                    align-items-center
+                    gap-3
+                    mt-4
+                "
+            >
+
+                <a
+                    href="{% url 'student_dashboard' %}"
+                    class="dashboard-nav-icon"
+                    title="Accueil"
+                >
+                    <i class="bi bi-house-door"></i>
+                </a>
+
+
+                <a
+                    href="{% url 'student_payments' %}"
+                    class="dashboard-nav-icon"
+                    title="Mes paiements"
+                >
+                    <i class="bi bi-credit-card"></i>
+                </a>
+
+
+                <a
+                    href="{% url 'student_declare_payment' %}"
+                    class="dashboard-nav-icon"
+                    title="Déclarer un paiement"
+                >
+                    <i class="bi bi-plus-circle"></i>
+                </a>
+
+            </nav>
+
+        </div>
+
+
+        <div>
+
+            <!-- Thème -->
+
+            <div class="d-flex justify-content-center py-4">
+
+                <button
+                    type="button"
+                    class="dashboard-nav-icon border-0"
+                    id="themeToggle"
+                    title="Passer en mode clair"
+                >
+                    <i class="bi bi-sun"></i>
+                </button>
+
+            </div>
+
+
+            <!-- Utilisateur -->
+
+            <div class="dashboard-sidebar-user py-4">
+
+                <div class="dropdown d-flex justify-content-center">
+
+                    <button
+                        class="
+                            dashboard-avatar
+                            active
+                            border-0
+                            rounded-circle
+                            d-flex
+                            align-items-center
+                            justify-content-center
+                        "
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                    >
+                        {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" alt="{{ user.full_congolese_name }}" class="rounded-circle" width="40" height="40">
+                        {% else %}
+                        <i class="bi bi-person-fill"></i>
+                        {% endif %}
+                    </button>
+
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+
+                        <li>
+                            <a
+                                class="dropdown-item active"
+                                href="{% url 'student_profile' %}"
+                            >
+                                <i class="bi bi-person me-2"></i>
+                                Mon compte
+                            </a>
+                        </li>
+
+                        <li>
+                            <a
+                                class="dropdown-item"
+                                href="{% url 'student_help' %}"
+                            >
+                                <i class="bi bi-question-circle me-2"></i>
+                                Aide & support
+                            </a>
+                        </li>
+
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <a
+                                class="dropdown-item"
+                                href="{% url 'logout' %}"
+                            >
+                                <i class="bi bi-box-arrow-right me-2"></i>
+                                Déconnexion
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         CONTENU PRINCIPAL
+    ====================================================== -->
+
+    <main class="dashboard-main flex-grow-1">
+
+        <div class="container profile-container">
+
+
+            <!-- =================================================
+                 HEADER MOBILE
+            ================================================== -->
+
+            <header
+                class="
+                    mobile-header
+                    d-flex
+                    d-lg-none
+                    justify-content-between
+                    align-items-center
+                "
+            >
+
+                <a
+                    href="{% url 'student_dashboard' %}"
+                    class="mobile-logo"
+                >
+                    <i class="bi bi-mortarboard-fill"></i>
+                </a>
+
+
+                <button
+                    class="mobile-menu-button"
+                    type="button"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#dashboardMobileMenu"
+                >
+                    <i class="bi bi-list"></i>
+                </button>
+
+            </header>
+
+
+            <!-- =================================================
+                 MESSAGES
+            ================================================== -->
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+
+            <!-- =================================================
+                 TITRE
+            ================================================== -->
+
+            <header class="profile-page-header">
+
+                <div>
+
+                    <span class="dashboard-eyebrow">
+                        COMPTE ÉTUDIANT
+                    </span>
+
+                    <h1>
+                        Mon compte
+                    </h1>
+
+                    <p>
+                        Consultez vos informations personnelles,
+                        académiques et les paramètres de votre compte.
+                    </p>
+
+                </div>
+
+            </header>
+
+
+            <!-- =================================================
+                 IDENTITÉ
+            ================================================== -->
+
+            <section class="profile-identity-card">
+
+                <div class="profile-main-avatar">
+                    {{ initials }}
+                </div>
+
+
+                <div class="profile-identity">
+
+                    <span class="dashboard-eyebrow">
+                        ÉTUDIANT
+                    </span>
+
+                    <h2 id="studentFullName">
+                        {{ full_name }}
+                    </h2>
+
+                    <p id="studentMatricule">
+                        {{ registration }}
+                    </p>
+
+                </div>
+
+
+                <div class="profile-status">
+
+                    <i class="bi bi-check-circle-fill"></i>
+
+                    <span>
+                        Compte actif
+                    </span>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 GRILLE
+            ================================================== -->
+
+            <div class="profile-grid">
+
+
+                <!-- =============================================
+                     INFORMATIONS ACADÉMIQUES
+                ============================================== -->
+
+                <section class="profile-card">
+
+                    <header class="profile-card-header">
+
+                        <div>
+
+                            <span class="dashboard-eyebrow">
+                                SCOLARITÉ
+                            </span>
+
+                            <h2>
+                                Informations académiques
+                            </h2>
+
+                        </div>
+
+
+                        <div class="profile-card-icon">
+
+                            <i class="bi bi-mortarboard"></i>
+
+                        </div>
+
+                    </header>
+
+
+                    <div class="profile-card-body">
+
+
+                        <!-- Matricule -->
+
+                        <div class="profile-information-row">
+
+                            <div class="profile-information-icon">
+
+                                <i class="bi bi-person-badge"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Matricule
+                                </span>
+
+                                <strong>
+                                    {{ registration }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Faculté -->
+
+                        <div class="profile-information-row">
+
+                            <div class="profile-information-icon">
+
+                                <i class="bi bi-building"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Faculté
+                                </span>
+
+                                <strong>
+                                    {{ faculty }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Promotion -->
+
+                        <div class="profile-information-row">
+
+                            <div class="profile-information-icon">
+
+                                <i class="bi bi-layers"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Promotion
+                                </span>
+
+                                <strong>
+                                    {{ level|default:program }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Année -->
+
+                        <div class="profile-information-row">
+
+                            <div class="profile-information-icon">
+
+                                <i class="bi bi-calendar3"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Année académique
+                                </span>
+
+                                <strong>
+                                    {{ current_academic_year }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Université -->
+
+                        <div class="profile-information-row">
+
+                            <div class="profile-information-icon">
+
+                                <i class="bi bi-bank"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Établissement
+                                </span>
+
+                                <strong>
+                                    {{ university }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <footer class="profile-card-note">
+
+                        <i class="bi bi-lock"></i>
+
+                        <span>
+                            Ces informations sont gérées par
+                            l'administration universitaire.
+                        </span>
+
+                    </footer>
+
+                </section>
+
+
+                <!-- =============================================
+                     INFORMATIONS PERSONNELLES
+                ============================================== -->
+
+                <section class="profile-card">
+
+                    <header class="profile-card-header">
+
+                        <div>
+
+                            <span class="dashboard-eyebrow">
+                                INFORMATIONS PERSONNELLES
+                            </span>
+
+                            <h2>
+                                Coordonnées
+                            </h2>
+
+                        </div>
+
+
+                        <div class="profile-card-icon">
+
+                            <i class="bi bi-person"></i>
+
+                        </div>
+
+                    </header>
+
+
+                    <form
+                        id="profileForm"
+                        class="profile-card-body"
+                        method="post"
+                        action="{% url 'student_profile' %}"
+                        novalidate
+                    >
+                        {% csrf_token %}
+
+                        <!-- Nom -->
+
+                        <div class="profile-field">
+
+                            <label for="fullName">
+                                Nom complet
+                            </label>
+
+
+                            <div class="profile-input">
+
+                                <i class="bi bi-person"></i>
+
+                                <input
+                                    type="text"
+                                    id="fullName"
+                                    value="{{ full_name }}"
+                                    disabled
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Email -->
+
+                        <div class="profile-field">
+
+                            <label for="email">
+                                Adresse e-mail
+                            </label>
+
+
+                            <div class="profile-input">
+
+                                <i class="bi bi-envelope"></i>
+
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    value="{{ email }}"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <small
+                                class="profile-field-error"
+                                id="emailError"
+                            ></small>
+
+                        </div>
+
+
+
+
+                        <!-- Action -->
+
+                        <div class="profile-form-action">
+
+                            <button
+                                type="submit"
+                                class="profile-save-button"
+                                id="saveProfileButton"
+                            >
+
+                                <i class="bi bi-check2"></i>
+
+                                Enregistrer les modifications
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </section>
+
+            </div>
+
+
+            <!-- =================================================
+                 SÉCURITÉ
+            ================================================== -->
+
+            <section class="profile-security-card">
+
+                <header class="profile-card-header">
+
+                    <div>
+
+                        <span class="dashboard-eyebrow">
+                            SÉCURITÉ
+                        </span>
+
+                        <h2>
+                            Sécurité du compte
+                        </h2>
+
+                    </div>
+
+
+                    <div class="profile-card-icon">
+
+                        <i class="bi bi-shield-lock"></i>
+
+                    </div>
+
+                </header>
+
+
+                <div class="security-list">
+
+
+                    <!-- Mot de passe -->
+
+                    <div class="security-item">
+
+                        <div class="security-item-left">
+
+                            <div class="security-icon">
+
+                                <i class="bi bi-key"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <strong>
+                                    Mot de passe
+                                </strong>
+
+                                <span>
+                                    Modifiez votre mot de passe
+                                    de connexion.
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="security-action"
+                            data-bs-toggle="modal"
+                            data-bs-target="#passwordModal"
+                        >
+                            Modifier
+
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+
+                    </div>
+
+
+                    <!-- Sessions -->
+
+                    <div class="security-item">
+
+                        <div class="security-item-left">
+
+                            <div class="security-icon">
+
+                                <i class="bi bi-display"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <strong>
+                                    Session actuelle
+                                </strong>
+
+                                <span>
+                                    Votre compte est actuellement connecté.
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <span class="security-current">
+
+                            <i class="bi bi-circle-fill"></i>
+
+                            Active
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- Dernière connexion -->
+
+                    <div class="security-item">
+
+                        <div class="security-item-left">
+
+                            <div class="security-icon">
+
+                                <i class="bi bi-clock-history"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <strong>
+                                    Dernière connexion
+                                </strong>
+
+                                <span>
+                                    {{ last_login }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 FOOTER
+            ================================================== -->
+
+            <footer class="dashboard-footer">
+
+                <span>
+                    © 2026 AcademicPay
+                </span>
+
+                <span>
+                    Gestion des paiements académiques
+                </span>
+
+            </footer>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- =========================================================
+     MODAL MODIFICATION MOT DE PASSE
+========================================================= -->
+
+<div
+    class="modal fade"
+    id="passwordModal"
+    tabindex="-1"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content profile-password-modal">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="dashboard-eyebrow">
+                        SÉCURITÉ
+                    </span>
+
+                    <h2 class="modal-title">
+                        Modifier le mot de passe
+                    </h2>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Fermer"
+                ></button>
+
+            </div>
+
+
+            <form
+                id="passwordForm"
+                method="post"
+                action="{% url 'student_profile' %}"
+                novalidate
+            >
+                {% csrf_token %}
+
+                <div class="modal-body">
+
+
+                    <!-- Ancien -->
+
+                    <div class="profile-field">
+
+                        <label for="currentPassword">
+                            Mot de passe actuel
+                        </label>
+
+
+                        <div class="profile-input password-input">
+
+                            <i class="bi bi-lock"></i>
+
+                            <input
+                                type="password"
+                                id="currentPassword"
+                                name="current_password"
+                                autocomplete="current-password"
+                                required
+                            >
+
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                data-target="currentPassword"
+                                aria-label="Afficher le mot de passe"
+                            >
+                                <i class="bi bi-eye"></i>
+                            </button>
+
+                        </div>
+
+
+                        <small
+                            class="profile-field-error"
+                            id="currentPasswordError"
+                        ></small>
+
+                    </div>
+
+
+                    <!-- Nouveau -->
+
+                    <div class="profile-field">
+
+                        <label for="newPassword">
+                            Nouveau mot de passe
+                        </label>
+
+
+                        <div class="profile-input password-input">
+
+                            <i class="bi bi-lock-fill"></i>
+
+                            <input
+                                type="password"
+                                id="newPassword"
+                                name="new_password"
+                                autocomplete="new-password"
+                                required
+                            >
+
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                data-target="newPassword"
+                                aria-label="Afficher le mot de passe"
+                            >
+                                <i class="bi bi-eye"></i>
+                            </button>
+
+                        </div>
+
+
+                        <small class="profile-password-help">
+                            Utilisez au moins 8 caractères.
+                        </small>
+
+
+                        <small
+                            class="profile-field-error"
+                            id="newPasswordError"
+                        ></small>
+
+                    </div>
+
+
+                    <!-- Confirmation -->
+
+                    <div class="profile-field">
+
+                        <label for="confirmPassword">
+                            Confirmer le nouveau mot de passe
+                        </label>
+
+
+                        <div class="profile-input password-input">
+
+                            <i class="bi bi-lock-fill"></i>
+
+                            <input
+                                type="password"
+                                id="confirmPassword"
+                                name="confirm_password"
+                                autocomplete="new-password"
+                                required
+                            >
+
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                data-target="confirmPassword"
+                                aria-label="Afficher le mot de passe"
+                            >
+                                <i class="bi bi-eye"></i>
+                            </button>
+
+                        </div>
+
+
+                        <small
+                            class="profile-field-error"
+                            id="confirmPasswordError"
+                        ></small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="profile-cancel-button"
+                        data-bs-dismiss="modal"
+                    >
+                        Annuler
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="profile-save-button"
+                        id="changePasswordButton"
+                    >
+                        <i class="bi bi-shield-check"></i>
+
+                        Modifier le mot de passe
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     NOTIFICATION
+========================================================= -->
+
+<div
+    class="profile-toast"
+    id="profileToast"
+    role="status"
+    aria-live="polite"
+>
+
+    <div class="profile-toast-icon">
+
+        <i class="bi bi-check-lg"></i>
+
+    </div>
+
+
+    <div>
+
+        <strong id="profileToastTitle">
+            Modifications enregistrées
+        </strong>
+
+        <span id="profileToastMessage">
+            Vos informations ont été mises à jour.
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     MENU MOBILE
+========================================================= -->
+
+<div
+    class="offcanvas offcanvas-start dashboard-offcanvas"
+    tabindex="-1"
+    id="dashboardMobileMenu"
+>
+
+    <div class="offcanvas-header">
+
+        <div class="mobile-menu-brand">
+
+            <div class="mobile-menu-logo">
+
+                <i class="bi bi-mortarboard-fill"></i>
+
+            </div>
+
+            <strong>
+                AcademicPay
+            </strong>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="offcanvas"
+            aria-label="Fermer"
+        ></button>
+
+    </div>
+
+
+    <div class="offcanvas-body">
+
+        <nav class="mobile-navigation">
+
+            <a
+                href="{% url 'student_dashboard' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-house-door"></i>
+
+                <span>
+                    Accueil
+                </span>
+            </a>
+
+
+            <a
+                href="{% url 'student_payments' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-credit-card"></i>
+
+                <span>
+                    Mes paiements
+                </span>
+            </a>
+
+
+            <a
+                href="{% url 'student_declare_payment' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-plus-circle"></i>
+
+                <span>
+                    Déclarer un paiement
+                </span>
+            </a>
+
+
+            <div class="mobile-nav-divider"></div>
+
+
+            <button
+                type="button"
+                class="mobile-nav-link"
+                id="mobileThemeToggle"
+            >
+                <i class="bi bi-sun"></i>
+
+                <span>
+                    Passer en mode clair
+                </span>
+            </button>
+
+
+            <a
+                href="{% url 'student_profile' %}"
+                class="mobile-nav-link active"
+            >
+                <i class="bi bi-person-fill"></i>
+
+                <span>
+                    Mon compte
+                </span>
+            </a>
+
+
+            <a
+                href="help.html"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-question-circle"></i>
+
+                <span>
+                    Aide & support
+                </span>
+            </a>
+
+
+            <a
+                href="{% url 'logout' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-box-arrow-right"></i>
+
+                <span>
+                    Déconnexion
+                </span>
+            </a>
+
+        </nav>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     SCRIPTS
+========================================================= -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+></script>
+
+<!-- Gestion globale du thème -->
+<script src="{% static 'js/espace_etudiant/dashboard.js' %}"></script>
+
+<!-- Gestion du profil -->
+<script src="{% static 'js/espace_etudiant/profile.js' %}"></script>
+
+</body>
+</html>

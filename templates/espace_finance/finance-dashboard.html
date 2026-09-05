@@ -1,0 +1,1496 @@
+
+{% load static %}
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Finance - Accueil | AcademicPay</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    >
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/espace_finance/finance-dashboard.css' %}">
+</head>
+
+<body>
+
+<div class="finance-layout">
+
+    <!-- =====================================================
+         SIDEBAR DESKTOP
+    ====================================================== -->
+    <aside class="finance-sidebar d-none d-xl-flex">
+
+        <a href="{% url 'finance_dashboard' %}" class="sidebar-brand">
+
+            <div class="brand-icon">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+            <div>
+                <strong>AcademicPay</strong>
+                <span>FINANCE</span>
+            </div>
+
+        </a>
+
+
+        <nav class="sidebar-nav">
+
+            <div class="nav-section-label">PRINCIPAL</div>
+
+            <a
+                href="{% url 'finance_dashboard' %}"
+                class="sidebar-link active"
+            >
+                <i class="bi bi-house-door-fill"></i>
+                <span>ACCUEIL</span>
+            </a>
+
+            <a
+                href="{% url 'finance_payments' %}"
+                class="sidebar-link"
+            >
+                <i class="bi bi-credit-card"></i>
+                <span>PAIEMENTS</span>
+            </a>
+
+            <a
+                href="{% url 'finance_statements' %}"
+                class="sidebar-link"
+            >
+                <i class="bi bi-bank"></i>
+                <span>EXTRAITS BANCAIRES</span>
+            </a>
+
+            <a
+                href="{% url 'finance_schedule' %}"
+                class="sidebar-link"
+            >
+                <i class="bi bi-calendar3"></i>
+                <span>ÉCHÉANCIER</span>
+            </a>
+
+
+            <div class="nav-section-label">
+                SUIVI FINANCIER
+            </div>
+
+            <a
+                href="{% url 'finance_students' %}"
+                class="sidebar-link"
+            >
+                <i class="bi bi-people"></i>
+                <span>SITUATIONS FINANCIÈRES</span>
+            </a>
+
+            <a
+                href="{% url 'finance_reconciliation' %}"
+                class="sidebar-link"
+            >
+                <i class="bi bi-arrow-left-right"></i>
+                <span>RAPPROCHEMENT GLOBAL</span>
+            </a>
+
+            <a
+                href="{% url 'finance_anomalies' %}"
+                class="sidebar-link"
+            >
+                <i class="bi bi-exclamation-triangle"></i>
+                <span>ANOMALIES</span>
+
+                <span
+                    class="nav-badge"
+                    id="sidebarAnomalyCount"
+                >
+                    24
+                </span>
+            </a>
+
+
+            <div class="nav-section-label">ANALYSE</div>
+
+            <a
+                href="{% url 'finance_reports' %}"
+                class="sidebar-link"
+            >
+                <i class="bi bi-bar-chart-line"></i>
+                <span>RAPPORTS</span>
+            </a>
+
+            <a
+                href="{% url 'finance_history' %}"
+                class="sidebar-link"
+            >
+                <i class="bi bi-clock-history"></i>
+                <span>HISTORIQUE</span>
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a
+                href="{% url 'finance_profile' %}"
+                class="finance-user"
+            >
+
+                <div class="user-avatar">
+                    RF
+                </div>
+
+                <div class="user-information">
+
+                    <strong>
+                        Responsable financier
+                    </strong>
+
+                    <span>
+                        Chef du service financier
+                    </span>
+
+                </div>
+
+                <i class="bi bi-chevron-right"></i>
+
+            </a>
+
+
+            <div class="sidebar-actions">
+
+                <button
+                    type="button"
+                    class="sidebar-action-btn"
+                    id="themeButton"
+                    title="Changer de thème"
+                >
+                    <i class="bi bi-sun"></i>
+                </button>
+
+                <a
+                    href="{% url 'finance_profile' %}"
+                    class="sidebar-action-btn"
+                    title="Paramètres"
+                >
+                    <i class="bi bi-gear"></i>
+                </a>
+
+                <a
+                    href="{% url 'logout' %}"
+                    class="sidebar-action-btn"
+                    title="Déconnexion"
+                >
+                    <i class="bi bi-box-arrow-right"></i>
+                </a>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+    <main class="finance-main">
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+        <header class="dashboard-header">
+
+            <div class="mobile-header d-xl-none">
+
+                <button
+                    class="mobile-menu-button"
+                    type="button"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#financeMobileMenu"
+                    aria-label="Ouvrir le menu"
+                >
+                    <i class="bi bi-list"></i>
+                </button>
+
+                <div class="mobile-brand">
+                    <strong>AcademicPay</strong>
+                    <span>FINANCE</span>
+                </div>
+
+            </div>
+
+
+            <div class="header-content">
+
+                <div>
+
+                    <span class="page-eyebrow">
+                        TABLEAU DE BORD FINANCIER
+                    </span>
+
+                    <h1>
+                        Bonjour, Responsable financier
+                    </h1>
+
+                    <p>
+                        Vue consolidée de la situation financière
+                        de l'université.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             INDICATEURS CLÉS
+        ================================================== -->
+        <section class="market-strip">
+
+            <div class="strip-title">
+                <span class="indicator-dot"></span>
+                INDICATEURS CLÉS
+            </div>
+
+
+            <div class="strip-item">
+
+                <span>
+                    Encaissements aujourd'hui
+                </span>
+
+                <div>
+
+                    <strong id="todayIncome">
+                        12 450 $
+                    </strong>
+
+                    <small
+                        class="positive"
+                        id="todayIncomeEvolution"
+                    >
+                        <i class="bi bi-arrow-up-short"></i>
+                        8.31%
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="strip-item">
+
+                <span>
+                    Paiements validés
+                </span>
+
+                <div>
+
+                    <strong id="validatedPayments">
+                        248
+                    </strong>
+
+                    <small
+                        class="positive"
+                        id="validatedPaymentsEvolution"
+                    >
+                        <i class="bi bi-arrow-up-short"></i>
+                        6.11%
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="strip-item">
+
+                <span>
+                    Anomalies en attente
+                </span>
+
+                <div>
+
+                    <strong
+                        class="danger-text"
+                        id="pendingAnomalies"
+                    >
+                        24
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="strip-item">
+
+                <span>
+                    Taux de recouvrement
+                </span>
+
+                <div>
+
+                    <strong
+                        class="positive"
+                        id="recoveryRate"
+                    >
+                        73.8%
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="strip-item">
+
+                <span>
+                    Écart bancaire global
+                </span>
+
+                <div>
+
+                    <strong
+                        class="danger-text"
+                        id="globalBankGap"
+                    >
+                        1 000 $
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             KPI
+        ================================================== -->
+        <section class="kpi-grid">
+
+            <!-- MONTANT ATTENDU -->
+            <article class="kpi-card">
+
+                <div class="kpi-card-main">
+
+                    <div class="kpi-icon">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+
+                    <div class="kpi-content">
+
+                        <span class="kpi-label">
+                            MONTANT ATTENDU
+                        </span>
+
+                        <strong
+                            class="kpi-value"
+                            id="expectedAmount"
+                        >
+                            850 000 $
+                        </strong>
+
+                        <small>
+                            Selon l'échéancier
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="kpi-footer">
+
+                    <span>
+                        vs période précédente
+                    </span>
+
+                    <strong
+                        class="positive"
+                        id="expectedAmountEvolution"
+                    >
+                        +5.42%
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+            <!-- MONTANT ENCAISSÉ -->
+            <article class="kpi-card">
+
+                <div class="kpi-card-main">
+
+                    <div class="kpi-icon">
+                        <i class="bi bi-wallet2"></i>
+                    </div>
+
+                    <div class="kpi-content">
+
+                        <span class="kpi-label">
+                            MONTANT ENCAISSÉ
+                        </span>
+
+                        <strong
+                            class="kpi-value"
+                            id="collectedAmount"
+                        >
+                            627 500 $
+                        </strong>
+
+                        <small>
+                            Paiements validés
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="kpi-footer">
+
+                    <span>
+                        vs période précédente
+                    </span>
+
+                    <strong
+                        class="positive"
+                        id="collectedAmountEvolution"
+                    >
+                        +7.18%
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+            <!-- À RECOUVRER -->
+            <article class="kpi-card">
+
+                <div class="kpi-card-main">
+
+                    <div class="kpi-icon">
+                        <i class="bi bi-cash-stack"></i>
+                    </div>
+
+                    <div class="kpi-content">
+
+                        <span class="kpi-label">
+                            À RECOUVRER
+                        </span>
+
+                        <strong
+                            class="kpi-value"
+                            id="remainingAmount"
+                        >
+                            222 500 $
+                        </strong>
+
+                        <small>
+                            Reste à encaisser
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="kpi-footer">
+
+                    <span>
+                        vs période précédente
+                    </span>
+
+                    <strong
+                        class="negative"
+                        id="remainingAmountEvolution"
+                    >
+                        -2.31%
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+            <!-- ANOMALIES -->
+            <article class="kpi-card">
+
+                <div class="kpi-card-main">
+
+                    <div class="kpi-icon danger-icon">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </div>
+
+                    <div class="kpi-content">
+
+                        <span class="kpi-label">
+                            ANOMALIES À TRAITER
+                        </span>
+
+                        <strong
+                            class="kpi-value"
+                            id="anomalyKpi"
+                        >
+                            24
+                        </strong>
+
+                        <small>
+                            En attente de décision
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="kpi-footer">
+
+                    <span>
+                        vs période précédente
+                    </span>
+
+                    <strong
+                        class="positive"
+                        id="anomalyEvolution"
+                    >
+                        -11.11%
+                    </strong>
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- =================================================
+             GRAPHIQUE + RAPPROCHEMENT
+        ================================================== -->
+        <section class="row g-3 dashboard-row">
+
+            <!-- ÉVOLUTION DES ENCAISSEMENTS -->
+            <div class="col-12 col-xxl-8">
+
+                <article class="dashboard-card chart-card">
+
+                    <div class="card-title-row">
+
+                        <div>
+
+                            <span class="card-eyebrow">
+                                PERFORMANCE
+                            </span>
+
+                            <h2>
+                                Évolution des encaissements
+                            </h2>
+
+                        </div>
+
+
+                        <div
+                            class="period-tabs"
+                            id="chartPeriods"
+                        >
+
+                            <button
+                                type="button"
+                                data-period="1D"
+                            >
+                                1D
+                            </button>
+
+                            <button
+                                type="button"
+                                data-period="1W"
+                            >
+                                1W
+                            </button>
+
+                            <button
+                                type="button"
+                                data-period="1M"
+                                class="active"
+                            >
+                                1M
+                            </button>
+
+                            <button
+                                type="button"
+                                data-period="3M"
+                            >
+                                3M
+                            </button>
+
+                            <button
+                                type="button"
+                                data-period="1Y"
+                            >
+                                1Y
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="chart-wrapper">
+                        <canvas id="incomeChart"></canvas>
+                    </div>
+
+
+                    <div class="chart-statistics">
+
+                        <div>
+
+                            <span>
+                                Total période
+                            </span>
+
+                            <strong id="periodTotal">
+                                627 500 $
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Moyenne
+                            </span>
+
+                            <strong id="periodAverage">
+                                20 916 $
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Meilleure valeur
+                            </span>
+
+                            <strong id="periodBest">
+                                37 820 $
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+
+            <!-- RAPPROCHEMENT -->
+            <div class="col-12 col-xxl-4">
+
+                <article class="dashboard-card reconciliation-card">
+
+                    <div class="card-title-row">
+
+                        <div>
+
+                            <span class="card-eyebrow">
+                                CONTRÔLE
+                            </span>
+
+                            <h2>
+                                Rapprochement bancaire global
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="donut-container">
+
+                        <div class="reconciliation-donut">
+
+                            <div class="donut-center">
+
+                                <span>
+                                    Écart global
+                                </span>
+
+                                <strong id="donutGap">
+                                    1 000 $
+                                </strong>
+
+                                <small id="donutGapRate">
+                                    0.16%
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="reconciliation-details">
+
+                        <div class="reconciliation-row">
+
+                            <div>
+                                <span class="legend-dot bank-dot"></span>
+                                Montant bancaire
+                            </div>
+
+                            <strong id="bankAmount">
+                                628 500 $
+                            </strong>
+
+                        </div>
+
+
+                        <div class="reconciliation-row">
+
+                            <div>
+                                <span class="legend-dot system-dot"></span>
+                                AcademicPay
+                            </div>
+
+                            <strong id="systemAmount">
+                                627 500 $
+                            </strong>
+
+                        </div>
+
+
+                        <div class="reconciliation-row">
+
+                            <div>
+                                <span class="legend-dot difference-dot"></span>
+                                Écart
+                            </div>
+
+                            <strong
+                                class="danger-text"
+                                id="reconciliationGap"
+                            >
+                                1 000 $
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <a
+                        href="{% url 'finance_reconciliation' %}"
+                        class="outline-action full-action"
+                    >
+                        Voir le rapprochement
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             RECOUVREMENT PAR FACULTÉ + ANOMALIES
+        ================================================== -->
+        <section class="row g-3 dashboard-row">
+
+            <!-- =================================================
+                 RECOUVREMENT PAR FACULTÉ UCB
+            ================================================== -->
+            <div class="col-12 col-xl-5">
+
+                <article class="dashboard-card faculty-card">
+
+                    <div class="card-title-row">
+
+                        <div>
+
+                            <span class="card-eyebrow">
+                                RECOUVREMENT
+                            </span>
+
+                            <h2>
+                                Recouvrement par faculté
+                            </h2>
+
+                        </div>
+
+                        <a
+                            href="{% url 'finance_students' %}"
+                            class="text-action"
+                        >
+                            Voir tout
+                        </a>
+
+                    </div>
+
+
+                    <div class="faculty-list">
+
+                        <!-- =====================================
+                             AGRO
+                             Sciences Agronomiques et Environnement
+                        ====================================== -->
+                        <div
+                            class="faculty-row"
+                            data-faculty="AGRO"
+                        >
+
+                            <div class="faculty-heading">
+
+                                <span>
+                                    Sciences Agronomiques et Environnement
+                                </span>
+
+                                <strong>
+                                    80%
+                                </strong>
+
+                            </div>
+
+                            <div class="faculty-amount">
+                                96 000 $ / 120 000 $
+                            </div>
+
+                            <div class="faculty-progress">
+                                <span style="width: 80%"></span>
+                            </div>
+
+                        </div>
+
+
+                        <!-- =====================================
+                             DROIT
+                        ====================================== -->
+                        <div
+                            class="faculty-row"
+                            data-faculty="DROIT"
+                        >
+
+                            <div class="faculty-heading">
+
+                                <span>
+                                    Droit
+                                </span>
+
+                                <strong>
+                                    79%
+                                </strong>
+
+                            </div>
+
+                            <div class="faculty-amount">
+                                118 500 $ / 150 000 $
+                            </div>
+
+                            <div class="faculty-progress">
+                                <span style="width: 79%"></span>
+                            </div>
+
+                        </div>
+
+
+                        <!-- =====================================
+                             ECO_GESTION
+                             Sciences Économiques et de Gestion
+                        ====================================== -->
+                        <div
+                            class="faculty-row"
+                            data-faculty="ECO_GESTION"
+                        >
+
+                            <div class="faculty-heading">
+
+                                <span>
+                                    Sciences Économiques et de Gestion
+                                </span>
+
+                                <strong>
+                                    76%
+                                </strong>
+
+                            </div>
+
+                            <div class="faculty-amount">
+                                114 000 $ / 150 000 $
+                            </div>
+
+                            <div class="faculty-progress">
+                                <span style="width: 76%"></span>
+                            </div>
+
+                        </div>
+
+
+                        <!-- =====================================
+                             SANTE
+                             Sciences de la Santé
+                        ====================================== -->
+                        <div
+                            class="faculty-row"
+                            data-faculty="SANTE"
+                        >
+
+                            <div class="faculty-heading">
+
+                                <span>
+                                    Sciences de la Santé
+                                </span>
+
+                                <strong>
+                                    74%
+                                </strong>
+
+                            </div>
+
+                            <div class="faculty-amount">
+                                111 000 $ / 150 000 $
+                            </div>
+
+                            <div class="faculty-progress">
+                                <span style="width: 74%"></span>
+                            </div>
+
+                        </div>
+
+
+                        <!-- =====================================
+                             SCI_TECH
+                             Sciences et Technologie
+                        ====================================== -->
+                        <div
+                            class="faculty-row"
+                            data-faculty="SCI_TECH"
+                        >
+
+                            <div class="faculty-heading">
+
+                                <span>
+                                    Sciences et Technologie
+                                </span>
+
+                                <strong>
+                                    71%
+                                </strong>
+
+                            </div>
+
+                            <div class="faculty-amount">
+                                106 500 $ / 150 000 $
+                            </div>
+
+                            <div class="faculty-progress">
+                                <span style="width: 71%"></span>
+                            </div>
+
+                        </div>
+
+
+                        <!-- =====================================
+                             SHS
+                             Sciences de l'Homme et de la Société
+                        ====================================== -->
+                        <div
+                            class="faculty-row"
+                            data-faculty="SHS"
+                        >
+
+                            <div class="faculty-heading">
+
+                                <span>
+                                    Sciences de l'Homme et de la Société
+                                </span>
+
+                                <strong>
+                                    68%
+                                </strong>
+
+                            </div>
+
+                            <div class="faculty-amount">
+                                81 500 $ / 120 000 $
+                            </div>
+
+                            <div class="faculty-progress">
+                                <span style="width: 68%"></span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+
+            <!-- =================================================
+                 ANOMALIES RÉCENTES
+            ================================================== -->
+            <div class="col-12 col-xl-7">
+
+                <article class="dashboard-card anomalies-card">
+
+                    <div class="card-title-row">
+
+                        <div>
+
+                            <span class="card-eyebrow">
+                                SURVEILLANCE
+                            </span>
+
+                            <h2>
+                                Anomalies récentes
+                            </h2>
+
+                        </div>
+
+                        <a
+                            href="{% url 'finance_anomalies' %}"
+                            class="text-action"
+                        >
+                            Voir toutes
+                        </a>
+
+                    </div>
+
+
+                    <div class="table-responsive">
+
+                        <table class="finance-table">
+
+                            <thead>
+
+                                <tr>
+                                    <th>Étudiant</th>
+                                    <th>Référence</th>
+                                    <th>Problème</th>
+                                    <th>Date</th>
+                                    <th></th>
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for anomaly in recent_anomalies %}
+
+                                    <tr>
+
+                                        <td>
+
+                                            <div class="student-cell">
+
+                                                <span class="student-avatar">
+                                                    {{ anomaly.claim.student.last_name|first }}{{ anomaly.claim.student.first_name|first }}
+                                                </span>
+
+                                                {{ anomaly.claim.student.full_congolese_name }}
+
+                                            </div>
+
+                                        </td>
+
+                                        <td class="reference">
+                                            {{ anomaly.claim.submitted_reference }}
+                                        </td>
+
+                                        <td>
+                                            {{ anomaly.get_anomaly_type_display }}
+                                        </td>
+
+                                        <td>
+                                            {{ anomaly.created_at|date:"d/m/Y" }}
+                                            <small>
+                                                {{ anomaly.created_at|date:"H:i" }}
+                                            </small>
+                                        </td>
+
+                                        <td>
+
+                                            <button
+                                                type="button"
+                                                class="table-action anomaly-examine"
+                                                data-reference="{{ anomaly.claim.submitted_reference }}"
+                                                title="Examiner"
+                                            >
+                                                <i class="bi bi-arrow-up-right"></i>
+                                            </button>
+
+                                        </td>
+
+                                    </tr>
+
+                                {% empty %}
+
+                                    <tr>
+                                        <td colspan="5" class="text-center">
+                                            Aucune anomalie récente.
+                                        </td>
+                                    </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- =====================================================
+     OFFCANVAS MOBILE
+===================================================== -->
+<div
+    class="offcanvas offcanvas-start finance-offcanvas"
+    tabindex="-1"
+    id="financeMobileMenu"
+>
+
+    <div class="offcanvas-header">
+
+        <div class="sidebar-brand">
+
+            <div class="brand-icon">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+            <div>
+                <strong>AcademicPay</strong>
+                <span>FINANCE</span>
+            </div>
+
+        </div>
+
+        <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="offcanvas"
+            aria-label="Fermer"
+        ></button>
+
+    </div>
+
+
+    <div class="offcanvas-body">
+
+        <nav class="mobile-navigation">
+
+            <a
+                href="{% url 'finance_dashboard' %}"
+                class="mobile-nav-link active"
+            >
+                <i class="bi bi-house-door-fill"></i>
+                Accueil
+            </a>
+
+            <a
+                href="{% url 'finance_payments' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-credit-card"></i>
+                Paiements
+            </a>
+
+            <a
+                href="{% url 'finance_statements' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-bank"></i>
+                Extraits bancaires
+            </a>
+
+            <a
+                href="{% url 'finance_schedule' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-calendar3"></i>
+                Échéancier
+            </a>
+
+            <a
+                href="{% url 'finance_students' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-people"></i>
+                Situations financières
+            </a>
+
+            <a
+                href="{% url 'finance_reconciliation' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-arrow-left-right"></i>
+                Rapprochement global
+            </a>
+
+            <a
+                href="{% url 'finance_anomalies' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-exclamation-triangle"></i>
+
+                Anomalies
+
+                <span
+                    class="mobile-badge"
+                    id="mobileAnomalyCount"
+                >
+                    24
+                </span>
+            </a>
+
+            <a
+                href="{% url 'finance_reports' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-bar-chart-line"></i>
+                Rapports
+            </a>
+
+            <a
+                href="{% url 'finance_history' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-clock-history"></i>
+                Historique
+            </a>
+
+            <hr>
+
+            <a
+                href="{% url 'finance_profile' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-person"></i>
+                Mon compte
+            </a>
+
+            <a
+                href="{% url 'logout' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-box-arrow-right"></i>
+                Déconnexion
+            </a>
+
+        </nav>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     MODALE DÉTAIL ANOMALIE
+===================================================== -->
+<div
+    class="modal fade"
+    id="anomalyDetailModal"
+    tabindex="-1"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content finance-modal">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span>
+                        ANOMALIE FINANCIÈRE
+                    </span>
+
+                    <h2>
+                        Examiner l'anomalie
+                    </h2>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal"
+                    aria-label="Fermer"
+                ></button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <div class="anomaly-detail-grid">
+
+                    <div>
+                        <span>Étudiant</span>
+
+                        <strong id="anomalyStudent">
+                            —
+                        </strong>
+                    </div>
+
+
+                    <div>
+                        <span>Référence</span>
+
+                        <strong id="anomalyReference">
+                            —
+                        </strong>
+                    </div>
+
+
+                    <div>
+                        <span>Problème</span>
+
+                        <strong id="anomalyProblem">
+                            —
+                        </strong>
+                    </div>
+
+
+                    <div>
+                        <span>Date</span>
+
+                        <strong id="anomalyDate">
+                            —
+                        </strong>
+                    </div>
+
+                </div>
+
+
+                <div class="anomaly-detail-note">
+
+                    <i class="bi bi-info-circle"></i>
+
+                    <p>
+                        Cette fenêtre donne un aperçu rapide.
+                        Le traitement et la décision définitive
+                        se font dans le module Anomalies.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn modal-cancel"
+                    data-bs-dismiss="modal"
+                >
+                    Fermer
+                </button>
+
+                <a
+                    href="{% url 'finance_anomalies' %}"
+                    class="btn modal-confirm"
+                    id="openAnomalyModule"
+                >
+                    Ouvrir le module Anomalies
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     TOAST
+===================================================== -->
+<div
+    class="toast-container position-fixed bottom-0 end-0 p-3"
+>
+
+    <div
+        id="financeToast"
+        class="toast finance-toast"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+    >
+
+        <div class="toast-body">
+
+            <i class="bi bi-check-circle-fill"></i>
+
+            <span id="toastMessage">
+                Opération effectuée.
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     SCRIPTS
+===================================================== -->
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Bootstrap -->
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+></script>
+
+<!-- Données envoyées par Django -->
+{{ dashboard_data|json_script:"dashboard-data" }}
+
+<!-- JavaScript du dashboard -->
+<script src="{% static 'js/espace_finance/finance-dashboard.js' %}"></script>
+
+</body>
+
+</html>

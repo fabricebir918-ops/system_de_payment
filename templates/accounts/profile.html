@@ -1,0 +1,333 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Mon compte | AcademicPay</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+</head>
+
+<body>
+
+<div class="d-flex min-vh-100">
+
+    <!-- =====================================================
+         SIDEBAR DESKTOP
+    ====================================================== -->
+    <aside class="student-sidebar d-none d-lg-flex flex-column
+                  justify-content-between position-fixed top-0 start-0">
+
+        <!-- Logo -->
+        <a href="{% url 'finance_status' %}"
+           class="sidebar-logo d-flex align-items-center
+                  justify-content-center text-decoration-none"
+           aria-label="AcademicPay">
+            <i class="bi bi-mortarboard-fill"></i>
+        </a>
+
+        <!-- Navigation -->
+        <nav class="nav flex-column align-items-center gap-3">
+            <a href="{% url 'finance_status' %}" class="sidebar-icon" title="Accueil"><i class="bi bi-house-door-fill"></i></a>
+            <a href="#" class="sidebar-icon" title="Situation financière"><i class="bi bi-wallet2"></i></a>
+            <a href="#" class="sidebar-icon" title="Mes paiements"><i class="bi bi-credit-card"></i></a>
+            <a href="{% url 'submit_claim' %}" class="sidebar-icon" title="Déclarer un paiement"><i class="bi bi-plus-circle"></i></a>
+            <a href="#" class="sidebar-icon" title="Historique"><i class="bi bi-clock-history"></i></a>
+        </nav>
+
+        <div>
+            <!-- Thème -->
+            <div class="d-flex justify-content-center py-4">
+                <button class="sidebar-icon border-0" type="button" title="Thème">
+                    <i class="bi bi-moon-stars"></i>
+                </button>
+            </div>
+
+            <!-- Utilisateur -->
+            <div class="sidebar-user d-flex justify-content-center py-4">
+                <div class="dropdown">
+                    <button class="student-avatar active border-0 rounded-circle
+                                   d-flex align-items-center justify-content-center"
+                            type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-fill"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="bi bi-person me-2"></i>Mon compte</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-question-circle me-2"></i>Aide</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form method="post" action="{% url 'logout' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right me-2"></i>Déconnexion</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+
+    <!-- =====================================================
+         CONTENU PRINCIPAL
+    ====================================================== -->
+    <main class="student-main flex-grow-1">
+
+        <div class="container profile-container">
+
+            <!-- HEADER MOBILE -->
+            <header class="d-flex d-lg-none justify-content-between align-items-center mb-4">
+                <a href="{% url 'finance_status' %}" class="mobile-logo d-flex align-items-center justify-content-center text-decoration-none" aria-label="Accueil">
+                    <i class="bi bi-mortarboard-fill"></i>
+                </a>
+                <button class="btn mobile-menu-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#studentMobileMenu" aria-label="Ouvrir le menu">
+                    <i class="bi bi-list fs-3"></i>
+                </button>
+            </header>
+
+            <header class="profile-header">
+                <h1 class="fw-bold mb-2">Mon compte</h1>
+                <p class="text-muted-app mb-0">Consultez vos informations personnelles et académiques.</p>
+            </header>
+
+            <div class="row g-4 align-items-start">
+
+                <!-- COLONNE GAUCHE -->
+                <div class="col-12 col-xl-4">
+                    <section class="profile-identity-card text-center">
+                        <div class="profile-avatar mx-auto">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+
+                        <h2 class="profile-name">
+                            {{ request.user.first_name }} {{ request.user.last_name }}
+                        </h2>
+
+                        <p class="profile-matricule">
+                            {{ request.user.registration_num|default:"Aucun matricule" }}
+                        </p>
+
+                        <span class="profile-role">
+                            {{ request.user.get_role_display }}
+                        </span>
+
+                        <div class="profile-divider"></div>
+
+                        <div class="profile-identity-info text-start">
+                            <div class="profile-mini-info">
+                                <i class="bi bi-mortarboard"></i>
+                                <div>
+                                    <span>Promotion</span>
+                                    <strong>{{ request.user.get_promotion_display|default:"Non définie" }} - {{ request.user.get_department_display|default:"" }}</strong>
+                                </div>
+                            </div>
+
+                            <div class="profile-mini-info">
+                                <i class="bi bi-building"></i>
+                                <div>
+                                    <span>Faculté</span>
+                                    <strong>{{ request.user.get_faculty_display|default:"Non définie" }}</strong>
+                                </div>
+                            </div>
+
+                            <div class="profile-mini-info">
+                                <i class="bi bi-calendar3"></i>
+                                <div>
+                                    <span>Année académique</span>
+                                    <strong>{{ academic_year }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- ÉTAT DU COMPTE -->
+                    <section class="profile-side-card mt-4">
+                        <h2 class="profile-side-title">État du compte</h2>
+                        <div class="profile-account-status">
+                            <div class="profile-status-icon {% if not request.user.is_active %}bg-danger{% endif %}">
+                                <i class="bi {% if request.user.is_active %}bi-check-lg{% else %}bi-x-lg{% endif %}"></i>
+                            </div>
+                            <div>
+                                <strong>{% if request.user.is_active %}Compte actif{% else %}Compte inactif{% endif %}</strong>
+                                <p class="mb-0">
+                                    {% if request.user.is_active %}Votre compte est actuellement actif.{% else %}Votre compte est désactivé.{% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- COLONNE DROITE -->
+                <div class="col-12 col-xl-8">
+
+                    <!-- INFORMATIONS PERSONNELLES -->
+                    <section class="profile-card mb-4">
+                        <div class="profile-card-header">
+                            <div>
+                                <h2>Informations personnelles</h2>
+                                <p>Consultez les informations associées à votre compte.</p>
+                            </div>
+                            <span class="profile-readonly-badge">
+                                <i class="bi bi-lock me-1"></i>Lecture seule
+                            </span>
+                        </div>
+
+                        <div class="profile-card-body">
+                            <div class="row g-4">
+                                <!-- Nom -->
+                                <div class="col-12 col-md-6">
+                                    <span class="profile-field-label">Nom</span>
+                                    <strong class="profile-field-value">{{ request.user.last_name|default:"N/A" }}</strong>
+                                </div>
+
+                                <!-- Prénom -->
+                                <div class="col-12 col-md-6">
+                                    <span class="profile-field-label">Post-nom</span>
+                                    <strong class="profile-field-value">{{ request.user.first_name|default:"N/A" }}</strong>
+                                </div>
+
+                                <!-- Adresse e-mail -->
+                                <div class="col-12">
+                                    <span class="profile-field-label">Adresse e-mail</span>
+                                    <strong class="profile-field-value">{{ request.user.email }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- INFORMATIONS ACADÉMIQUES -->
+                    <section class="profile-card mb-4">
+                        <div class="profile-card-header">
+                            <div>
+                                <h2>Informations académiques</h2>
+                                <p>Informations utilisées pour identifier votre dossier.</p>
+                            </div>
+                            <span class="profile-readonly-badge">
+                                <i class="bi bi-lock me-1"></i>Lecture seule
+                            </span>
+                        </div>
+
+                        <div class="profile-card-body">
+                            <div class="row g-4">
+                                <div class="col-12 col-md-6">
+                                    <span class="profile-field-label">Matricule</span>
+                                    <strong class="profile-field-value">{{ request.user.registration_num|default:"N/A" }}</strong>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <span class="profile-field-label">Promotion</span>
+                                    <strong class="profile-field-value">{{ request.user.get_promotion_display|default:"N/A" }} - {{ request.user.get_department_display|default:"" }}</strong>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <span class="profile-field-label">Faculté</span>
+                                    <strong class="profile-field-value">{{ request.user.get_faculty_display|default:"N/A" }}</strong>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <span class="profile-field-label">Année académique</span>
+                                    <strong class="profile-field-value">{{ academic_year }}</strong>
+                                </div>
+                            </div>
+
+                            <div class="profile-info-message mt-4">
+                                <i class="bi bi-info-circle"></i>
+                                <p class="mb-0">Ces informations sont gérées par l'établissement et ne peuvent pas être modifiées depuis votre compte.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- SÉCURITÉ -->
+                    <section class="profile-card">
+                        <div class="profile-card-header">
+                            <div>
+                                <h2>Sécurité</h2>
+                                <p>Gérez la sécurité de votre compte.</p>
+                            </div>
+                        </div>
+
+                        <div class="profile-security-row">
+                            <div class="profile-security-info">
+                                <div class="profile-security-icon"><i class="bi bi-key"></i></div>
+                                <div>
+                                    <strong>Mot de passe</strong>
+                                    <p class="mb-0">Modifiez votre mot de passe de connexion.</p>
+                                </div>
+                            </div>
+                            <button type="button" class="btn profile-outline-btn" data-bs-toggle="modal" data-bs-target="#passwordModal">
+                                Modifier
+                            </button>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- MODAL MOT DE PASSE -->
+<div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="passwordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content profile-modal">
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="update_password" value="1">
+
+                <div class="modal-header">
+                    <div>
+                        <h2 class="modal-title fs-5" id="passwordModalLabel">Modifier le mot de passe</h2>
+                        <p class="text-muted-app small mb-0 mt-1">Choisissez un nouveau mot de passe sécurisé.</p>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+
+                <div class="modal-body">
+                    <!-- Django Messages Integration -->
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %} py-2 small mb-3" role="alert">
+                                <i class="bi {% if message.tags == 'error' %}bi-exclamation-triangle-fill{% else %}bi-check-circle-fill{% endif %} me-2"></i>{{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label for="currentPassword" class="form-label profile-label">Mot de passe actuel</label>
+                        <input type="password" id="currentPassword" name="current_password" class="form-control profile-input" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label profile-label">Nouveau mot de passe</label>
+                        <input type="password" id="newPassword" name="new_password" class="form-control profile-input" required>
+                    </div>
+                    <div>
+                        <label for="confirmPassword" class="form-label profile-label">Confirmer le nouveau mot de passe</label>
+                        <input type="password" id="confirmPassword" name="confirm_password" class="form-control profile-input" required>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn profile-outline-btn" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-accent">Modifier le mot de passe</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+{% if messages %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
+        passwordModal.show();
+    });
+</script>
+{% endif %}
+</body>
+</html>

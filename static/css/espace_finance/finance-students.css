@@ -1,0 +1,1823 @@
+/* ==========================================================
+   ACADEMICPAY — FINANCE / SITUATIONS FINANCIÈRES
+   finance-students.css
+========================================================== */
+
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.students-header {
+    max-width: 1600px;
+    margin: 0 auto 14px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.students-header-copy {
+    min-width: 0;
+}
+
+.students-header h1 {
+    margin: 0 0 5px;
+
+    color: var(--text);
+
+    font-size: clamp(1.5rem, 2vw, 1.9rem);
+    font-weight: 560;
+}
+
+.students-header p {
+    max-width: 720px;
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: .88rem;
+    line-height: 1.55;
+}
+
+.students-header-actions {
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+/* ==========================================================
+   ANNÉE
+========================================================== */
+
+.filter-control {
+    min-height: 38px;
+    padding: 0 11px;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+
+.filter-control > i {
+    color: var(--muted);
+    font-size: .82rem;
+}
+
+.filter-control select {
+    padding: 0 18px 0 0;
+
+    color: var(--soft);
+    background: transparent;
+
+    border: 0;
+    outline: 0;
+
+    font-size: .76rem;
+    font-weight: 650;
+
+    cursor: pointer;
+}
+
+.filter-control select option {
+    color: var(--text);
+    background: var(--surface);
+}
+
+
+/* ==========================================================
+   BOUTON EXPORT
+========================================================== */
+
+.students-export-button {
+    min-height: 38px;
+    padding: 0 13px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    color: #161718;
+    background: var(--accent);
+
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-sm);
+
+    font-size: .76rem;
+    font-weight: 750;
+
+    cursor: pointer;
+
+    transition:
+        opacity var(--transition),
+        transform var(--transition);
+}
+
+.students-export-button:hover {
+    opacity: .9;
+}
+
+.students-export-button:active {
+    transform: translateY(1px);
+}
+
+
+/* ==========================================================
+   KPI
+========================================================== */
+
+.students-kpi-grid {
+    max-width: 1600px;
+    margin: 0 auto 12px;
+
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.students-kpi {
+    min-width: 0;
+    min-height: 92px;
+    padding: 14px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+}
+
+.students-kpi-icon {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-radius: 8px;
+
+    font-size: .95rem;
+}
+
+.students-kpi-icon.success {
+    color: var(--green);
+    background: var(--green-soft);
+}
+
+.students-kpi-icon.warning {
+    color: var(--orange);
+    background: rgba(232, 165, 75, .09);
+}
+
+.students-kpi-icon.danger {
+    color: var(--red);
+    background: var(--red-soft);
+}
+
+.students-kpi > div:last-child {
+    min-width: 0;
+}
+
+.students-kpi span,
+.students-kpi strong,
+.students-kpi small {
+    display: block;
+}
+
+.students-kpi span {
+    margin-bottom: 4px;
+
+    color: var(--muted);
+
+    font-size: .62rem;
+    font-weight: 750;
+    letter-spacing: .07em;
+}
+
+.students-kpi strong {
+    color: var(--text);
+
+    font-size: 1.22rem;
+    font-weight: 650;
+}
+
+.students-kpi small {
+    margin-top: 3px;
+
+    color: var(--muted);
+
+    font-size: .68rem;
+}
+
+
+/* ==========================================================
+   SYNTHÈSE
+========================================================== */
+
+.students-financial-summary {
+    max-width: 1600px;
+    margin: 0 auto 12px;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 260px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+
+    overflow: hidden;
+}
+
+.financial-summary-main {
+    min-width: 0;
+    padding: 17px;
+}
+
+.financial-summary-heading {
+    margin-bottom: 17px;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.financial-summary-heading h2,
+.students-table-heading h2,
+.student-detail-heading h3 {
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: .94rem;
+    font-weight: 650;
+}
+
+.summary-period {
+    padding: 5px 8px;
+
+    color: var(--muted);
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 6px;
+
+    font-size: .67rem;
+    font-weight: 650;
+}
+
+.financial-summary-values {
+    margin-bottom: 18px;
+
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.financial-summary-values > div {
+    min-width: 0;
+    padding-right: 20px;
+}
+
+.financial-summary-values > div + div {
+    padding-left: 20px;
+    border-left: 1px solid var(--border);
+}
+
+.financial-summary-values span,
+.financial-summary-values strong {
+    display: block;
+}
+
+.financial-summary-values span {
+    margin-bottom: 6px;
+
+    color: var(--muted);
+
+    font-size: .62rem;
+    font-weight: 750;
+    letter-spacing: .06em;
+}
+
+.financial-summary-values strong {
+    color: var(--text);
+
+    font-size: 1.15rem;
+    font-weight: 620;
+}
+
+
+/* ==========================================================
+   PROGRESSION
+========================================================== */
+
+.students-progress-header {
+    margin-bottom: 7px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    color: var(--muted);
+
+    font-size: .69rem;
+}
+
+.students-progress-header strong {
+    color: var(--soft);
+    font-weight: 700;
+}
+
+.students-progress-track {
+    width: 100%;
+    height: 5px;
+
+    background: var(--surface-2);
+
+    border-radius: 999px;
+
+    overflow: hidden;
+}
+
+.students-progress-bar {
+    width: 0;
+    height: 100%;
+
+    background: var(--accent);
+
+    border-radius: inherit;
+
+    transition: width .3s ease;
+}
+
+
+/* ==========================================================
+   SYNTHÈSE DROITE
+========================================================== */
+
+.financial-summary-side {
+    padding: 17px;
+
+    display: flex;
+    flex-direction: column;
+
+    background: var(--surface-2);
+
+    border-left: 1px solid var(--border);
+}
+
+.financial-summary-side > span {
+    color: var(--muted);
+
+    font-size: .62rem;
+    font-weight: 750;
+    letter-spacing: .07em;
+}
+
+.financial-summary-side > strong {
+    margin: 7px 0 16px;
+
+    color: var(--text);
+
+    font-size: 1.35rem;
+    font-weight: 650;
+}
+
+.summary-side-row {
+    padding: 9px 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    border-top: 1px solid var(--border);
+
+    font-size: .7rem;
+}
+
+.summary-side-row span {
+    color: var(--muted);
+}
+
+.summary-side-row strong {
+    color: var(--green);
+    font-weight: 700;
+}
+
+.summary-side-row.overdue strong {
+    color: var(--red);
+}
+
+
+/* ==========================================================
+   FILTRES
+========================================================== */
+
+.students-filters {
+    max-width: 1600px;
+    margin: 0 auto 12px;
+    padding: 11px;
+
+    display: grid;
+    grid-template-columns:
+        minmax(230px, 1.4fr)
+        repeat(6, minmax(125px, .7fr))
+        auto;
+
+    align-items: end;
+    gap: 8px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+}
+
+.students-search {
+    height: 39px;
+    padding: 0 9px;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+
+.students-search > i {
+    color: var(--muted);
+    font-size: .8rem;
+}
+
+.students-search input {
+    width: 100%;
+    min-width: 0;
+
+    color: var(--text);
+    background: transparent;
+
+    border: 0;
+    outline: 0;
+
+    font-size: .73rem;
+}
+
+.students-search input::placeholder {
+    color: var(--muted);
+}
+
+.students-search button {
+    width: 25px;
+    height: 25px;
+    flex: 0 0 25px;
+
+    display: grid;
+    place-items: center;
+
+    padding: 0;
+
+    color: var(--muted);
+    background: transparent;
+
+    border: 0;
+    border-radius: 5px;
+
+    cursor: pointer;
+}
+
+.students-search button:hover {
+    color: var(--text);
+    background: var(--surface-hover);
+}
+
+
+/* ==========================================================
+   SELECT FILTRE
+========================================================== */
+
+.students-filter {
+    min-width: 0;
+}
+
+.students-filter label {
+    display: block;
+    margin: 0 0 5px 2px;
+
+    color: var(--muted);
+
+    font-size: .6rem;
+    font-weight: 750;
+    letter-spacing: .04em;
+}
+
+.students-filter select {
+    width: 100%;
+    height: 39px;
+    padding: 0 9px;
+
+    color: var(--soft);
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+
+    outline: 0;
+
+    font-size: .7rem;
+
+    cursor: pointer;
+}
+
+.students-filter select:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+.students-filter select option {
+    color: var(--text);
+    background: var(--surface);
+}
+
+.reset-student-filters {
+    height: 39px;
+    padding: 0 10px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    color: var(--muted);
+    background: transparent;
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+
+    font-size: .68rem;
+    font-weight: 650;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+
+    transition:
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition);
+}
+
+.reset-student-filters:hover {
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-color: var(--border-strong);
+}
+
+
+/* ==========================================================
+   TABLE CARD
+========================================================== */
+
+.students-table-card {
+    max-width: 1600px;
+    margin: 0 auto;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+
+    overflow: hidden;
+}
+
+.students-table-heading {
+    min-height: 67px;
+    padding: 13px 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.students-result-count {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+
+    color: var(--muted);
+
+    font-size: .68rem;
+}
+
+.students-result-count strong {
+    color: var(--soft);
+    font-size: .78rem;
+}
+
+.students-table-wrapper {
+    overflow-x: auto;
+}
+
+
+/* ==========================================================
+   TABLE
+========================================================== */
+
+.students-table {
+    width: 100%;
+    min-width: 1120px;
+
+    border-collapse: collapse;
+}
+
+.students-table th {
+    padding: 9px 12px;
+
+    color: var(--muted);
+    background: var(--surface-2);
+
+    border-bottom: 1px solid var(--border);
+
+    text-align: left;
+
+    font-size: .59rem;
+    font-weight: 750;
+    letter-spacing: .055em;
+
+    white-space: nowrap;
+}
+
+.students-table td {
+    padding: 11px 12px;
+
+    color: var(--soft);
+
+    border-bottom: 1px solid var(--border);
+
+    font-size: .7rem;
+
+    vertical-align: middle;
+}
+
+.students-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.students-table tbody tr {
+    transition: background var(--transition);
+}
+
+.students-table tbody tr:hover {
+    background: var(--surface-hover);
+}
+
+
+/* ==========================================================
+   CELLULE ÉTUDIANT
+========================================================== */
+
+.student-cell {
+    min-width: 190px;
+
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.student-cell-avatar {
+    width: 31px;
+    height: 31px;
+    flex: 0 0 31px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-radius: 7px;
+
+    font-size: .63rem;
+    font-weight: 750;
+}
+
+.student-cell-info {
+    min-width: 0;
+}
+
+.student-cell-info strong,
+.student-cell-info span {
+    display: block;
+}
+
+.student-cell-info strong {
+    max-width: 180px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: var(--text);
+
+    font-size: .72rem;
+    font-weight: 650;
+}
+
+.student-cell-info span {
+    margin-top: 2px;
+
+    color: var(--muted);
+
+    font-size: .62rem;
+}
+
+
+/* ==========================================================
+   PARCOURS
+========================================================== */
+
+.academic-program-cell {
+    min-width: 190px;
+}
+
+.academic-program-cell strong,
+.academic-program-cell span {
+    display: block;
+}
+
+.academic-program-cell strong {
+    color: var(--soft);
+    font-size: .69rem;
+    font-weight: 650;
+}
+
+.academic-program-cell span {
+    margin-top: 3px;
+
+    color: var(--muted);
+
+    font-size: .61rem;
+}
+
+
+/* ==========================================================
+   MONTANTS
+========================================================== */
+
+.student-money {
+    color: var(--soft);
+    font-weight: 650;
+
+    white-space: nowrap;
+}
+
+.student-money.paid {
+    color: var(--green);
+}
+
+.student-money.overdue {
+    color: var(--red);
+}
+
+.student-money.zero {
+    color: var(--muted);
+}
+
+
+/* ==========================================================
+   STATUT
+========================================================== */
+
+.student-financial-status {
+    min-height: 23px;
+    padding: 0 7px;
+
+    display: inline-flex;
+    align-items: center;
+
+    border-radius: 999px;
+
+    font-size: .61rem;
+    font-weight: 750;
+
+    white-space: nowrap;
+}
+
+.student-financial-status.up-to-date {
+    color: var(--green);
+    background: var(--green-soft);
+}
+
+.student-financial-status.ahead {
+    color: var(--accent);
+    background: var(--accent-soft);
+}
+
+.student-financial-status.late {
+    color: var(--red);
+    background: var(--red-soft);
+}
+
+.student-financial-status.unconfigured {
+    color: var(--orange);
+    background: rgba(232, 165, 75, .09);
+}
+
+
+/* ==========================================================
+   ACTION
+========================================================== */
+
+.student-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.student-action-button {
+    width: 30px;
+    height: 30px;
+
+    display: grid;
+    place-items: center;
+
+    padding: 0;
+
+    color: var(--muted);
+    background: transparent;
+
+    border: 1px solid var(--border);
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    transition:
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition);
+}
+
+.student-action-button:hover {
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-color: var(--border-strong);
+}
+
+
+/* ==========================================================
+   ÉTAT VIDE
+========================================================== */
+
+.students-empty {
+    padding: 50px 20px;
+
+    text-align: center;
+}
+
+.students-empty-icon {
+    width: 42px;
+    height: 42px;
+
+    margin: 0 auto 10px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--muted);
+    background: var(--surface-2);
+
+    border-radius: 9px;
+}
+
+.students-empty strong {
+    display: block;
+
+    color: var(--text);
+
+    font-size: .82rem;
+}
+
+.students-empty p {
+    margin: 5px 0 13px;
+
+    color: var(--muted);
+
+    font-size: .7rem;
+}
+
+.students-empty button {
+    min-height: 34px;
+    padding: 0 10px;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border: 1px solid var(--border);
+    border-radius: 6px;
+
+    font-size: .68rem;
+    font-weight: 650;
+
+    cursor: pointer;
+}
+
+
+/* ==========================================================
+   MODALES
+========================================================== */
+
+.finance-modal {
+    color: var(--soft);
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+}
+
+.finance-modal .modal-header,
+.finance-modal .modal-footer {
+    border-color: var(--border);
+}
+
+.finance-modal .modal-header {
+    padding: 14px 16px;
+}
+
+.finance-modal .modal-footer {
+    padding: 10px 16px;
+}
+
+.finance-modal .btn-close {
+    filter: invert(1);
+    opacity: .55;
+}
+
+body.light-theme .finance-modal .btn-close {
+    filter: none;
+}
+
+.modal-eyebrow {
+    display: block;
+    margin-bottom: 4px;
+
+    color: var(--accent);
+
+    font-size: .59rem;
+    font-weight: 750;
+    letter-spacing: .09em;
+}
+
+.finance-modal .modal-title {
+    color: var(--text);
+
+    font-size: 1rem;
+    font-weight: 650;
+}
+
+
+/* ==========================================================
+   PROFIL ÉTUDIANT
+========================================================== */
+
+.student-financial-modal-body {
+    padding: 15px;
+}
+
+.student-profile-summary {
+    padding: 14px;
+
+    display: flex;
+    align-items: center;
+    gap: 13px;
+
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+}
+
+.student-profile-avatar {
+    width: 46px;
+    height: 46px;
+    flex: 0 0 46px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-radius: 9px;
+
+    font-size: .85rem;
+    font-weight: 750;
+}
+
+.student-profile-main {
+    min-width: 0;
+    flex: 1;
+}
+
+.student-profile-main h3 {
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: .88rem;
+    font-weight: 650;
+}
+
+.student-profile-main > span {
+    display: block;
+    margin-top: 2px;
+
+    color: var(--muted);
+
+    font-size: .65rem;
+}
+
+.student-profile-tags {
+    margin-top: 8px;
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.student-profile-tags span {
+    padding: 3px 6px;
+
+    color: var(--muted);
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: 5px;
+
+    font-size: .58rem;
+}
+
+.student-profile-status {
+    min-width: 130px;
+
+    text-align: right;
+}
+
+.student-profile-status span,
+.student-profile-status strong,
+.student-profile-status small {
+    display: block;
+}
+
+.student-profile-status span {
+    color: var(--muted);
+
+    font-size: .57rem;
+    font-weight: 750;
+    letter-spacing: .07em;
+}
+
+.student-profile-status strong {
+    margin-top: 4px;
+
+    color: var(--accent);
+
+    font-size: .82rem;
+}
+
+.student-profile-status small {
+    margin-top: 3px;
+
+    color: var(--muted);
+
+    font-size: .61rem;
+}
+
+
+/* ==========================================================
+   CHIFFRES INDIVIDUELS
+========================================================== */
+
+.student-financial-numbers {
+    margin-top: 10px;
+
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 7px;
+}
+
+.student-financial-numbers article {
+    min-width: 0;
+    padding: 11px;
+
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+
+.student-financial-numbers span,
+.student-financial-numbers strong {
+    display: block;
+}
+
+.student-financial-numbers span {
+    margin-bottom: 5px;
+
+    color: var(--muted);
+
+    font-size: .56rem;
+    font-weight: 750;
+    letter-spacing: .055em;
+}
+
+.student-financial-numbers strong {
+    color: var(--text);
+
+    font-size: .86rem;
+    font-weight: 650;
+}
+
+.student-financial-numbers .positive strong {
+    color: var(--green);
+}
+
+.student-financial-numbers .negative strong {
+    color: var(--red);
+}
+
+
+/* ==========================================================
+   CARTES DÉTAIL
+========================================================== */
+
+.student-detail-card {
+    margin-top: 10px;
+    padding: 13px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+}
+
+.student-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.student-detail-heading {
+    margin-bottom: 12px;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.student-detail-heading > i,
+.student-detail-heading > strong {
+    color: var(--muted);
+}
+
+.student-progress-meta {
+    margin-top: 7px;
+
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+
+    color: var(--muted);
+
+    font-size: .64rem;
+}
+
+
+/* ==========================================================
+   ÉCHÉANCIER
+========================================================== */
+
+.student-schedule-timeline {
+    display: grid;
+    gap: 7px;
+}
+
+.student-schedule-item {
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr);
+    gap: 8px;
+}
+
+.student-schedule-marker {
+    width: 27px;
+    height: 27px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--muted);
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 6px;
+
+    font-size: .7rem;
+}
+
+.student-schedule-item.completed .student-schedule-marker {
+    color: var(--green);
+    background: var(--green-soft);
+}
+
+.student-schedule-item.late .student-schedule-marker {
+    color: var(--red);
+    background: var(--red-soft);
+}
+
+.student-schedule-item.current .student-schedule-marker {
+    color: var(--accent);
+    background: var(--accent-soft);
+}
+
+.student-schedule-content {
+    min-width: 0;
+    padding-bottom: 8px;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.student-schedule-item:last-child .student-schedule-content {
+    border-bottom: 0;
+}
+
+.student-schedule-content span,
+.student-schedule-content strong,
+.student-schedule-content small {
+    display: block;
+}
+
+.student-schedule-content span {
+    color: var(--muted);
+    font-size: .59rem;
+}
+
+.student-schedule-content strong {
+    margin-top: 2px;
+
+    color: var(--soft);
+
+    font-size: .68rem;
+}
+
+.student-schedule-content small {
+    margin-top: 2px;
+
+    color: var(--muted);
+
+    font-size: .57rem;
+}
+
+.student-schedule-amount {
+    white-space: nowrap;
+}
+
+
+/* ==========================================================
+   PAIEMENTS
+========================================================== */
+
+.student-payments-list {
+    display: grid;
+    gap: 6px;
+}
+
+.student-payment-item {
+    padding: 8px;
+
+    display: grid;
+    grid-template-columns: 29px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+.student-payment-bank {
+    width: 29px;
+    height: 29px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-radius: 6px;
+
+    font-size: .7rem;
+}
+
+.student-payment-info {
+    min-width: 0;
+}
+
+.student-payment-info strong,
+.student-payment-info span,
+.student-payment-info small {
+    display: block;
+}
+
+.student-payment-info strong {
+    color: var(--soft);
+
+    font-size: .66rem;
+}
+
+.student-payment-info span {
+    margin-top: 2px;
+
+    color: var(--muted);
+
+    font-size: .58rem;
+}
+
+.student-payment-info small {
+    margin-top: 2px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: var(--muted);
+
+    font-size: .55rem;
+}
+
+.student-payment-value {
+    color: var(--green);
+
+    font-size: .69rem;
+
+    white-space: nowrap;
+}
+
+
+/* ==========================================================
+   ANALYSE
+========================================================== */
+
+.student-financial-analysis {
+    margin-top: 10px;
+    padding: 12px;
+
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+
+    background: var(--green-soft);
+
+    border: 1px solid rgba(110, 219, 143, .16);
+    border-radius: var(--radius-md);
+}
+
+.student-financial-analysis.late {
+    background: var(--red-soft);
+    border-color: rgba(255, 114, 114, .16);
+}
+
+.student-financial-analysis.ahead {
+    background: var(--accent-soft);
+    border-color: rgba(185, 237, 46, .16);
+}
+
+.student-financial-analysis.unconfigured {
+    background: rgba(232, 165, 75, .09);
+    border-color: rgba(232, 165, 75, .16);
+}
+
+.student-analysis-icon {
+    color: var(--green);
+}
+
+.student-financial-analysis.late .student-analysis-icon {
+    color: var(--red);
+}
+
+.student-financial-analysis.ahead .student-analysis-icon {
+    color: var(--accent);
+}
+
+.student-financial-analysis.unconfigured .student-analysis-icon {
+    color: var(--orange);
+}
+
+.student-financial-analysis strong {
+    display: block;
+
+    color: var(--text);
+
+    font-size: .72rem;
+}
+
+.student-financial-analysis p {
+    margin: 3px 0 0;
+
+    color: var(--muted);
+
+    font-size: .65rem;
+    line-height: 1.5;
+}
+
+
+/* ==========================================================
+   EMPTY DÉTAIL
+========================================================== */
+
+.student-detail-empty {
+    padding: 25px 12px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    text-align: center;
+}
+
+.student-detail-empty i {
+    margin-bottom: 7px;
+
+    color: var(--muted);
+
+    font-size: 1.1rem;
+}
+
+.student-detail-empty strong {
+    color: var(--soft);
+
+    font-size: .7rem;
+}
+
+.student-detail-empty span {
+    max-width: 330px;
+    margin-top: 4px;
+
+    color: var(--muted);
+
+    font-size: .61rem;
+    line-height: 1.45;
+}
+
+
+/* ==========================================================
+   BOUTONS MODALE
+========================================================== */
+
+.student-modal-primary,
+.student-modal-secondary {
+    min-height: 35px;
+    padding: 0 11px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    border-radius: 6px;
+
+    font-size: .68rem;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.student-modal-primary {
+    color: #161718;
+    background: var(--accent);
+
+    border: 1px solid var(--accent);
+}
+
+.student-modal-secondary {
+    color: var(--soft);
+    background: transparent;
+
+    border: 1px solid var(--border);
+}
+
+.student-modal-secondary:hover {
+    background: var(--surface-hover);
+}
+
+
+/* ==========================================================
+   EXPORT
+========================================================== */
+
+.export-description {
+    margin: 0 0 12px;
+
+    color: var(--muted);
+
+    font-size: .7rem;
+}
+
+.export-format-list {
+    display: grid;
+    gap: 7px;
+}
+
+.export-format-option {
+    padding: 10px;
+
+    display: grid;
+    grid-template-columns: auto 34px minmax(0, 1fr);
+    align-items: center;
+    gap: 9px;
+
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 7px;
+
+    cursor: pointer;
+}
+
+.export-format-option:has(input:checked) {
+    background: var(--accent-soft);
+    border-color: rgba(185, 237, 46, .25);
+}
+
+.export-format-option input {
+    accent-color: var(--accent);
+}
+
+.export-format-icon {
+    width: 34px;
+    height: 34px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-radius: 6px;
+}
+
+.export-format-option strong,
+.export-format-option small {
+    display: block;
+}
+
+.export-format-option strong {
+    color: var(--soft);
+
+    font-size: .7rem;
+}
+
+.export-format-option small {
+    margin-top: 2px;
+
+    color: var(--muted);
+
+    font-size: .59rem;
+}
+
+
+/* ==========================================================
+   TOAST
+========================================================== */
+
+.finance-toast {
+    color: var(--soft);
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+}
+
+.finance-toast .toast-body {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    font-size: .7rem;
+}
+
+.finance-toast i {
+    color: var(--accent);
+}
+
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 1399.98px) {
+
+    .students-filters {
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr));
+    }
+
+    .students-search {
+        grid-column: span 2;
+    }
+}
+
+
+@media (max-width: 1199.98px) {
+
+    .students-header {
+        margin-top: 12px;
+    }
+
+    .students-kpi-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+@media (max-width: 991.98px) {
+
+    .students-financial-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .financial-summary-side {
+        border-top: 1px solid var(--border);
+        border-left: 0;
+    }
+
+    .student-financial-numbers {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+
+    .student-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .students-filters {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .students-search {
+        grid-column: 1 / -1;
+    }
+}
+
+
+@media (max-width: 767.98px) {
+
+    .students-header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .students-header-actions {
+        width: 100%;
+    }
+
+    .filter-control {
+        flex: 1;
+    }
+
+    .students-export-button {
+        flex: 1;
+    }
+
+    .financial-summary-values {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .financial-summary-values > div,
+    .financial-summary-values > div + div {
+        padding: 0;
+        border-left: 0;
+    }
+
+    .student-profile-summary {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .student-profile-status {
+        width: 100%;
+        text-align: left;
+    }
+
+    .student-financial-numbers {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+@media (max-width: 575.98px) {
+
+    .students-kpi-grid,
+    .students-filters {
+        grid-template-columns: 1fr;
+    }
+
+    .students-search {
+        grid-column: auto;
+    }
+
+    .students-header-actions {
+        flex-direction: column;
+    }
+
+    .filter-control,
+    .students-export-button {
+        width: 100%;
+    }
+
+    .student-financial-numbers {
+        grid-template-columns: 1fr;
+    }
+
+    .student-progress-meta {
+        flex-direction: column;
+    }
+}
+
+
+/* ==========================================================
+   IMPRESSION
+========================================================== */
+
+@media print {
+
+    .finance-sidebar,
+    .mobile-header,
+    .students-header,
+    .students-kpi-grid,
+    .students-financial-summary,
+    .students-filters,
+    .students-table-card,
+    .modal-footer,
+    .btn-close {
+        display: none !important;
+    }
+
+    body {
+        background: #fff !important;
+    }
+
+    .modal {
+        position: static !important;
+        display: block !important;
+    }
+
+    .modal-dialog {
+        max-width: none !important;
+        margin: 0 !important;
+    }
+
+    .finance-modal {
+        color: #222 !important;
+        background: #fff !important;
+
+        border: 0 !important;
+        box-shadow: none !important;
+    }
+
+    .student-financial-modal-body {
+        overflow: visible !important;
+    }
+}

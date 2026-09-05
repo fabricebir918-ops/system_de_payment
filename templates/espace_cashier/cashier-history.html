@@ -1,0 +1,818 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Historique | AcademicPay</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    >
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/espace_cashier/cashier-history.css' %}">
+</head>
+
+<body>
+
+<div class="d-flex min-vh-100">
+
+    <!-- =====================================================
+         SIDEBAR DESKTOP
+    ====================================================== -->
+    <aside
+        class="cashier-sidebar d-none d-lg-flex flex-column
+               justify-content-between position-fixed top-0 start-0"
+    >
+
+        <div>
+
+            <!-- Logo -->
+            <a
+                href="{% url 'cashier_dashboard' %}"
+                class="sidebar-logo d-flex align-items-center
+                       justify-content-center text-decoration-none"
+                aria-label="Accueil"
+            >
+                <i class="bi bi-mortarboard-fill"></i>
+            </a>
+
+            <!-- Navigation -->
+            <nav class="nav flex-column align-items-center gap-3 mt-4">
+
+                <a
+                    href="{% url 'cashier_dashboard' %}"
+                    class="sidebar-icon"
+                    title="Accueil"
+                >
+                    <i class="bi bi-house-door-fill"></i>
+                </a>
+
+                <a
+                    href="{% url 'cashier_payments' %}"
+                    class="sidebar-icon"
+                    title="Paiements"
+                >
+                    <i class="bi bi-credit-card"></i>
+                </a>
+
+                <a
+                    href="{% url 'cashier_anomalies' %}"
+                    class="sidebar-icon"
+                    title="Anomalies"
+                >
+                    <i class="bi bi-exclamation-triangle"></i>
+                </a>
+
+                <a
+                    href="{% url 'cashier_history' %}"
+                    class="sidebar-icon active"
+                    title="Historique"
+                    aria-current="page"
+                >
+                    <i class="bi bi-clock-history"></i>
+                </a>
+
+            </nav>
+
+        </div>
+
+        <!-- Bas sidebar -->
+        <div>
+
+            <div class="d-flex justify-content-center py-3">
+
+                <button
+                    class="sidebar-icon border-0"
+                    type="button"
+                    id="themeToggle"
+                    title="Thème"
+                >
+                    <i class="bi bi-moon-stars"></i>
+                </button>
+
+            </div>
+
+            <div class="sidebar-user d-flex justify-content-center py-4">
+
+                <div class="dropdown">
+
+                    <button
+                        class="cashier-avatar border-0 rounded-circle
+                               d-flex align-items-center justify-content-center"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                    >
+                        {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" alt="{{ user.full_congolese_name }}" class="rounded-circle" width="40" height="40">
+                        {% else %}
+                        <i class="bi bi-person-fill"></i>
+                        {% endif %}
+                    </button>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+
+                        <li>
+                            <a
+                                class="dropdown-item"
+                                href="{% url 'cashier_profile' %}"
+                            >
+                                <i class="bi bi-person me-2"></i>
+                                Mon compte
+                            </a>
+                        </li>
+
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <a
+                                class="dropdown-item"
+                                href="{% url 'logout' %}"
+                            >
+                                <i class="bi bi-box-arrow-right me-2"></i>
+                                Déconnexion
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         CONTENU PRINCIPAL
+    ====================================================== -->
+    <main class="cashier-main flex-grow-1">
+
+        <div class="container-fluid history-container">
+
+            <!-- =================================================
+                 HEADER MOBILE
+            ================================================== -->
+            <header
+                class="d-flex d-lg-none justify-content-between
+                       align-items-center mb-4"
+            >
+
+                <a
+                    href="{% url 'cashier_dashboard' %}"
+                    class="mobile-logo d-flex align-items-center
+                           justify-content-center text-decoration-none"
+                    aria-label="Accueil"
+                >
+                    <i class="bi bi-mortarboard-fill"></i>
+                </a>
+
+                <button
+                    class="btn mobile-menu-btn"
+                    type="button"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#cashierMobileMenu"
+                    aria-controls="cashierMobileMenu"
+                >
+                    <i class="bi bi-list"></i>
+                </button>
+
+            </header>
+
+
+            <!-- =================================================
+                 HEADER PAGE
+            ================================================== -->
+            <header class="page-header">
+
+                <div class="d-flex flex-column flex-lg-row
+                            justify-content-between gap-4">
+
+                    <div>
+
+                        <span class="page-eyebrow">
+                            Traçabilité
+                        </span>
+
+                        <h1>
+                            Historique
+                        </h1>
+
+                        <p>
+                            Consultez les opérations et interventions
+                            enregistrées dans l'espace caisse.
+                        </p>
+
+                    </div>
+
+                    <div class="academic-year">
+
+                        <span>
+                            Année académique
+                        </span>
+
+                        <strong>
+                            {{ current_academic_year }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <!-- =================================================
+                 STATISTIQUES
+            ================================================== -->
+            <section class="row g-3 history-stats">
+
+                <!-- Total -->
+                <div class="col-12 col-sm-6 col-xl-3">
+
+                    <article class="stat-card">
+
+                        <div class="stat-icon">
+                            <i class="bi bi-activity"></i>
+                        </div>
+
+                        <div>
+                            <span>Opérations</span>
+                            <strong>{{ total_operations }}</strong>
+                        </div>
+
+                    </article>
+
+                </div>
+
+                <!-- Rapprochements -->
+                <div class="col-12 col-sm-6 col-xl-3">
+
+                    <article class="stat-card">
+
+                        <div class="stat-icon success">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+
+                        <div>
+                            <span>Rapprochements</span>
+                            <strong>{{ matching_count }}</strong>
+                        </div>
+
+                    </article>
+
+                </div>
+
+                <!-- Corrections -->
+                <div class="col-12 col-sm-6 col-xl-3">
+
+                    <article class="stat-card">
+
+                        <div class="stat-icon warning">
+                            <i class="bi bi-pencil-square"></i>
+                        </div>
+
+                        <div>
+                            <span>Corrections</span>
+                            <strong>{{ correction_count }}</strong>
+                        </div>
+
+                    </article>
+
+                </div>
+
+                <!-- Transmissions -->
+                <div class="col-12 col-sm-6 col-xl-3">
+
+                    <article class="stat-card">
+
+                        <div class="stat-icon danger">
+                            <i class="bi bi-arrow-up-right-circle"></i>
+                        </div>
+
+                        <div>
+                            <span>Transmissions</span>
+                            <strong>{{ escalation_count }}</strong>
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 FILTRES
+            ================================================== -->
+            <section class="filters-section">
+
+                <!-- Recherche -->
+                <div class="history-search">
+
+                    <i class="bi bi-search"></i>
+
+                    <input
+                        type="search"
+                        id="historySearch"
+                        class="form-control"
+                        placeholder="Étudiant, matricule, référence ou agent..."
+                        autocomplete="off"
+                        value="{{ search_query }}"
+                    >
+
+                </div>
+
+                <!-- Action -->
+                <select
+                    class="form-select filter-select"
+                    id="actionFilter"
+                >
+
+                    <option value="all" {% if action_filter == 'all' %}selected{% endif %}>
+                        Toutes les opérations
+                    </option>
+
+                    <option value="matching" {% if action_filter == 'matching' %}selected{% endif %}>
+                        Rapprochement
+                    </option>
+
+                    <option value="correction" {% if action_filter == 'correction' %}selected{% endif %}>
+                        Correction
+                    </option>
+
+                    <option value="escalation" {% if action_filter == 'escalation' %}selected{% endif %}>
+                        Transmission
+                    </option>
+
+                    <option value="verification" {% if action_filter == 'verification' %}selected{% endif %}>
+                        Vérification
+                    </option>
+
+                </select>
+
+                <!-- Période -->
+                <select
+                    class="form-select filter-select"
+                    id="periodFilter"
+                >
+
+                    <option value="all" {% if period_filter == 'all' %}selected{% endif %}>
+                        Toutes les périodes
+                    </option>
+
+                    <option value="today" {% if period_filter == 'today' %}selected{% endif %}>
+                        Aujourd'hui
+                    </option>
+
+                    <option value="week" {% if period_filter == 'week' %}selected{% endif %}>
+                        Cette semaine
+                    </option>
+
+                    <option value="month" {% if period_filter == 'month' %}selected{% endif %}>
+                        Ce mois
+                    </option>
+
+                </select>
+
+                <!-- Reset -->
+                <button
+                    class="btn reset-btn"
+                    id="resetFilters"
+                    type="button"
+                    title="Réinitialiser les filtres"
+                >
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                </button>
+
+            </section>
+
+
+            <!-- =================================================
+                 HISTORIQUE
+            ================================================== -->
+            <section class="history-section">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-eyebrow">
+                            Journal d'activité
+                        </span>
+
+                        <h2>
+                            Opérations enregistrées
+                        </h2>
+
+                    </div>
+
+                    <span
+                        class="result-count"
+                        id="resultCount"
+                    >
+                        {{ result_count }} opération{{ result_count|pluralize }} affichée{{ result_count|pluralize }}
+                    </span>
+
+                </div>
+
+                <!-- EN-TÊTE DESKTOP -->
+                <div class="history-table-header d-none d-xl-grid">
+
+                    <span>Opération</span>
+
+                    <span>Paiement</span>
+
+                    <span>Agent</span>
+
+                    <span>Date et heure</span>
+
+                    <span>Résultat</span>
+
+                    <span></span>
+
+                </div>
+
+                <!-- LISTE -->
+                <div
+                    class="history-list"
+                    id="historyList"
+                >
+
+                    {% for entry in entries %}
+                    <article
+                        class="history-row"
+                        data-action="{{ entry.action }}"
+                        data-period="
+                            {% now "Y-m-d" as today_date %}
+                            {% if entry.created_at|date:"Y-m-d" == today_date %}today
+                            {% elif entry.created_at|date:"W" == now|date:"W" %}week
+                            {% else %}month{% endif %}"
+                    >
+
+                        <div class="operation-main">
+
+                            <div class="operation-icon 
+                                {% if entry.action == 'submission' %}success
+                                {% elif entry.action == 'anomaly_detected' %}warning
+                                {% elif entry.action == 'verification' %}danger
+                                {% else %}neutral{% endif %}">
+                                <i class="bi 
+                                    {% if entry.action == 'submission' %}bi-check-lg
+                                    {% elif entry.action == 'anomaly_detected' %}bi-pencil-square
+                                    {% elif entry.action == 'verification' %}bi-arrow-up-right
+                                    {% else %}bi-arrow-repeat{% endif %}"></i>
+                            </div>
+
+                            <div>
+
+                                <span class="operation-id">
+                                    {{ entry.id }}
+                                </span>
+
+                                <h3>
+                                    {{ entry.action_label }}
+                                </h3>
+
+                                <p>
+                                    {% if entry.action == 'submission' %}
+                                        Correspondance bancaire confirmée
+                                    {% elif entry.action == 'anomaly_detected' %}
+                                        Modification après vérification
+                                    {% elif entry.action == 'verification' %}
+                                        Examen complémentaire requis
+                                    {% else %}
+                                        Nouvelle recherche bancaire
+                                    {% endif %}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="history-data">
+
+                            <span class="mobile-label">
+                                Paiement
+                            </span>
+
+                            <strong>
+                                {{ entry.student_name }}
+                            </strong>
+
+                            <small>
+                                {% if entry.reference %}{{ entry.reference }}{% endif %}
+                                {% if entry.amount %}{{ entry.amount|floatformat:2 }} ${% endif %}
+                            </small>
+
+                        </div>
+
+                        <div class="history-data">
+
+                            <span class="mobile-label">
+                                Agent
+                            </span>
+
+                            <strong>
+                                {{ entry.agent_name }}
+                            </strong>
+
+                            <small>
+                                {{ entry.agent_role }}
+                            </small>
+
+                        </div>
+
+                        <div class="history-data">
+
+                            <span class="mobile-label">
+                                Date et heure
+                            </span>
+
+                            <strong>
+                                {{ entry.created_at|date:"d/m/Y" }}
+                            </strong>
+
+                            <small>
+                                {{ entry.created_at|date:"H:i" }}
+                            </small>
+
+                        </div>
+
+                        <div>
+
+                            <span class="result-badge 
+                                {% if entry.result_type == 'success' %}success
+                                {% elif entry.result_type == 'danger' %}danger
+                                {% elif entry.result_type == 'warning' %}warning
+                                {% else %}neutral{% endif %}">
+                                <i class="bi 
+                                    {% if entry.result_type == 'success' %}bi-check-circle-fill
+                                    {% elif entry.result_type == 'danger' %}bi-exclamation-circle-fill
+                                    {% elif entry.result_type == 'warning' %}bi-pencil-fill
+                                    {% else %}bi-dash-circle-fill{% endif %}"></i>
+                                {{ entry.result }}
+                            </span>
+
+                        </div>
+
+                        {% if entry.url %}
+                        <a
+                            href="{{ entry.url }}"
+                            class="row-action"
+                            title="Voir le paiement"
+                        >
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                        {% else %}
+                        <span class="row-action disabled">
+                            <i class="bi bi-dash"></i>
+                        </span>
+                        {% endif %}
+
+                    </article>
+                    {% empty %}
+                    <div class="text-center text-muted py-5">
+                        <i class="bi bi-clock-history fs-1 d-block mb-3"></i>
+                        <p class="mb-0">Aucune opération trouvée pour l'année {{ current_academic_year }}</p>
+                    </div>
+                    {% endfor %}
+
+                </div>
+
+                <!-- =================================================
+                     PAGINATION
+                ================================================== -->
+                {% if entries.has_other_pages %}
+                <nav aria-label="Navigation de l'historique" class="mt-4">
+                    <ul class="pagination justify-content-center">
+
+                        {% if entries.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ entries.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if action_filter != 'all' %}&action={{ action_filter }}{% endif %}{% if period_filter != 'all' %}&period={{ period_filter }}{% endif %}">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% for num in entries.paginator.page_range %}
+                            {% if entries.number == num %}
+                                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                            {% elif num > entries.number|add:'-3' and num < entries.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if action_filter != 'all' %}&action={{ action_filter }}{% endif %}{% if period_filter != 'all' %}&period={{ period_filter }}{% endif %}">
+                                        {{ num }}
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if entries.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ entries.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if action_filter != 'all' %}&action={{ action_filter }}{% endif %}{% if period_filter != 'all' %}&period={{ period_filter }}{% endif %}">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                    </ul>
+                </nav>
+                {% endif %}
+
+                <!-- =================================================
+                     AUCUN RÉSULTAT
+                ================================================== -->
+                <div
+                    class="empty-state"
+                    id="emptyState"
+                    hidden
+                >
+
+                    <i class="bi bi-clock-history"></i>
+
+                    <h3>
+                        Aucune opération trouvée
+                    </h3>
+
+                    <p>
+                        Modifiez les critères de recherche ou
+                        réinitialisez les filtres.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 NOTE DE TRAÇABILITÉ
+            ================================================== -->
+            <section class="audit-note">
+
+                <div class="audit-icon">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+
+                <div>
+
+                    <strong>
+                        Journal de traçabilité
+                    </strong>
+
+                    <p>
+                        Les interventions effectuées sur les paiements
+                        sont enregistrées afin de conserver l'auteur,
+                        la nature de l'opération ainsi que sa date et
+                        son heure.
+                    </p>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- =========================================================
+     MENU MOBILE
+========================================================= -->
+<div
+    class="offcanvas offcanvas-start cashier-offcanvas"
+    tabindex="-1"
+    id="cashierMobileMenu"
+>
+
+    <div class="offcanvas-header">
+
+        <div class="d-flex align-items-center gap-3">
+
+            <div class="offcanvas-brand">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+            <div>
+                <strong>AcademicPay</strong>
+                <span>Espace caisse</span>
+            </div>
+
+        </div>
+
+        <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="offcanvas"
+            aria-label="Fermer"
+        ></button>
+
+    </div>
+
+    <div class="offcanvas-body">
+
+        <nav class="nav flex-column gap-1">
+
+            <a
+                href="{% url 'cashier_dashboard' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-house-door-fill"></i>
+                <span>Accueil</span>
+            </a>
+
+            <a
+                href="{% url 'cashier_payments' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-credit-card"></i>
+                <span>Paiements</span>
+            </a>
+
+            <a
+                href="{% url 'cashier_anomalies' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-exclamation-triangle"></i>
+                <span>Anomalies</span>
+            </a>
+
+            <a
+                href="{% url 'cashier_history' %}"
+                class="mobile-nav-link active"
+                aria-current="page"
+            >
+                <i class="bi bi-clock-history"></i>
+                <span>Historique</span>
+            </a>
+
+            <hr>
+
+            <a
+                href="{% url 'cashier_profile' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-person"></i>
+                <span>Mon compte</span>
+            </a>
+
+            <a
+                href="{% url 'logout' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Déconnexion</span>
+            </a>
+
+        </nav>
+
+    </div>
+
+</div>
+
+
+<!-- Bootstrap -->
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+></script>
+
+<!-- JS -->
+<script src="{% static 'js/espace_cashier/cashier-history.js' %}"></script>
+
+<!-- Theme Toggle -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('dark-theme');
+                const icon = this.querySelector('i');
+                if (document.body.classList.contains('dark-theme')) {
+                    icon.className = 'bi bi-sun-fill';
+                } else {
+                    icon.className = 'bi bi-moon-stars';
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

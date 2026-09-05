@@ -1,0 +1,2362 @@
+/* ==========================================================
+   ACADEMICPAY — FINANCE
+   PAGE : RAPPROCHEMENT GLOBAL
+   ========================================================== */
+
+
+/* ==========================================================
+   1. VARIABLES LOCALES
+   ========================================================== */
+
+:root {
+    --reconciliation-radius: 14px;
+    --reconciliation-radius-sm: 10px;
+    --reconciliation-transition: 0.2s ease;
+}
+
+
+/* ==========================================================
+   2. HEADER
+   ========================================================== */
+
+.reconciliation-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 24px;
+
+    margin-bottom: 24px;
+}
+
+
+.page-eyebrow,
+.section-eyebrow {
+    margin-bottom: 6px;
+
+    color: var(--accent);
+
+    font-size: 0.68rem;
+    font-weight: 600;
+
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+
+.reconciliation-header h1 {
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: clamp(1.65rem, 2.3vw, 2.05rem);
+    font-weight: 600;
+
+    letter-spacing: -0.025em;
+}
+
+
+.reconciliation-header p {
+    max-width: 690px;
+
+    margin:
+        8px
+        0
+        0;
+
+    color: var(--muted);
+
+    font-size: 0.84rem;
+    font-weight: 400;
+
+    line-height: 1.6;
+}
+
+
+/* ==========================================================
+   3. ACTIONS HEADER
+   ========================================================== */
+
+.reconciliation-header-actions {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    flex-shrink: 0;
+}
+
+
+/* ==========================================================
+   4. FILTRE ANNÉE ACADÉMIQUE
+   ========================================================== */
+
+.academic-year-filter {
+    position: relative;
+
+    width: 190px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    background: var(--surface);
+
+    overflow: hidden;
+
+    transition:
+        border-color var(--reconciliation-transition),
+        background-color var(--reconciliation-transition),
+        box-shadow var(--reconciliation-transition);
+}
+
+
+.academic-year-filter-icon {
+    position: absolute;
+
+    left: 13px;
+    z-index: 2;
+
+    color: var(--muted);
+
+    font-size: 0.85rem;
+
+    pointer-events: none;
+}
+
+
+.academic-year-select {
+    width: 100%;
+    height: 100%;
+
+    margin: 0;
+
+    padding:
+        0
+        38px
+        0
+        38px;
+
+    border: 0;
+    outline: 0;
+
+    border-radius: inherit;
+
+    background: transparent;
+    color: var(--text);
+
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 400;
+
+    line-height: 42px;
+
+    cursor: pointer;
+
+    box-shadow: none;
+
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+
+.academic-year-select::-ms-expand {
+    display: none;
+}
+
+
+.academic-year-filter-chevron {
+    position: absolute;
+
+    right: 13px;
+    z-index: 2;
+
+    color: var(--muted);
+
+    font-size: 0.68rem;
+
+    pointer-events: none;
+
+    transition:
+        color var(--reconciliation-transition),
+        transform var(--reconciliation-transition);
+}
+
+
+.academic-year-filter:hover {
+    border-color: var(--accent);
+
+    background: var(--surface-2);
+}
+
+
+.academic-year-filter:hover
+.academic-year-filter-icon,
+
+.academic-year-filter:hover
+.academic-year-filter-chevron {
+    color: var(--accent);
+}
+
+
+.academic-year-filter:focus-within {
+    border-color: var(--accent);
+
+    background: var(--surface);
+
+    box-shadow:
+        0 0 0 3px var(--accent-soft);
+}
+
+
+.academic-year-filter:focus-within
+.academic-year-filter-icon,
+
+.academic-year-filter:focus-within
+.academic-year-filter-chevron {
+    color: var(--accent);
+}
+
+
+.academic-year-select option {
+    background: var(--surface);
+    color: var(--text);
+
+    font-weight: 400;
+}
+
+
+/* ==========================================================
+   5. EXPORT
+   ========================================================== */
+
+.reconciliation-export-button {
+    height: 42px;
+    min-height: 42px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    padding:
+        0
+        14px;
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    background: var(--surface);
+    color: var(--text);
+
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 500;
+
+    line-height: 1;
+
+    white-space: nowrap;
+
+    box-shadow: none;
+
+    transition:
+        border-color var(--reconciliation-transition),
+        background-color var(--reconciliation-transition),
+        color var(--reconciliation-transition),
+        transform 0.15s ease;
+}
+
+
+.reconciliation-export-button i {
+    color: var(--accent);
+
+    font-size: 0.9rem;
+}
+
+
+.reconciliation-export-button.dropdown-toggle::after {
+    margin-left: 3px;
+
+    opacity: 0.65;
+
+    vertical-align: middle;
+}
+
+
+.reconciliation-export-button:hover,
+.reconciliation-export-button:focus,
+.reconciliation-export-button.show {
+    border-color: var(--accent);
+
+    background: var(--accent-soft);
+    color: var(--text);
+
+    box-shadow: none;
+}
+
+
+.reconciliation-export-button:active {
+    transform: translateY(1px);
+}
+
+
+/* ==========================================================
+   6. MENU EXPORT
+   ========================================================== */
+
+.reconciliation-export-menu {
+    min-width: 205px;
+
+    margin-top: 7px !important;
+
+    padding: 6px;
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    background: var(--surface);
+
+    box-shadow: var(--shadow);
+}
+
+
+.reconciliation-export-menu .dropdown-item {
+    min-height: 38px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    padding:
+        8px
+        10px;
+
+    border-radius: 7px;
+
+    background: transparent;
+    color: var(--text);
+
+    font-size: 0.78rem;
+    font-weight: 400;
+
+    transition:
+        color 0.15s ease,
+        background-color 0.15s ease;
+}
+
+
+.reconciliation-export-menu .dropdown-item i {
+    width: 18px;
+
+    color: var(--accent);
+
+    font-size: 0.9rem;
+
+    text-align: center;
+}
+
+
+.reconciliation-export-menu .dropdown-item:hover,
+.reconciliation-export-menu .dropdown-item:focus {
+    background: var(--surface-2);
+    color: var(--text);
+}
+
+
+/* ==========================================================
+   7. KPI
+   ========================================================== */
+
+.reconciliation-kpi-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 14px;
+
+    margin-bottom: 18px;
+}
+
+
+.reconciliation-kpi-card {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 17px;
+
+    border: 1px solid var(--border);
+    border-radius: var(--reconciliation-radius);
+
+    background: var(--surface);
+
+    box-shadow: var(--shadow);
+}
+
+
+.reconciliation-kpi-icon {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 auto;
+
+    border-radius: 11px;
+
+    background: var(--accent-soft);
+    color: var(--accent);
+
+    font-size: 1rem;
+}
+
+
+.reconciliation-kpi-icon.warning {
+    background: rgba(245, 158, 11, 0.12);
+    color: #d99400;
+}
+
+
+.reconciliation-kpi-icon.success {
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
+
+.reconciliation-kpi-card > div:last-child {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+.reconciliation-kpi-card span {
+    margin-bottom: 3px;
+
+    color: var(--muted);
+
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+
+
+.reconciliation-kpi-card strong {
+    color: var(--text);
+
+    font-size: 1.15rem;
+    font-weight: 600;
+
+    line-height: 1.25;
+}
+
+
+.reconciliation-kpi-card small {
+    margin-top: 3px;
+
+    color: var(--muted);
+
+    font-size: 0.66rem;
+    font-weight: 400;
+}
+
+
+/* ==========================================================
+   8. GRILLE OVERVIEW
+   ========================================================== */
+
+.reconciliation-overview-grid {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.6fr)
+        minmax(300px, 0.8fr);
+
+    gap: 18px;
+
+    margin-bottom: 18px;
+}
+
+
+/* ==========================================================
+   9. CARTES
+   ========================================================== */
+
+.reconciliation-card {
+    min-width: 0;
+
+    border: 1px solid var(--border);
+    border-radius: var(--reconciliation-radius);
+
+    background: var(--surface);
+
+    box-shadow: var(--shadow);
+}
+
+
+.reconciliation-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 18px;
+
+    padding:
+        18px
+        18px
+        15px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+
+.reconciliation-card-header h2,
+.reconciliation-card-header h3 {
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+
+.reconciliation-card-header p {
+    max-width: 720px;
+
+    margin:
+        5px
+        0
+        0;
+
+    color: var(--muted);
+
+    font-size: 0.73rem;
+    font-weight: 400;
+
+    line-height: 1.55;
+}
+
+
+/* ==========================================================
+   10. LÉGENDE GRAPHIQUE
+   ========================================================== */
+
+.chart-legend {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 12px;
+
+    color: var(--muted);
+
+    font-size: 0.68rem;
+}
+
+
+.chart-legend span {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 6px;
+}
+
+
+.legend-dot {
+    width: 8px;
+    height: 8px;
+
+    display: inline-block;
+
+    border-radius: 50%;
+}
+
+
+.legend-dot.bank {
+    background: var(--accent);
+}
+
+
+.legend-dot.system {
+    background: var(--muted);
+}
+
+
+/* ==========================================================
+   11. GRAPHIQUE
+   ========================================================== */
+
+.reconciliation-chart-container {
+    position: relative;
+
+    width: 100%;
+    height: 310px;
+
+    padding:
+        16px
+        18px
+        18px;
+}
+
+
+/* ==========================================================
+   12. ÉTAT DU RAPPROCHEMENT
+   ========================================================== */
+
+.reconciliation-health {
+    padding: 18px;
+}
+
+
+.reconciliation-health-main {
+    display: flex;
+    align-items: center;
+
+    gap: 15px;
+
+    padding-bottom: 17px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+
+.health-circle {
+    width: 76px;
+    height: 76px;
+
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+
+    flex: 0 0 auto;
+
+    padding-top: 22px;
+
+    border: 7px solid var(--accent-soft);
+    border-top-color: var(--accent);
+
+    border-radius: 50%;
+
+    color: var(--text);
+}
+
+
+.health-circle strong {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+
+.health-circle span {
+    margin-left: 2px;
+
+    color: var(--muted);
+
+    font-size: 0.67rem;
+}
+
+
+.reconciliation-health-main > div:last-child > strong {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: var(--text);
+
+    font-size: 0.84rem;
+    font-weight: 600;
+}
+
+
+.reconciliation-health-main p {
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: 0.7rem;
+
+    line-height: 1.5;
+}
+
+
+.reconciliation-health-list {
+    display: flex;
+    flex-direction: column;
+
+    margin-top: 9px;
+}
+
+
+.reconciliation-health-list > div {
+    min-height: 43px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+
+.reconciliation-health-list > div:last-child {
+    border-bottom: 0;
+}
+
+
+.reconciliation-health-list span {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 7px;
+
+    color: var(--muted);
+
+    font-size: 0.7rem;
+}
+
+
+.reconciliation-health-list span i {
+    color: var(--accent);
+}
+
+
+.reconciliation-health-list strong {
+    color: var(--text);
+
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+
+/* ==========================================================
+   13. RAPPROCHEMENT PAR BANQUE
+   ========================================================== */
+
+.bank-reconciliation-card {
+    margin-bottom: 18px;
+}
+
+
+.bank-results-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 9px;
+
+    flex-shrink: 0;
+}
+
+
+.reconciliation-result-count {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 4px;
+
+    color: var(--muted);
+
+    font-size: 0.7rem;
+
+    white-space: nowrap;
+}
+
+
+.reconciliation-result-count span {
+    color: var(--text);
+
+    font-weight: 600;
+}
+
+
+/* ==========================================================
+   14. BOUTON RESET BANQUE
+   ========================================================== */
+
+.bank-filter-reset {
+    min-height: 32px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    padding:
+        0
+        10px;
+
+    border: 1px solid var(--border);
+    border-radius: 8px;
+
+    background: transparent;
+    color: var(--muted);
+
+    font-family: inherit;
+    font-size: 0.69rem;
+    font-weight: 500;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition:
+        border-color var(--reconciliation-transition),
+        background-color var(--reconciliation-transition),
+        color var(--reconciliation-transition);
+}
+
+
+.bank-filter-reset i {
+    font-size: 0.76rem;
+}
+
+
+.bank-filter-reset:hover,
+.bank-filter-reset:focus {
+    border-color: var(--accent);
+
+    background: var(--accent-soft);
+    color: var(--accent);
+
+    outline: none;
+}
+
+
+.bank-filter-reset[hidden] {
+    display: none !important;
+}
+
+
+/* ==========================================================
+   15. LISTE BANQUES
+   ========================================================== */
+
+.bank-reconciliation-list {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.bank-reconciliation-item {
+    display: grid;
+
+    grid-template-columns:
+        minmax(180px, 1.35fr)
+        minmax(120px, 0.8fr)
+        minmax(120px, 0.8fr)
+        minmax(100px, 0.65fr)
+        minmax(145px, 1fr)
+        minmax(120px, 0.75fr)
+        38px;
+
+    align-items: center;
+
+    gap: 14px;
+
+    padding:
+        15px
+        18px;
+
+    border-bottom: 1px solid var(--border);
+
+    transition:
+        background-color var(--reconciliation-transition);
+}
+
+
+.bank-reconciliation-item:last-child {
+    border-bottom: 0;
+}
+
+
+.bank-reconciliation-item:hover {
+    background: var(--surface-2);
+}
+
+
+.bank-reconciliation-item[hidden] {
+    display: none !important;
+}
+
+
+/* ==========================================================
+   16. IDENTITÉ BANQUE
+   ========================================================== */
+
+.bank-cell-info {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+}
+
+
+.bank-logo {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 auto;
+
+    border: 1px solid var(--border);
+    border-radius: 9px;
+
+    background: var(--surface-2);
+    color: var(--accent);
+
+    font-size: 0.68rem;
+    font-weight: 600;
+}
+
+
+.bank-cell-info > div:last-child {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+.bank-cell-info strong {
+    overflow: hidden;
+
+    color: var(--text);
+
+    font-size: 0.76rem;
+    font-weight: 600;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+.bank-cell-info span {
+    margin-top: 2px;
+
+    color: var(--muted);
+
+    font-size: 0.63rem;
+}
+
+
+/* ==========================================================
+   17. MÉTRIQUES BANQUE
+   ========================================================== */
+
+.bank-reconciliation-metric {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+
+.bank-reconciliation-metric span {
+    color: var(--muted);
+
+    font-size: 0.61rem;
+}
+
+
+.bank-reconciliation-metric strong {
+    color: var(--text);
+
+    font-size: 0.76rem;
+    font-weight: 500;
+
+    white-space: nowrap;
+}
+
+
+/* ==========================================================
+   18. COUVERTURE
+   ========================================================== */
+
+.coverage-cell {
+    min-width: 0;
+}
+
+
+.coverage-cell-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 8px;
+
+    margin-bottom: 6px;
+}
+
+
+.coverage-cell-header span {
+    color: var(--muted);
+
+    font-size: 0.61rem;
+}
+
+
+.coverage-cell-header strong {
+    color: var(--text);
+
+    font-size: 0.68rem;
+    font-weight: 600;
+}
+
+
+.coverage-progress {
+    width: 100%;
+    height: 5px;
+
+    overflow: hidden;
+
+    border-radius: 999px;
+
+    background: var(--surface-2);
+}
+
+
+.coverage-progress span {
+    height: 100%;
+
+    display: block;
+
+    border-radius: inherit;
+
+    background: var(--accent);
+}
+
+
+/* ==========================================================
+   19. STATUTS
+   ========================================================== */
+
+.reconciliation-status,
+.diagnostic-badge {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+
+    width: fit-content;
+
+    padding:
+        5px
+        8px;
+
+    border-radius: 999px;
+
+    font-size: 0.62rem;
+    font-weight: 500;
+
+    white-space: nowrap;
+}
+
+
+.reconciliation-status.warning,
+.diagnostic-badge.warning {
+    background: rgba(245, 158, 11, 0.11);
+    color: #d99400;
+}
+
+
+.reconciliation-status.danger,
+.diagnostic-badge.danger {
+    background: rgba(239, 68, 68, 0.11);
+    color: #dc4a4a;
+}
+
+
+.reconciliation-status.success,
+.diagnostic-badge.success {
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
+
+/* ==========================================================
+   20. BOUTONS VOIR
+   ========================================================== */
+
+.bank-view-button,
+.reconciliation-view-button {
+    width: 32px;
+    height: 32px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid var(--border);
+    border-radius: 8px;
+
+    background: transparent;
+    color: var(--muted);
+
+    cursor: pointer;
+
+    transition:
+        border-color var(--reconciliation-transition),
+        background-color var(--reconciliation-transition),
+        color var(--reconciliation-transition);
+}
+
+
+.bank-view-button:hover,
+.bank-view-button:focus,
+.reconciliation-view-button:hover,
+.reconciliation-view-button:focus {
+    border-color: var(--accent);
+
+    background: var(--accent-soft);
+    color: var(--accent);
+
+    outline: none;
+}
+
+
+/* ==========================================================
+   21. CARTE TRANSACTIONS
+   ========================================================== */
+
+.unmatched-card {
+    margin-bottom: 24px;
+}
+
+
+/* ==========================================================
+   22. FILTRES
+   ========================================================== */
+
+.reconciliation-filters {
+    display: grid;
+
+    grid-template-columns:
+        minmax(230px, 1.5fr)
+        minmax(140px, 0.75fr)
+        minmax(140px, 0.75fr)
+        minmax(165px, 0.85fr)
+        auto;
+
+    align-items: end;
+
+    gap: 10px;
+
+    padding:
+        14px
+        18px;
+
+    border-bottom: 1px solid var(--border);
+
+    background: var(--surface-2);
+}
+
+
+/* ==========================================================
+   23. RECHERCHE
+   ========================================================== */
+
+.reconciliation-search {
+    position: relative;
+
+    height: 39px;
+}
+
+
+.reconciliation-search > i {
+    position: absolute;
+
+    top: 50%;
+    left: 12px;
+
+    transform: translateY(-50%);
+
+    color: var(--muted);
+
+    font-size: 0.78rem;
+
+    pointer-events: none;
+}
+
+
+.reconciliation-search input {
+    width: 100%;
+    height: 100%;
+
+    padding:
+        0
+        36px
+        0
+        35px;
+
+    border: 1px solid var(--border);
+    border-radius: 9px;
+
+    outline: none;
+
+    background: var(--surface);
+    color: var(--text);
+
+    font-family: inherit;
+    font-size: 0.73rem;
+
+    transition:
+        border-color var(--reconciliation-transition),
+        box-shadow var(--reconciliation-transition);
+}
+
+
+.reconciliation-search input::placeholder {
+    color: var(--muted);
+}
+
+
+.reconciliation-search input:focus {
+    border-color: var(--accent);
+
+    box-shadow:
+        0 0 0 3px var(--accent-soft);
+}
+
+
+.clear-reconciliation-search {
+    position: absolute;
+
+    top: 50%;
+    right: 7px;
+
+    width: 27px;
+    height: 27px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transform: translateY(-50%);
+
+    border: 0;
+    border-radius: 7px;
+
+    background: transparent;
+    color: var(--muted);
+
+    font-size: 0.67rem;
+
+    cursor: pointer;
+}
+
+
+.clear-reconciliation-search:hover {
+    background: var(--surface-2);
+    color: var(--text);
+}
+
+
+/* ==========================================================
+   24. SELECTS FILTRES
+   ========================================================== */
+
+.reconciliation-filter {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+
+.reconciliation-filter label {
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: 0.62rem;
+    font-weight: 500;
+}
+
+
+.reconciliation-filter select {
+    width: 100%;
+    height: 39px;
+
+    padding:
+        0
+        31px
+        0
+        10px;
+
+    border: 1px solid var(--border);
+    border-radius: 9px;
+
+    outline: none;
+
+    background-color: var(--surface);
+    color: var(--text);
+
+    font-family: inherit;
+    font-size: 0.7rem;
+    font-weight: 400;
+
+    cursor: pointer;
+
+    box-shadow: none;
+
+    transition:
+        border-color var(--reconciliation-transition),
+        box-shadow var(--reconciliation-transition);
+}
+
+
+.reconciliation-filter select:hover {
+    border-color: var(--muted);
+}
+
+
+.reconciliation-filter select:focus {
+    border-color: var(--accent);
+
+    box-shadow:
+        0 0 0 3px var(--accent-soft);
+}
+
+
+.reconciliation-filter select option {
+    background: var(--surface);
+    color: var(--text);
+}
+
+
+/* ==========================================================
+   25. RESET GLOBAL
+   ========================================================== */
+
+.reset-reconciliation-filters {
+    height: 39px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    padding:
+        0
+        11px;
+
+    border: 1px solid var(--border);
+    border-radius: 9px;
+
+    background: var(--surface);
+    color: var(--muted);
+
+    font-family: inherit;
+    font-size: 0.68rem;
+    font-weight: 500;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition:
+        border-color var(--reconciliation-transition),
+        background-color var(--reconciliation-transition),
+        color var(--reconciliation-transition);
+}
+
+
+.reset-reconciliation-filters:hover,
+.reset-reconciliation-filters:focus {
+    border-color: var(--accent);
+
+    background: var(--accent-soft);
+    color: var(--accent);
+
+    outline: none;
+}
+
+
+/* ==========================================================
+   26. TABLEAU
+   ========================================================== */
+
+.reconciliation-table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+}
+
+
+.reconciliation-table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    min-width: 1030px;
+}
+
+
+.reconciliation-table th {
+    padding:
+        11px
+        13px;
+
+    border-bottom: 1px solid var(--border);
+
+    background: var(--surface);
+
+    color: var(--muted);
+
+    font-size: 0.61rem;
+    font-weight: 600;
+
+    letter-spacing: 0.025em;
+    text-align: left;
+
+    white-space: nowrap;
+}
+
+
+.reconciliation-table td {
+    padding:
+        12px
+        13px;
+
+    border-bottom: 1px solid var(--border);
+
+    color: var(--text);
+
+    font-size: 0.7rem;
+
+    vertical-align: middle;
+}
+
+
+.reconciliation-table tbody tr {
+    transition:
+        background-color var(--reconciliation-transition);
+}
+
+
+.reconciliation-table tbody tr:hover {
+    background: var(--surface-2);
+}
+
+
+.reconciliation-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+
+.reconciliation-table tbody tr[hidden] {
+    display: none;
+}
+
+
+/* ==========================================================
+   27. CONTENU TABLEAU
+   ========================================================== */
+
+.transaction-reference {
+    color: var(--text);
+
+    font-size: 0.69rem;
+    font-weight: 500;
+
+    white-space: nowrap;
+}
+
+
+.reconciliation-money {
+    font-weight: 500;
+
+    white-space: nowrap;
+}
+
+
+.reconciliation-money.difference {
+    color: #d99400;
+}
+
+
+.reconciliation-student-info {
+    min-width: 145px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+.reconciliation-student-info strong {
+    color: var(--text);
+
+    font-size: 0.69rem;
+    font-weight: 500;
+}
+
+
+.reconciliation-student-info span {
+    margin-top: 2px;
+
+    color: var(--muted);
+
+    font-size: 0.6rem;
+}
+
+
+.muted-value {
+    color: var(--muted);
+
+    font-size: 0.67rem;
+}
+
+
+/* ==========================================================
+   28. ÉTAT VIDE
+   ========================================================== */
+
+.reconciliation-empty-state {
+    min-height: 300px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    padding: 36px 20px;
+
+    text-align: center;
+}
+
+
+.reconciliation-empty-state[hidden] {
+    display: none !important;
+}
+
+
+.reconciliation-empty-icon {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 12px;
+
+    border-radius: 13px;
+
+    background: var(--surface-2);
+    color: var(--muted);
+
+    font-size: 1rem;
+}
+
+
+.reconciliation-empty-state h3 {
+    margin:
+        0
+        0
+        5px;
+
+    color: var(--text);
+
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+
+.reconciliation-empty-state p {
+    max-width: 420px;
+
+    margin:
+        0
+        0
+        15px;
+
+    color: var(--muted);
+
+    font-size: 0.7rem;
+
+    line-height: 1.55;
+}
+
+
+.reconciliation-empty-reset {
+    min-height: 36px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    padding:
+        0
+        12px;
+
+    border: 1px solid var(--accent);
+    border-radius: 9px;
+
+    background: var(--accent-soft);
+    color: var(--accent);
+
+    font-family: inherit;
+    font-size: 0.69rem;
+    font-weight: 500;
+
+    cursor: pointer;
+}
+
+
+/* ==========================================================
+   29. MODALES
+   ========================================================== */
+
+.finance-modal {
+    overflow: hidden;
+
+    border: 1px solid var(--border);
+    border-radius: 15px;
+
+    background: var(--surface);
+    color: var(--text);
+
+    box-shadow: var(--shadow);
+}
+
+
+.finance-modal .modal-header {
+    padding:
+        17px
+        18px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+
+.finance-modal .modal-header h2 {
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+
+.finance-modal .modal-body {
+    padding: 18px;
+}
+
+
+.finance-modal .modal-footer {
+    padding:
+        13px
+        18px;
+
+    border-top: 1px solid var(--border);
+}
+
+
+.finance-modal .btn-close {
+    box-shadow: none;
+}
+
+
+/* ==========================================================
+   30. COMPARAISON MODALE
+   ========================================================== */
+
+.comparison-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 12px;
+}
+
+
+.comparison-block {
+    padding: 14px;
+
+    border: 1px solid var(--border);
+    border-radius: 11px;
+
+    background: var(--surface-2);
+}
+
+
+.comparison-block-heading {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 14px;
+}
+
+
+.comparison-source-icon {
+    width: 35px;
+    height: 35px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 auto;
+
+    border-radius: 9px;
+
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
+
+.comparison-block-heading span {
+    display: block;
+
+    margin-bottom: 2px;
+
+    color: var(--muted);
+
+    font-size: 0.59rem;
+}
+
+
+.comparison-block-heading h3 {
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+
+.comparison-information-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 11px;
+}
+
+
+.comparison-information-grid > div {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+
+.comparison-information-grid span {
+    color: var(--muted);
+
+    font-size: 0.59rem;
+}
+
+
+.comparison-information-grid strong {
+    overflow-wrap: anywhere;
+
+    color: var(--text);
+
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+
+/* ==========================================================
+   31. DIAGNOSTIC
+   ========================================================== */
+
+.reconciliation-diagnostic {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 18px;
+
+    margin-top: 14px;
+
+    padding: 14px;
+
+    border: 1px solid var(--border);
+    border-radius: 11px;
+
+    background: var(--surface-2);
+}
+
+
+.reconciliation-diagnostic > div:first-child {
+    min-width: 0;
+}
+
+
+.reconciliation-diagnostic span {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: var(--muted);
+
+    font-size: 0.59rem;
+}
+
+
+.reconciliation-diagnostic strong {
+    color: var(--text);
+
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+
+.reconciliation-diagnostic p {
+    margin:
+        4px
+        0
+        0;
+
+    color: var(--muted);
+
+    font-size: 0.67rem;
+
+    line-height: 1.5;
+}
+
+
+.difference-box {
+    min-width: 115px;
+
+    padding: 10px;
+
+    border-radius: 9px;
+
+    background: rgba(245, 158, 11, 0.1);
+
+    text-align: right;
+}
+
+
+.difference-box strong {
+    color: #d99400;
+
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+
+/* ==========================================================
+   32. MODALE BANQUE
+   ========================================================== */
+
+.bank-detail-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+}
+
+
+.bank-detail-grid > div,
+.bank-detail-summary > div {
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+
+    padding: 12px;
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    background: var(--surface-2);
+}
+
+
+.bank-detail-grid span,
+.bank-detail-summary span {
+    color: var(--muted);
+
+    font-size: 0.6rem;
+}
+
+
+.bank-detail-grid strong,
+.bank-detail-summary strong {
+    color: var(--text);
+
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+
+.bank-detail-summary {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+
+    margin-top: 10px;
+}
+
+
+/* ==========================================================
+   33. BOUTONS MODALES
+   ========================================================== */
+
+.modal-secondary-button,
+.modal-primary-button {
+    min-height: 37px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    padding:
+        0
+        13px;
+
+    border-radius: 9px;
+
+    font-family: inherit;
+    font-size: 0.7rem;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition:
+        border-color var(--reconciliation-transition),
+        background-color var(--reconciliation-transition),
+        color var(--reconciliation-transition);
+}
+
+
+.modal-secondary-button {
+    border: 1px solid var(--border);
+
+    background: var(--surface);
+    color: var(--muted);
+}
+
+
+.modal-secondary-button:hover {
+    border-color: var(--muted);
+
+    color: var(--text);
+}
+
+
+.modal-primary-button {
+    border: 1px solid var(--accent);
+
+    background: var(--accent);
+    color: var(--accent-contrast, #111);
+}
+
+
+.modal-primary-button:hover {
+    opacity: 0.9;
+}
+
+
+/* ==========================================================
+   34. TOAST
+   ========================================================== */
+
+.finance-toast {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    background: var(--surface);
+    color: var(--text);
+
+    box-shadow: var(--shadow);
+}
+
+
+.finance-toast .toast-body {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    font-size: 0.72rem;
+}
+
+
+.finance-toast .toast-body i {
+    color: var(--accent);
+}
+
+
+/* ==========================================================
+   35. MODE CLAIR / SOMBRE
+   ========================================================== */
+
+[data-theme="dark"] .finance-modal .btn-close {
+    filter: invert(1) grayscale(100%);
+}
+
+
+[data-theme="dark"] .reconciliation-export-menu {
+    background: var(--surface);
+}
+
+
+[data-theme="dark"] .academic-year-select {
+    color-scheme: dark;
+}
+
+
+[data-theme="light"] .academic-year-select {
+    color-scheme: light;
+}
+
+
+/* ==========================================================
+   36. TABLETTES
+   ========================================================== */
+
+@media (max-width: 1199.98px) {
+
+    .reconciliation-kpi-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+
+    .reconciliation-overview-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .bank-reconciliation-item {
+        grid-template-columns:
+            minmax(180px, 1.3fr)
+            repeat(3, minmax(105px, 0.7fr))
+            minmax(130px, 0.9fr)
+            110px
+            36px;
+
+        gap: 10px;
+    }
+
+
+    .reconciliation-filters {
+        grid-template-columns:
+            minmax(220px, 1fr)
+            repeat(3, minmax(130px, 0.7fr));
+
+        align-items: end;
+    }
+
+
+    .reset-reconciliation-filters {
+        width: fit-content;
+    }
+
+}
+
+
+/* ==========================================================
+   37. <= 991
+   ========================================================== */
+
+@media (max-width: 991.98px) {
+
+    .reconciliation-header {
+        flex-direction: column;
+    }
+
+
+    .reconciliation-header-actions {
+        width: 100%;
+
+        justify-content: flex-start;
+    }
+
+
+    .bank-reconciliation-list {
+        padding: 0;
+    }
+
+
+    .bank-reconciliation-item {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 12px;
+
+        padding: 16px;
+    }
+
+
+    .bank-cell-info {
+        grid-column: 1 / -1;
+    }
+
+
+    .coverage-cell {
+        grid-column: 1 / -1;
+    }
+
+
+    .bank-reconciliation-status {
+        display: flex;
+        align-items: center;
+    }
+
+
+    .bank-view-button {
+        justify-self: end;
+    }
+
+
+    .reconciliation-filters {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+
+    .reconciliation-search {
+        grid-column: 1 / -1;
+    }
+
+}
+
+
+/* ==========================================================
+   38. MOBILE
+   ========================================================== */
+
+@media (max-width: 767.98px) {
+
+    .reconciliation-header {
+        gap: 17px;
+
+        margin-bottom: 18px;
+    }
+
+
+    .reconciliation-header h1 {
+        font-size: 1.55rem;
+    }
+
+
+    .reconciliation-header p {
+        font-size: 0.78rem;
+    }
+
+
+    .reconciliation-header-actions {
+        display: grid;
+
+        grid-template-columns:
+            minmax(0, 1fr)
+            auto;
+
+        gap: 9px;
+    }
+
+
+    .academic-year-filter {
+        width: 100%;
+        min-width: 0;
+    }
+
+
+    .reconciliation-kpi-grid {
+        grid-template-columns:
+            1fr;
+
+        gap: 10px;
+    }
+
+
+    .reconciliation-card-header {
+        flex-direction: column;
+
+        gap: 10px;
+
+        padding:
+            15px
+            14px;
+    }
+
+
+    .chart-legend {
+        width: 100%;
+    }
+
+
+    .reconciliation-chart-container {
+        height: 270px;
+
+        padding:
+            12px
+            12px
+            15px;
+    }
+
+
+    .reconciliation-health {
+        padding: 14px;
+    }
+
+
+    .bank-results-actions {
+        width: 100%;
+
+        justify-content: space-between;
+    }
+
+
+    .reconciliation-filters {
+        grid-template-columns:
+            1fr;
+
+        padding:
+            13px
+            14px;
+    }
+
+
+    .reconciliation-search {
+        grid-column: auto;
+    }
+
+
+    .reset-reconciliation-filters {
+        width: 100%;
+    }
+
+
+    .comparison-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .reconciliation-diagnostic {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+
+    .difference-box {
+        width: 100%;
+
+        text-align: left;
+    }
+
+}
+
+
+/* ==========================================================
+   39. PETITS MOBILES
+   ========================================================== */
+
+@media (max-width: 479.98px) {
+
+    .reconciliation-header-actions {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .academic-year-filter,
+    .reconciliation-export-button,
+    .reconciliation-header-actions .dropdown {
+        width: 100%;
+    }
+
+
+    .reconciliation-export-button {
+        justify-content: center;
+    }
+
+
+    .reconciliation-kpi-card {
+        padding: 14px;
+    }
+
+
+    .bank-results-actions {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+
+    .bank-reconciliation-item {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .bank-cell-info,
+    .coverage-cell {
+        grid-column: auto;
+    }
+
+
+    .bank-view-button {
+        width: 100%;
+
+        justify-self: stretch;
+    }
+
+
+    .comparison-information-grid,
+    .bank-detail-grid,
+    .bank-detail-summary {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .reconciliation-health-main {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+}

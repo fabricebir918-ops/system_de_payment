@@ -1,0 +1,1065 @@
+{% load static %}
+
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Historique | AcademicPay</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    >
+
+    <!-- CSS global Finance -->
+    <link rel="stylesheet" href="{% static 'css/espace_finance/finance-dashboard.css' %}">
+
+    <!-- CSS spécifique -->
+    <link rel="stylesheet" href="{% static 'css/espace_finance/finance-history.css' %}">
+</head>
+
+
+<body>
+
+<div class="finance-layout">
+
+    <!-- =====================================================
+         SIDEBAR DESKTOP
+    ====================================================== -->
+
+    <aside class="finance-sidebar d-none d-xl-flex">
+
+        <a href="{% url 'finance_dashboard' %}" class="sidebar-brand">
+
+            <div class="brand-icon">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+            <div>
+                <strong>AcademicPay</strong>
+                <span>FINANCE</span>
+            </div>
+
+        </a>
+
+
+        <nav class="sidebar-nav">
+
+            <div class="nav-section-label">
+                PRINCIPAL
+            </div>
+
+            <a href="{% url 'finance_dashboard' %}" class="sidebar-link">
+                <i class="bi bi-house-door"></i>
+                <span>ACCUEIL</span>
+            </a>
+
+            <a href="{% url 'finance_payments' %}" class="sidebar-link">
+                <i class="bi bi-credit-card-fill"></i>
+                <span>PAIEMENTS</span>
+            </a>
+
+            <a href="{% url 'finance_statements' %}" class="sidebar-link">
+                <i class="bi bi-bank"></i>
+                <span>EXTRAITS BANCAIRES</span>
+            </a>
+
+            <a href="{% url 'finance_schedule' %}" class="sidebar-link">
+                <i class="bi bi-calendar3"></i>
+                <span>ÉCHÉANCIER</span>
+            </a>
+
+
+            <div class="nav-section-label">
+                SUIVI FINANCIER
+            </div>
+
+            <a href="{% url 'finance_students' %}" class="sidebar-link">
+                <i class="bi bi-people"></i>
+                <span>SITUATIONS FINANCIÈRES</span>
+            </a>
+
+            <a href="{% url 'finance_reconciliation' %}" class="sidebar-link">
+                <i class="bi bi-arrow-left-right"></i>
+                <span>RAPPROCHEMENT GLOBAL</span>
+            </a>
+
+            <a href="{% url 'finance_anomalies' %}" class="sidebar-link">
+
+                <i class="bi bi-exclamation-triangle"></i>
+
+                <span>ANOMALIES</span>
+
+                <span class="nav-badge" id="sidebarAnomalyCount">
+                    {{ pending_anomalies }}
+                </span>
+
+            </a>
+
+
+            <div class="nav-section-label">
+                ANALYSE
+            </div>
+
+            <a href="{% url 'finance_reports' %}" class="sidebar-link">
+                <i class="bi bi-bar-chart-line"></i>
+                <span>RAPPORTS</span>
+            </a>
+
+            <a href="{% url 'finance_history' %}" class="sidebar-link active">
+                <i class="bi bi-clock-history"></i>
+                <span>HISTORIQUE</span>
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a href="{% url 'finance_profile' %}" class="finance-user">
+
+                <div class="user-avatar">
+                    {% with initials=user.full_congolese_name|slice:":2" %}
+                        {{ initials|upper }}
+                    {% endwith %}
+                </div>
+
+                <div class="user-information">
+                    <strong>{{ user.full_congolese_name }}</strong>
+                    <span>{{ user.get_staff_role_display|default:"Responsable financier" }}</span>
+                </div>
+
+                <i class="bi bi-chevron-right"></i>
+
+            </a>
+
+
+            <div class="sidebar-actions">
+
+                <button
+                    type="button"
+                    class="sidebar-action-btn"
+                    id="themeButton"
+                    title="Changer de thème"
+                >
+                    <i class="bi bi-sun"></i>
+                </button>
+
+                <a
+                    href="{% url 'finance_profile' %}"
+                    class="sidebar-action-btn"
+                    title="Paramètres"
+                >
+                    <i class="bi bi-gear"></i>
+                </a>
+
+                <a
+                    href="{% url 'logout' %}"
+                    class="sidebar-action-btn"
+                    title="Déconnexion"
+                >
+                    <i class="bi bi-box-arrow-right"></i>
+                </a>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         CONTENU PRINCIPAL
+    ====================================================== -->
+
+    <main class="finance-main">
+
+        <!-- MOBILE HEADER -->
+
+        <div class="mobile-header d-xl-none">
+
+            <button
+                class="mobile-menu-button"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#financeMobileMenu"
+                aria-label="Ouvrir le menu"
+            >
+                <i class="bi bi-list"></i>
+            </button>
+
+            <div class="mobile-brand">
+                <strong>AcademicPay</strong>
+                <span>FINANCE</span>
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <header class="history-header">
+
+            <div>
+
+                <span class="page-eyebrow">
+                    TRAÇABILITÉ
+                </span>
+
+                <h1>Historique des opérations</h1>
+
+                <p>
+                    Consultez les opérations effectuées dans le module
+                    financier et retracez les modifications apportées
+                    aux paiements, extraits, rapprochements, anomalies
+                    et échéanciers.
+                </p>
+
+            </div>
+
+
+            <div class="history-header-actions">
+
+                <button
+                    type="button"
+                    class="history-action-button"
+                    id="refreshHistoryButton"
+                >
+                    <i class="bi bi-arrow-clockwise"></i>
+                    Actualiser
+                </button>
+
+                <a
+                    href="{% url 'finance_export_history' %}?{% if search_query %}search={{ search_query }}&{% endif %}{% if period_filter %}period={{ period_filter }}&{% endif %}{% if module_filter %}module={{ module_filter }}&{% endif %}{% if action_filter %}action={{ action_filter }}&{% endif %}{% if status_filter %}status={{ status_filter }}&{% endif %}{% if actor_filter %}actor={{ actor_filter }}&{% endif %}"
+                    class="history-action-button primary"
+                    id="exportHistoryButton"
+                >
+                    <i class="bi bi-download"></i>
+                    Exporter CSV
+                </a>
+
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             KPI
+        ================================================== -->
+
+        <section class="history-kpi-grid">
+
+            <article class="history-kpi">
+
+                <div class="history-kpi-icon">
+                    <i class="bi bi-activity"></i>
+                </div>
+
+                <div>
+                    <span>OPÉRATIONS</span>
+                    <strong id="totalOperationsKpi">
+                        {{ total_operations }}
+                    </strong>
+                    <small>
+                        Sur la période sélectionnée
+                    </small>
+                </div>
+
+            </article>
+
+
+            <article class="history-kpi">
+
+                <div class="history-kpi-icon success">
+                    <i class="bi bi-check2-circle"></i>
+                </div>
+
+                <div>
+                    <span>RÉUSSIES</span>
+                    <strong id="successfulOperationsKpi">
+                        {{ successful_ops }}
+                    </strong>
+                    <small>
+                        Opérations exécutées avec succès
+                    </small>
+                </div>
+
+            </article>
+
+
+            <article class="history-kpi">
+
+                <div class="history-kpi-icon warning">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+
+                <div>
+                    <span>À VÉRIFIER</span>
+                    <strong id="warningOperationsKpi">
+                        {{ warning_ops }}
+                    </strong>
+                    <small>
+                        Opérations nécessitant un contrôle
+                    </small>
+                </div>
+
+            </article>
+
+
+            <article class="history-kpi">
+
+                <div class="history-kpi-icon danger">
+                    <i class="bi bi-x-circle"></i>
+                </div>
+
+                <div>
+                    <span>ÉCHECS</span>
+                    <strong id="failedOperationsKpi">
+                        {{ failed_ops }}
+                    </strong>
+                    <small>
+                        Opérations non exécutées
+                    </small>
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- =================================================
+             HISTORIQUE
+        ================================================== -->
+
+        <section class="history-card">
+
+            <!-- HEADER CARTE -->
+
+            <div class="history-card-header">
+
+                <div>
+
+                    <span class="card-eyebrow">
+                        JOURNAL FINANCIER
+                    </span>
+
+                    <h2>
+                        Activités récentes
+                    </h2>
+
+                    <p>
+                        Journal chronologique des opérations du
+                        service financier
+                    </p>
+
+                </div>
+
+
+                <div class="history-search">
+
+                    <i class="bi bi-search"></i>
+
+                    <input
+                        type="search"
+                        id="historySearch"
+                        placeholder="Rechercher acteur, référence, action..."
+                        autocomplete="off"
+                        value="{{ search_query }}"
+                    >
+
+                    <button
+                        type="button"
+                        id="clearHistorySearch"
+                        aria-label="Effacer la recherche"
+                    >
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 FILTRES
+            ================================================== -->
+
+            <div class="history-filters">
+
+                <div class="history-filter">
+
+                    <label for="historyPeriodFilter">
+                        Période
+                    </label>
+
+                    <select id="historyPeriodFilter">
+
+                        <option value="" {% if not period_filter %}selected{% endif %}>
+                            Toutes les périodes
+                        </option>
+
+                        <option value="today" {% if period_filter == 'today' %}selected{% endif %}>
+                            Aujourd'hui
+                        </option>
+
+                        <option value="week" {% if period_filter == 'week' %}selected{% endif %}>
+                            7 derniers jours
+                        </option>
+
+                        <option value="month" {% if period_filter == 'month' %}selected{% endif %}>
+                            30 derniers jours
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="history-filter">
+
+                    <label for="historyModuleFilter">
+                        Module
+                    </label>
+
+                    <select id="historyModuleFilter">
+
+                        <option value="" {% if not module_filter %}selected{% endif %}>
+                            Tous les modules
+                        </option>
+
+                        <option value="payment" {% if module_filter == 'payment' %}selected{% endif %}>
+                            Paiements
+                        </option>
+
+                        <option value="statement" {% if module_filter == 'statement' %}selected{% endif %}>
+                            Extraits bancaires
+                        </option>
+
+                        <option value="schedule" {% if module_filter == 'schedule' %}selected{% endif %}>
+                            Échéancier
+                        </option>
+
+                        <option value="student" {% if module_filter == 'student' %}selected{% endif %}>
+                            Situation financière
+                        </option>
+
+                        <option value="reconciliation" {% if module_filter == 'reconciliation' %}selected{% endif %}>
+                            Rapprochement
+                        </option>
+
+                        <option value="anomaly" {% if module_filter == 'anomaly' %}selected{% endif %}>
+                            Anomalies
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="history-filter">
+
+                    <label for="historyActionFilter">
+                        Action
+                    </label>
+
+                    <select id="historyActionFilter">
+
+                        <option value="" {% if not action_filter %}selected{% endif %}>
+                            Toutes les actions
+                        </option>
+
+                        <option value="create" {% if action_filter == 'create' %}selected{% endif %}>
+                            Création
+                        </option>
+
+                        <option value="import" {% if action_filter == 'import' %}selected{% endif %}>
+                            Importation
+                        </option>
+
+                        <option value="update" {% if action_filter == 'update' %}selected{% endif %}>
+                            Modification
+                        </option>
+
+                        <option value="validate" {% if action_filter == 'validate' %}selected{% endif %}>
+                            Validation
+                        </option>
+
+                        <option value="reconcile" {% if action_filter == 'reconcile' %}selected{% endif %}>
+                            Rapprochement
+                        </option>
+
+                        <option value="resolve" {% if action_filter == 'resolve' %}selected{% endif %}>
+                            Résolution
+                        </option>
+
+                        <option value="export" {% if action_filter == 'export' %}selected{% endif %}>
+                            Exportation
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="history-filter">
+
+                    <label for="historyStatusFilter">
+                        Résultat
+                    </label>
+
+                    <select id="historyStatusFilter">
+
+                        <option value="" {% if not status_filter %}selected{% endif %}>
+                            Tous les résultats
+                        </option>
+
+                        <option value="success" {% if status_filter == 'success' %}selected{% endif %}>
+                            Réussie
+                        </option>
+
+                        <option value="warning" {% if status_filter == 'warning' %}selected{% endif %}>
+                            À vérifier
+                        </option>
+
+                        <option value="failed" {% if status_filter == 'failed' %}selected{% endif %}>
+                            Échec
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="history-filter">
+
+                    <label for="historyActorFilter">
+                        Acteur
+                    </label>
+
+                    <select id="historyActorFilter">
+
+                        <option value="" {% if not actor_filter %}selected{% endif %}>
+                            Tous les acteurs
+                        </option>
+
+                        <option value="finance" {% if actor_filter == 'finance' %}selected{% endif %}>
+                            Responsable financier
+                        </option>
+
+                        <option value="cashier" {% if actor_filter == 'cashier' %}selected{% endif %}>
+                            Agent de caisse
+                        </option>
+
+                        <option value="student" {% if actor_filter == 'student' %}selected{% endif %}>
+                            Étudiant
+                        </option>
+
+                        <option value="system" {% if actor_filter == 'system' %}selected{% endif %}>
+                            Système
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="reset-history-filters"
+                    id="resetHistoryFilters"
+                >
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                    Réinitialiser
+                </button>
+
+            </div>
+
+
+            <!-- =================================================
+                 TABLEAU
+            ================================================== -->
+
+            <div class="history-table-wrapper">
+
+                <table class="history-table">
+
+                    <thead>
+
+                    <tr>
+                        <th>Date & heure</th>
+                        <th>Acteur</th>
+                        <th>Module</th>
+                        <th>Action</th>
+                        <th>Ressource / Référence</th>
+                        <th>Description</th>
+                        <th>Résultat</th>
+                        <th></th>
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody id="historyTableBody">
+
+                    {% for entry in history_entries %}
+                    <tr
+                        data-id="{{ entry.id }}"
+                        data-date="{{ entry.date|date:'c' }}"
+                        data-actor="{{ entry.actor }}"
+                        data-module="{{ entry.module }}"
+                        data-action="{{ entry.action }}"
+                        data-status="{{ entry.status }}"
+                        data-reference="{{ entry.reference }}"
+                        data-description="{{ entry.description }}"
+                    >
+
+                        <td>
+                            <div class="history-date">
+                                <strong>{{ entry.date|date:"d M Y" }}</strong>
+                                <small>{{ entry.date|date:"H:i" }}</small>
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="history-actor">
+
+                                <div class="history-avatar 
+                                    {% if entry.actor == 'system' %}system
+                                    {% elif entry.actor == 'finance' %}finance
+                                    {% elif entry.actor == 'cashier' %}cashier
+                                    {% else %}student{% endif %}">
+                                    {% if entry.actor == 'system' %}
+                                        <i class="bi bi-cpu"></i>
+                                    {% else %}
+                                        {{ entry.actor_display|slice:":2"|upper }}
+                                    {% endif %}
+                                </div>
+
+                                <div>
+                                    <strong>{{ entry.actor_display }}</strong>
+                                    <small>
+                                        {% if entry.actor == 'system' %}AcademicPay
+                                        {% elif entry.actor == 'finance' %}Service financier
+                                        {% elif entry.actor == 'cashier' %}Caisse
+                                        {% else %}Étudiant{% endif %}
+                                    </small>
+                                </div>
+
+                            </div>
+                        </td>
+
+                        <td>
+                            <span class="history-module {{ entry.module_class }}">
+                                <i class="bi {{ entry.icon }}"></i>
+                                {{ entry.module_display }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="history-action">
+                                {{ entry.action_display }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <strong class="history-reference">
+                                {{ entry.reference }}
+                            </strong>
+                        </td>
+
+                        <td class="history-description">
+                            {{ entry.description }}
+                        </td>
+
+                        <td>
+                            <span class="history-status {{ entry.status }}">
+                                <i class="bi 
+                                    {% if entry.status == 'success' %}bi-check-circle-fill
+                                    {% elif entry.status == 'warning' %}bi-exclamation-circle-fill
+                                    {% else %}bi-x-circle-fill{% endif %}"></i>
+                                {{ entry.status_display }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <button
+                                type="button"
+                                class="history-view-button"
+                                aria-label="Voir les détails"
+                            >
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
+                        </td>
+
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center py-4 text-muted">
+                            <i class="bi bi-clock-history fs-2 d-block mb-2"></i>
+                            <p class="mb-0">Aucune opération trouvée</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- EMPTY STATE -->
+
+            <div
+                class="history-empty"
+                id="historyEmpty"
+                hidden
+            >
+
+                <i class="bi bi-clock-history"></i>
+
+                <strong>
+                    Aucune opération trouvée
+                </strong>
+
+                <span>
+                    Modifiez les filtres ou la recherche.
+                </span>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <div class="history-table-footer">
+
+                <span id="historyResultCount">
+                    {{ result_count }} opération{{ result_count|pluralize }} affichée{{ result_count|pluralize }}
+                </span>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- =========================================================
+     OFFCANVAS MOBILE
+========================================================= -->
+
+<div
+    class="offcanvas offcanvas-start finance-offcanvas"
+    tabindex="-1"
+    id="financeMobileMenu"
+>
+
+    <div class="offcanvas-header">
+
+        <div class="sidebar-brand">
+
+            <div class="brand-icon">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+            <div>
+                <strong>AcademicPay</strong>
+                <span>FINANCE</span>
+            </div>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="offcanvas"
+            aria-label="Fermer"
+        ></button>
+
+    </div>
+
+
+    <div class="offcanvas-body">
+
+        <nav class="mobile-navigation">
+
+            <a href="{% url 'finance_dashboard' %}" class="mobile-nav-link">
+                <i class="bi bi-house-door"></i>
+                Accueil
+            </a>
+
+            <a href="{% url 'finance_payments' %}" class="mobile-nav-link">
+                <i class="bi bi-credit-card-fill"></i>
+                Paiements
+            </a>
+
+            <a href="{% url 'finance_statements' %}" class="mobile-nav-link">
+                <i class="bi bi-bank"></i>
+                Extraits bancaires
+            </a>
+
+            <a href="{% url 'finance_schedule' %}" class="mobile-nav-link">
+                <i class="bi bi-calendar3"></i>
+                Échéancier
+            </a>
+
+            <a href="{% url 'finance_students' %}" class="mobile-nav-link">
+                <i class="bi bi-people"></i>
+                Situations financières
+            </a>
+
+            <a href="{% url 'finance_reconciliation' %}" class="mobile-nav-link">
+                <i class="bi bi-arrow-left-right"></i>
+                Rapprochement global
+            </a>
+
+            <a href="{% url 'finance_anomalies' %}" class="mobile-nav-link">
+                <i class="bi bi-exclamation-triangle"></i>
+                Anomalies
+            </a>
+
+            <a href="{% url 'finance_reports' %}" class="mobile-nav-link">
+                <i class="bi bi-bar-chart-line"></i>
+                Rapports
+            </a>
+
+            <a href="{% url 'finance_history' %}" class="mobile-nav-link active">
+                <i class="bi bi-clock-history"></i>
+                Historique
+            </a>
+
+            <hr>
+
+            <a href="{% url 'finance_profile' %}" class="mobile-nav-link">
+                <i class="bi bi-person"></i>
+                Mon compte
+            </a>
+
+            <a
+                href="{% url 'logout' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-box-arrow-right"></i>
+                Déconnexion
+            </a>
+
+        </nav>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     MODALE DÉTAIL
+========================================================= -->
+
+<div
+    class="modal fade"
+    id="historyDetailModal"
+    tabindex="-1"
+    aria-hidden="true"
+>
+
+    <div
+        class="modal-dialog modal-dialog-centered modal-lg"
+    >
+
+        <div class="modal-content finance-modal">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span>
+                        JOURNAL D'AUDIT
+                    </span>
+
+                    <h2>
+                        Détail de l'opération
+                    </h2>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal"
+                    aria-label="Fermer"
+                ></button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <!-- IDENTIFIANT -->
+
+                <div class="history-detail-id">
+
+                    <span>
+                        Identifiant de l'opération
+                    </span>
+
+                    <strong id="modalHistoryId">
+                        LOG-000001
+                    </strong>
+
+                </div>
+
+
+                <!-- MÉTADONNÉES -->
+
+                <div class="history-detail-grid">
+
+                    <div>
+                        <span>Date et heure</span>
+                        <strong id="modalHistoryDate">—</strong>
+                    </div>
+
+                    <div>
+                        <span>Acteur</span>
+                        <strong id="modalHistoryActor">—</strong>
+                    </div>
+
+                    <div>
+                        <span>Module</span>
+                        <strong id="modalHistoryModule">—</strong>
+                    </div>
+
+                    <div>
+                        <span>Action</span>
+                        <strong id="modalHistoryAction">—</strong>
+                    </div>
+
+                    <div>
+                        <span>Référence</span>
+                        <strong id="modalHistoryReference">—</strong>
+                    </div>
+
+                    <div>
+                        <span>Résultat</span>
+                        <strong id="modalHistoryStatus">—</strong>
+                    </div>
+
+                </div>
+
+
+                <!-- DESCRIPTION -->
+
+                <div class="history-detail-description">
+
+                    <span>
+                        DESCRIPTION DE L'OPÉRATION
+                    </span>
+
+                    <p id="modalHistoryDescription">
+                        —
+                    </p>
+
+                </div>
+
+
+                <!-- TRACE -->
+
+                <div class="history-trace">
+
+                    <div class="history-trace-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Traçabilité système
+                        </strong>
+
+                        <p>
+                            Cette entrée du journal permet de retracer
+                            l'opération effectuée dans AcademicPay.
+                            Dans la version Django, ces informations
+                            seront enregistrées automatiquement côté
+                            serveur et ne devront pas être modifiables
+                            depuis l'interface utilisateur.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="history-modal-close"
+                    data-bs-dismiss="modal"
+                >
+                    Fermer
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     TOAST
+========================================================= -->
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+
+    <div
+        id="financeToast"
+        class="toast finance-toast"
+        role="alert"
+    >
+
+        <div class="toast-body">
+
+            <i class="bi bi-check-circle-fill"></i>
+
+            <span id="toastMessage">
+                Opération effectuée.
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Bootstrap JS -->
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+></script>
+
+<!-- JS spécifique -->
+<script src="{% static 'js/espace_finance/finance-history.js' %}"></script>
+
+</body>
+</html>
+
+

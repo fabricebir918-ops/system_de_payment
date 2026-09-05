@@ -1,0 +1,2159 @@
+/* ==========================================================
+   ACADEMICPAY — FINANCE / EXTRAITS BANCAIRES
+   finance-statements.css
+========================================================== */
+
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.statements-header {
+    max-width: 1600px;
+    margin: 0 auto 18px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.statements-header h1 {
+    margin: 0 0 6px;
+    color: var(--text);
+
+    font-size: clamp(1.5rem, 2vw, 1.85rem);
+    font-weight: 600;
+}
+
+.statements-header p {
+    max-width: 700px;
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: .9rem;
+    line-height: 1.55;
+}
+
+.statements-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+/* ==========================================================
+   FILTRE ANNÉE ACADÉMIQUE
+========================================================== */
+
+.academic-year-filter {
+    width: 180px;
+    height: 42px;
+
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    color: var(--muted);
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 8px;
+
+    overflow: hidden;
+
+    transition:
+        background var(--transition),
+        border-color var(--transition),
+        box-shadow var(--transition);
+}
+
+.academic-year-filter:hover {
+    border-color: var(--border-strong);
+}
+
+.academic-year-filter:focus-within {
+    background: var(--surface);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 40%,
+            var(--border)
+        );
+
+    box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.academic-year-filter > i:first-child {
+    position: absolute;
+    left: 12px;
+    z-index: 2;
+
+    color: var(--accent);
+
+    font-size: .9rem;
+
+    pointer-events: none;
+}
+
+.academic-year-filter select {
+    width: 100%;
+    height: 100%;
+
+    padding: 0 35px 0 36px;
+
+    color: var(--soft);
+    background: transparent;
+
+    border: 0;
+    outline: 0;
+
+    appearance: none;
+    -webkit-appearance: none;
+
+    font-family: inherit;
+    font-size: .84rem;
+    font-weight: 550;
+
+    cursor: pointer;
+}
+
+.academic-year-filter select option {
+    color: var(--text);
+    background: var(--surface);
+}
+
+.academic-year-chevron {
+    position: absolute;
+    right: 12px;
+
+    color: var(--muted);
+
+    font-size: .7rem;
+
+    pointer-events: none;
+}
+
+
+/* ==========================================================
+   BOUTON CHARGER UN EXTRAIT
+========================================================== */
+
+.statement-upload-button {
+    min-height: 42px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    padding: 0 16px;
+
+    color: #171819;
+    background: var(--accent);
+
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+
+    font-family: inherit;
+    font-size: .84rem;
+    font-weight: 700;
+
+    white-space: nowrap;
+    cursor: pointer;
+
+    transition:
+        opacity var(--transition),
+        transform var(--transition),
+        box-shadow var(--transition);
+}
+
+.statement-upload-button:hover {
+    opacity: .92;
+    transform: translateY(-1px);
+}
+
+.statement-upload-button:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.statement-upload-button i {
+    font-size: 1rem;
+}
+
+
+/* ==========================================================
+   KPI
+========================================================== */
+
+.statement-kpi-grid {
+    max-width: 1600px;
+    margin: 0 auto 14px;
+
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.statement-kpi {
+    min-width: 0;
+    padding: 17px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+
+    transition:
+        transform var(--transition),
+        border-color var(--transition);
+}
+
+.statement-kpi:hover {
+    transform: translateY(-2px);
+    border-color: var(--border-strong);
+}
+
+.statement-kpi-heading {
+    margin-bottom: 14px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.statement-kpi-heading span {
+    color: var(--muted);
+
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .045em;
+}
+
+.statement-kpi-heading i {
+    color: var(--accent);
+    font-size: 1rem;
+}
+
+.statement-kpi > strong {
+    display: block;
+    margin-bottom: 5px;
+
+    color: var(--text);
+
+    font-size: 1.2rem;
+    font-weight: 650;
+
+    white-space: nowrap;
+}
+
+.statement-kpi > small {
+    display: block;
+
+    color: var(--muted);
+
+    font-size: .76rem;
+}
+
+.statement-kpi .warning-value {
+    color: var(--orange);
+}
+
+
+/* ==========================================================
+   SECTIONS
+========================================================== */
+
+.statement-bank-section,
+.statement-history-card {
+    max-width: 1600px;
+    margin: 0 auto 14px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+
+    overflow: hidden;
+}
+
+.statement-section-header {
+    min-height: 65px;
+    padding: 14px 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.statement-section-header h2 {
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: 1rem;
+    font-weight: 650;
+}
+
+
+/* ==========================================================
+   CARTES BANQUES
+========================================================== */
+
+.statement-bank-grid {
+    padding: 14px;
+
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.statement-bank-card {
+    min-width: 0;
+    min-height: 92px;
+
+    padding: 14px;
+
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 12px;
+
+    color: inherit;
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 9px;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        background var(--transition),
+        border-color var(--transition),
+        transform var(--transition);
+}
+
+.statement-bank-card:hover {
+    background: var(--surface-hover);
+    border-color: var(--border-strong);
+    transform: translateY(-1px);
+}
+
+.statement-bank-card.active {
+    background: var(--accent-soft);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 30%,
+            var(--border)
+        );
+}
+
+.statement-bank-logo {
+    width: 40px;
+    height: 40px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border: 1px solid
+        color-mix(
+            in srgb,
+            var(--accent) 15%,
+            transparent
+        );
+
+    border-radius: 8px;
+
+    font-size: .72rem;
+    font-weight: 750;
+}
+
+.statement-bank-info {
+    min-width: 0;
+}
+
+.statement-bank-info strong,
+.statement-bank-info span,
+.statement-bank-value strong,
+.statement-bank-value span {
+    display: block;
+}
+
+.statement-bank-info strong {
+    margin-bottom: 4px;
+
+    color: var(--soft);
+
+    font-size: .86rem;
+    font-weight: 650;
+}
+
+.statement-bank-info span {
+    color: var(--muted);
+    font-size: .74rem;
+}
+
+.statement-bank-value {
+    text-align: right;
+}
+
+.statement-bank-value strong {
+    margin-bottom: 4px;
+
+    color: var(--text);
+
+    font-size: .9rem;
+    font-weight: 650;
+
+    white-space: nowrap;
+}
+
+.statement-bank-value span {
+    color: var(--muted);
+    font-size: .72rem;
+}
+
+.statement-bank-card > i {
+    color: var(--muted);
+    font-size: .85rem;
+}
+
+
+/* ==========================================================
+   TOUTES LES BANQUES
+========================================================== */
+
+.statement-reset-bank {
+    min-height: 36px;
+
+    padding: 0 12px;
+
+    color: var(--muted);
+    background: transparent;
+
+    border: 1px solid var(--border);
+    border-radius: 7px;
+
+    font-family: inherit;
+    font-size: .8rem;
+    font-weight: 650;
+
+    cursor: pointer;
+
+    transition:
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition);
+}
+
+.statement-reset-bank:hover {
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 25%,
+            var(--border)
+        );
+}
+
+
+/* ==========================================================
+   FILTRES
+========================================================== */
+
+.statement-filters {
+    max-width: 1600px;
+    margin: 0 auto 14px;
+    padding: 12px;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(250px, 2fr)
+        minmax(150px, .7fr)
+        minmax(180px, .9fr)
+        auto;
+
+    align-items: end;
+    gap: 9px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+}
+
+
+/* ==========================================================
+   RECHERCHE
+========================================================== */
+
+.statement-search {
+    min-height: 42px;
+
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 8px;
+
+    transition:
+        background var(--transition),
+        border-color var(--transition);
+}
+
+.statement-search:focus-within {
+    background: var(--surface);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 35%,
+            var(--border)
+        );
+
+    box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.statement-search > i {
+    margin-left: 12px;
+
+    color: var(--muted);
+
+    font-size: .9rem;
+}
+
+.statement-search input {
+    width: 100%;
+    min-width: 0;
+    height: 40px;
+
+    padding: 0 36px 0 9px;
+
+    color: var(--soft);
+    background: transparent;
+
+    border: 0;
+    outline: 0;
+
+    font-family: inherit;
+    font-size: .84rem;
+}
+
+.statement-search input::placeholder {
+    color: var(--muted);
+    opacity: .8;
+}
+
+.statement-search button {
+    width: 31px;
+    height: 31px;
+
+    position: absolute;
+    right: 5px;
+
+    display: grid;
+    place-items: center;
+
+    padding: 0;
+
+    color: var(--muted);
+    background: transparent;
+
+    border: 0;
+    border-radius: 6px;
+
+    font-size: .82rem;
+
+    cursor: pointer;
+}
+
+.statement-search button:hover {
+    color: var(--text);
+    background: var(--surface-hover);
+}
+
+
+/* ==========================================================
+   SELECTS FILTRES
+========================================================== */
+
+.statement-filter {
+    min-width: 0;
+}
+
+.statement-filter label {
+    display: block;
+
+    margin: 0 0 6px 2px;
+
+    color: var(--muted);
+
+    font-size: .75rem;
+    font-weight: 600;
+}
+
+.statement-filter select {
+    width: 100%;
+    height: 42px;
+
+    padding: 0 32px 0 11px;
+
+    color: var(--soft);
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    outline: 0;
+
+    font-family: inherit;
+    font-size: .83rem;
+
+    cursor: pointer;
+
+    transition:
+        background var(--transition),
+        border-color var(--transition);
+}
+
+.statement-filter select:hover {
+    border-color: var(--border-strong);
+}
+
+.statement-filter select:focus {
+    background: var(--surface);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 35%,
+            var(--border)
+        );
+
+    box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.statement-filter select option {
+    color: var(--text);
+    background: var(--surface);
+}
+
+
+/* ==========================================================
+   RESET FILTRES
+========================================================== */
+
+.statement-reset-filters {
+    min-height: 42px;
+
+    padding: 0 13px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    color: var(--muted);
+    background: transparent;
+
+    border: 1px solid var(--border);
+    border-radius: 8px;
+
+    font-family: inherit;
+    font-size: .8rem;
+    font-weight: 650;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+}
+
+.statement-reset-filters:hover {
+    color: var(--soft);
+    background: var(--surface-hover);
+
+    border-color: var(--border-strong);
+}
+
+
+/* ==========================================================
+   COMPTEUR
+========================================================== */
+
+.statement-result-counter {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+
+    color: var(--muted);
+
+    font-size: .76rem;
+}
+
+.statement-result-counter strong {
+    color: var(--accent);
+
+    font-size: .88rem;
+    font-weight: 650;
+}
+
+
+/* ==========================================================
+   TABLEAU
+========================================================== */
+
+.statement-table-wrapper {
+    position: relative;
+    overflow-x: auto;
+
+    scrollbar-width: thin;
+    scrollbar-color: #414448 transparent;
+}
+
+.statement-table-wrapper::-webkit-scrollbar {
+    height: 8px;
+}
+
+.statement-table-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.statement-table-wrapper::-webkit-scrollbar-thumb {
+    background: #3e4246;
+
+    border: 2px solid transparent;
+    border-radius: 999px;
+
+    background-clip: padding-box;
+}
+
+.statement-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #555a60;
+
+    border: 2px solid transparent;
+
+    background-clip: padding-box;
+}
+
+.statement-table {
+    width: 100%;
+    min-width: 1120px;
+
+    border-collapse: collapse;
+
+    color: var(--soft);
+}
+
+.statement-table th {
+    padding: 12px 13px;
+
+    color: var(--muted);
+    background: var(--surface-2);
+
+    border-bottom: 1px solid var(--border);
+
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .035em;
+
+    text-align: left;
+
+    white-space: nowrap;
+}
+
+.statement-table td {
+    padding: 12px 13px;
+
+    color: var(--muted);
+
+    border-bottom: 1px solid var(--border);
+
+    font-size: .8rem;
+
+    vertical-align: middle;
+}
+
+.statement-table tbody tr {
+    transition: background var(--transition);
+}
+
+.statement-table tbody tr:hover {
+    background: var(--surface-hover);
+}
+
+.statement-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+
+/* ==========================================================
+   FICHIER DANS LE TABLEAU
+========================================================== */
+
+.statement-file-cell {
+    min-width: 220px;
+
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.statement-file-icon {
+    width: 33px;
+    height: 33px;
+
+    flex: 0 0 33px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-radius: 7px;
+
+    font-size: .85rem;
+}
+
+.statement-file-cell > div:last-child {
+    min-width: 0;
+}
+
+.statement-file-cell strong,
+.statement-file-cell span {
+    display: block;
+}
+
+.statement-file-cell strong {
+    max-width: 210px;
+
+    overflow: hidden;
+
+    color: var(--soft);
+
+    font-size: .8rem;
+    font-weight: 600;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.statement-file-cell span {
+    margin-top: 3px;
+
+    color: var(--muted);
+
+    font-size: .68rem;
+}
+
+
+/* ==========================================================
+   BANQUE
+========================================================== */
+
+.statement-bank-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    white-space: nowrap;
+}
+
+.statement-bank-name::before {
+    content: "";
+
+    width: 6px;
+    height: 6px;
+
+    flex: 0 0 6px;
+
+    background: var(--accent);
+
+    border-radius: 50%;
+}
+
+
+/* ==========================================================
+   MONTANT
+========================================================== */
+
+.statement-amount {
+    color: var(--soft);
+
+    font-weight: 650;
+
+    white-space: nowrap;
+}
+
+
+/* ==========================================================
+   STATUTS
+========================================================== */
+
+.statement-status {
+    min-height: 27px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 0 9px;
+
+    border-radius: 999px;
+
+    font-size: .72rem;
+    font-weight: 650;
+
+    white-space: nowrap;
+}
+
+.statement-status::before {
+    content: "";
+
+    width: 5px;
+    height: 5px;
+
+    border-radius: 50%;
+}
+
+.statement-status.processed {
+    color: var(--green);
+    background: var(--green-soft);
+}
+
+.statement-status.processed::before {
+    background: var(--green);
+}
+
+.statement-status.partial {
+    color: var(--orange);
+
+    background:
+        color-mix(
+            in srgb,
+            var(--orange) 9%,
+            transparent
+        );
+}
+
+.statement-status.partial::before {
+    background: var(--orange);
+}
+
+.statement-status.pending {
+    color: var(--accent);
+    background: var(--accent-soft);
+}
+
+.statement-status.pending::before {
+    background: var(--accent);
+}
+
+.statement-status.error {
+    color: var(--red);
+    background: var(--red-soft);
+}
+
+.statement-status.error::before {
+    background: var(--red);
+}
+
+
+/* ==========================================================
+   ACTION DÉTAIL
+========================================================== */
+
+.statement-detail-button {
+    width: 33px;
+    height: 33px;
+
+    display: grid;
+    place-items: center;
+
+    padding: 0;
+
+    color: var(--muted);
+    background: transparent;
+
+    border: 1px solid var(--border);
+    border-radius: 7px;
+
+    font-size: .85rem;
+
+    cursor: pointer;
+
+    transition:
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition);
+}
+
+.statement-detail-button:hover {
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 25%,
+            var(--border)
+        );
+}
+
+
+/* ==========================================================
+   ÉTAT VIDE
+========================================================== */
+
+.statement-empty {
+    min-height: 300px;
+
+    padding: 40px 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    text-align: center;
+}
+
+.statement-empty[hidden] {
+    display: none;
+}
+
+.statement-empty > div {
+    width: 50px;
+    height: 50px;
+
+    margin-bottom: 14px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--muted);
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    font-size: 1.15rem;
+}
+
+.statement-empty strong {
+    margin-bottom: 6px;
+
+    color: var(--soft);
+
+    font-size: .95rem;
+}
+
+.statement-empty p {
+    max-width: 340px;
+
+    margin: 0 0 15px;
+
+    color: var(--muted);
+
+    font-size: .8rem;
+    line-height: 1.6;
+}
+
+.statement-empty button {
+    min-height: 38px;
+
+    padding: 0 13px;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border: 1px solid
+        color-mix(
+            in srgb,
+            var(--accent) 20%,
+            var(--border)
+        );
+
+    border-radius: 7px;
+
+    font-size: .8rem;
+    font-weight: 650;
+
+    cursor: pointer;
+}
+
+
+/* ==========================================================
+   MODALES COMMUNES
+========================================================== */
+
+.finance-modal {
+    color: var(--soft);
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: 12px;
+
+    box-shadow: 0 22px 70px rgba(0, 0, 0, .30);
+
+    overflow: hidden;
+}
+
+.finance-modal .modal-header {
+    padding: 18px 20px;
+
+    align-items: center;
+
+    background: var(--surface);
+
+    border-bottom: 1px solid var(--border);
+}
+
+.finance-modal .modal-header > div > span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: var(--accent);
+
+    font-size: .68rem;
+    font-weight: 750;
+    letter-spacing: .08em;
+}
+
+.finance-modal .modal-header h2 {
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: 1.05rem;
+    font-weight: 650;
+}
+
+.finance-modal .modal-header .btn-close {
+    width: 30px;
+    height: 30px;
+
+    margin: 0;
+    padding: 0;
+
+    border-radius: 7px;
+
+    opacity: .65;
+}
+
+.finance-modal .modal-body {
+    padding: 20px;
+}
+
+.finance-modal .modal-footer {
+    padding: 14px 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 9px;
+
+    background: var(--surface);
+
+    border-top: 1px solid var(--border);
+}
+
+
+/* ==========================================================
+   MODALE IMPORTATION
+========================================================== */
+
+#uploadStatementModal .modal-dialog {
+    max-width: 650px;
+}
+
+
+/* ==========================================================
+   FORMULAIRE MODALE
+========================================================== */
+
+.statement-form-group {
+    margin-bottom: 17px;
+}
+
+.statement-form-group > label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: var(--soft);
+
+    font-size: .8rem;
+    font-weight: 600;
+}
+
+.statement-form-group .finance-input {
+    width: 100%;
+    height: 43px;
+
+    padding: 0 12px;
+
+    color: var(--soft);
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    outline: 0;
+
+    font-family: inherit;
+    font-size: .84rem;
+
+    transition:
+        background var(--transition),
+        border-color var(--transition),
+        box-shadow var(--transition);
+}
+
+.statement-form-group .finance-input:hover {
+    border-color: var(--border-strong);
+}
+
+.statement-form-group .finance-input:focus {
+    background: var(--surface);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 40%,
+            var(--border)
+        );
+
+    box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.statement-form-group select.finance-input {
+    cursor: pointer;
+}
+
+.statement-form-group select.finance-input:disabled {
+    color: var(--muted);
+    background: var(--surface-2);
+
+    cursor: not-allowed;
+
+    opacity: .75;
+}
+
+.statement-form-group select.finance-input option {
+    color: var(--text);
+    background: var(--surface);
+}
+
+.statement-field-help {
+    display: block;
+
+    margin-top: 6px;
+
+    color: var(--muted);
+
+    font-size: .72rem;
+    line-height: 1.45;
+}
+
+
+/* ==========================================================
+   DEVISE FIXE USD
+========================================================== */
+
+.statement-currency-field {
+    min-height: 54px;
+
+    padding: 8px 11px;
+
+    display: flex;
+    align-items: center;
+    gap: 11px;
+
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.statement-currency-icon {
+    width: 36px;
+    height: 36px;
+
+    flex: 0 0 36px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border: 1px solid
+        color-mix(
+            in srgb,
+            var(--accent) 15%,
+            transparent
+        );
+
+    border-radius: 8px;
+
+    font-size: 1rem;
+}
+
+.statement-currency-content {
+    min-width: 0;
+    flex: 1;
+}
+
+.statement-currency-content strong,
+.statement-currency-content span {
+    display: block;
+}
+
+.statement-currency-content strong {
+    margin-bottom: 1px;
+
+    color: var(--soft);
+
+    font-size: .86rem;
+    font-weight: 700;
+}
+
+.statement-currency-content span {
+    color: var(--muted);
+
+    font-size: .72rem;
+}
+
+.statement-fixed-badge {
+    flex: 0 0 auto;
+
+    padding: 4px 8px;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border: 1px solid
+        color-mix(
+            in srgb,
+            var(--accent) 15%,
+            transparent
+        );
+
+    border-radius: 999px;
+
+    font-size: .67rem;
+    font-weight: 700;
+}
+
+
+/* ==========================================================
+   DROPZONE
+========================================================== */
+
+.statement-dropzone {
+    min-height: 170px;
+
+    padding: 24px 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    color: var(--muted);
+
+    background:
+        color-mix(
+            in srgb,
+            var(--surface-2) 75%,
+            transparent
+        );
+
+    border: 1px dashed var(--border-strong);
+    border-radius: 10px;
+
+    text-align: center;
+
+    cursor: pointer;
+
+    transition:
+        background var(--transition),
+        border-color var(--transition),
+        transform var(--transition);
+}
+
+.statement-dropzone:hover,
+.statement-dropzone.dragging {
+    background: var(--accent-soft);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 45%,
+            var(--border)
+        );
+}
+
+.statement-dropzone.dragging {
+    transform: scale(.997);
+}
+
+.statement-dropzone-icon {
+    width: 46px;
+    height: 46px;
+
+    margin-bottom: 12px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-radius: 9px;
+
+    font-size: 1.15rem;
+}
+
+.statement-dropzone strong {
+    margin-bottom: 5px;
+
+    color: var(--soft);
+
+    font-size: .9rem;
+    font-weight: 650;
+}
+
+.statement-dropzone span {
+    margin-bottom: 8px;
+
+    font-size: .8rem;
+}
+
+.statement-dropzone small {
+    color: var(--muted);
+
+    font-size: .72rem;
+}
+
+
+/* ==========================================================
+   FICHIER SÉLECTIONNÉ
+========================================================== */
+
+.selected-statement-file {
+    min-height: 56px;
+
+    margin-top: 9px;
+    padding: 9px 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.selected-statement-file[hidden] {
+    display: none;
+}
+
+.selected-statement-file > div {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.selected-statement-file > div > i {
+    width: 34px;
+    height: 34px;
+
+    flex: 0 0 34px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-radius: 7px;
+}
+
+.selected-statement-file > div > div {
+    min-width: 0;
+}
+
+.selected-statement-file strong,
+.selected-statement-file span {
+    display: block;
+}
+
+.selected-statement-file strong {
+    max-width: 430px;
+
+    overflow: hidden;
+
+    color: var(--soft);
+
+    font-size: .8rem;
+    font-weight: 600;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.selected-statement-file span {
+    margin-top: 2px;
+
+    color: var(--muted);
+
+    font-size: .7rem;
+}
+
+.selected-statement-file button {
+    width: 32px;
+    height: 32px;
+
+    flex: 0 0 32px;
+
+    display: grid;
+    place-items: center;
+
+    padding: 0;
+
+    color: var(--muted);
+    background: transparent;
+
+    border: 1px solid transparent;
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    transition:
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition);
+}
+
+.selected-statement-file button:hover {
+    color: var(--red);
+    background: var(--red-soft);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--red) 15%,
+            transparent
+        );
+}
+
+
+/* ==========================================================
+   INFORMATION IMPORT
+========================================================== */
+
+.statement-import-information {
+    margin-top: 6px;
+    padding: 12px;
+
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+
+    color: var(--muted);
+    background: var(--accent-soft);
+
+    border: 1px solid
+        color-mix(
+            in srgb,
+            var(--accent) 15%,
+            var(--border)
+        );
+
+    border-radius: 8px;
+}
+
+.statement-import-information > i {
+    margin-top: 2px;
+
+    color: var(--accent);
+
+    font-size: .9rem;
+}
+
+.statement-import-information p {
+    margin: 0;
+
+    font-size: .78rem;
+    line-height: 1.6;
+}
+
+.statement-import-information strong {
+    color: var(--soft);
+}
+
+
+/* ==========================================================
+   ERREUR FORMULAIRE
+========================================================== */
+
+.statement-form-error {
+    display: none;
+
+    margin-top: 11px;
+    padding: 10px 12px;
+
+    color: var(--red);
+    background: var(--red-soft);
+
+    border: 1px solid
+        color-mix(
+            in srgb,
+            var(--red) 18%,
+            var(--border)
+        );
+
+    border-radius: 7px;
+
+    font-size: .78rem;
+    line-height: 1.5;
+}
+
+.statement-form-error.show {
+    display: block;
+}
+
+
+/* ==========================================================
+   BOUTONS DES MODALES
+========================================================== */
+
+.finance-modal .modal-footer .btn {
+    min-height: 40px;
+
+    padding: 0 16px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    border-radius: 8px;
+
+    font-family: inherit;
+    font-size: .82rem;
+    font-weight: 650;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    transition:
+        background var(--transition),
+        color var(--transition),
+        border-color var(--transition),
+        transform var(--transition),
+        box-shadow var(--transition);
+}
+
+.finance-modal .modal-cancel {
+    color: var(--soft);
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+}
+
+.finance-modal .modal-cancel:hover {
+    color: var(--text);
+    background: var(--surface-hover);
+
+    border-color: var(--border-strong);
+}
+
+.finance-modal .modal-confirm {
+    color: #171819;
+    background: var(--accent);
+
+    border: 1px solid var(--accent);
+}
+
+.finance-modal .modal-confirm:hover {
+    color: #171819;
+
+    opacity: .92;
+
+    transform: translateY(-1px);
+}
+
+.finance-modal .modal-confirm:focus-visible,
+.finance-modal .modal-cancel:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+
+/* ==========================================================
+   MODALE DÉTAIL EXTRAIT
+========================================================== */
+
+#statementDetailModal .modal-content {
+    color: var(--soft);
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+#statementDetailModal .modal-body {
+    padding: 20px;
+}
+
+
+/* ==========================================================
+   DÉTAIL EXTRAIT
+========================================================== */
+
+.statement-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 9px;
+}
+
+.statement-detail-grid > div {
+    min-width: 0;
+
+    padding: 13px;
+
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.statement-detail-grid span,
+.statement-detail-grid strong {
+    display: block;
+}
+
+.statement-detail-grid span {
+    margin-bottom: 5px;
+
+    color: var(--muted);
+
+    font-size: .74rem;
+}
+
+.statement-detail-grid strong {
+    color: var(--soft);
+
+    font-size: .84rem;
+    font-weight: 650;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* ==========================================================
+   RÉSUMÉ RAPPROCHEMENT
+========================================================== */
+
+.statement-reconciliation-summary {
+    margin-top: 12px;
+
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 9px;
+}
+
+.statement-reconciliation-summary > div {
+    padding: 13px;
+
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.statement-reconciliation-summary span,
+.statement-reconciliation-summary strong {
+    display: block;
+}
+
+.statement-reconciliation-summary span {
+    margin-bottom: 5px;
+
+    color: var(--muted);
+
+    font-size: .74rem;
+}
+
+.statement-reconciliation-summary strong {
+    color: var(--text);
+
+    font-size: 1rem;
+    font-weight: 650;
+}
+
+.statement-reconciliation-summary > div:first-child strong {
+    color: var(--green);
+}
+
+.statement-reconciliation-summary > div:nth-child(2) strong {
+    color: var(--orange);
+}
+
+.statement-reconciliation-summary > div:last-child strong {
+    color: var(--red);
+}
+
+
+/* ==========================================================
+   NOTE DÉTAIL
+========================================================== */
+
+.statement-detail-note {
+    margin-top: 12px;
+    padding: 13px;
+
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.statement-detail-note > i {
+    margin-top: 2px;
+
+    color: var(--accent);
+
+    font-size: .9rem;
+}
+
+.statement-detail-note strong {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: var(--soft);
+
+    font-size: .82rem;
+}
+
+.statement-detail-note p {
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: .77rem;
+    line-height: 1.6;
+}
+
+
+/* ==========================================================
+   ANIMATION
+========================================================== */
+
+.statement-kpi,
+.statement-bank-section,
+.statement-filters,
+.statement-history-card {
+    animation: statementFade .3s ease both;
+}
+
+.statement-kpi:nth-child(2) {
+    animation-delay: .025s;
+}
+
+.statement-kpi:nth-child(3) {
+    animation-delay: .05s;
+}
+
+.statement-kpi:nth-child(4) {
+    animation-delay: .075s;
+}
+
+@keyframes statementFade {
+
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* ==========================================================
+   RESPONSIVE — 1200
+========================================================== */
+
+@media (max-width: 1199.98px) {
+
+    .statements-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .statements-header-actions {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .statement-kpi-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+/* ==========================================================
+   RESPONSIVE — 992
+========================================================== */
+
+@media (max-width: 991.98px) {
+
+    .statement-bank-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .statement-filters {
+        grid-template-columns:
+            minmax(200px, 2fr)
+            1fr
+            1fr;
+    }
+
+    .statement-reset-filters {
+        grid-column: 1 / -1;
+    }
+}
+
+
+/* ==========================================================
+   RESPONSIVE — 768
+========================================================== */
+
+@media (max-width: 767.98px) {
+
+    .statements-header-actions {
+        width: 100%;
+
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .academic-year-filter,
+    .statement-upload-button {
+        width: 100%;
+    }
+
+    .statement-filters {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .statement-search {
+        grid-column: 1 / -1;
+    }
+
+    .statement-reset-filters {
+        grid-column: 1 / -1;
+    }
+
+    .statement-detail-grid,
+    .statement-reconciliation-summary {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    #uploadStatementModal .modal-dialog {
+        max-width: calc(100% - 24px);
+        margin: 12px auto;
+    }
+}
+
+
+/* ==========================================================
+   RESPONSIVE — MOBILE
+========================================================== */
+
+@media (max-width: 575.98px) {
+
+    .statements-header-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .statement-kpi-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .statement-section-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .statement-reset-bank {
+        width: 100%;
+    }
+
+    .statement-bank-card {
+        grid-template-columns:
+            auto minmax(0, 1fr) auto;
+    }
+
+    .statement-bank-value {
+        grid-column: 2;
+        text-align: left;
+    }
+
+    .statement-bank-card > i {
+        grid-column: 3;
+        grid-row: 1 / 3;
+    }
+
+    .statement-filters {
+        grid-template-columns: 1fr;
+    }
+
+    .statement-search,
+    .statement-reset-filters {
+        grid-column: auto;
+    }
+
+    .statement-detail-grid,
+    .statement-reconciliation-summary {
+        grid-template-columns: 1fr;
+    }
+
+    #uploadStatementModal .modal-body {
+        padding: 16px;
+    }
+
+    .finance-modal .modal-footer {
+        padding: 13px 16px;
+
+        flex-direction: column-reverse;
+    }
+
+    .finance-modal .modal-footer .btn {
+        width: 100%;
+    }
+
+    .statement-dropzone {
+        min-height: 155px;
+        padding: 20px 14px;
+    }
+
+    .statement-currency-field {
+        min-height: 52px;
+    }
+
+    .selected-statement-file strong {
+        max-width: 210px;
+    }
+}
+.statement-modal-close {
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+
+    display: grid;
+    place-items: center;
+
+    padding: 0;
+
+    color: var(--muted);
+    background: transparent;
+
+    border: 1px solid var(--border);
+    border-radius: 8px;
+
+    cursor: pointer;
+}
+
+.statement-modal-close:hover {
+    color: var(--text);
+    background: var(--surface-hover);
+    border-color: var(--border-strong);
+}
+
+.statement-modal-close i {
+    font-size: 1rem;
+    line-height: 1;
+}
+/* Header de la modale */
+.statement-modal-header {
+    position: relative;
+    padding-right: 56px;
+}
+
+/* Croix exactement dans le coin supérieur droit */
+.statement-modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+
+    width: 32px;
+    height: 32px;
+
+    display: grid;
+    place-items: center;
+
+    padding: 0;
+    margin: 0;
+
+    color: var(--muted);
+    background: transparent;
+
+    border: 0;
+    border-radius: 6px;
+
+    cursor: pointer;
+    z-index: 2;
+}
+
+.statement-modal-close i {
+    display: block;
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.statement-modal-close:hover {
+    color: var(--text);
+    background: var(--surface-2);
+}

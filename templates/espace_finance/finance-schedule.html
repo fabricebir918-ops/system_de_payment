@@ -1,0 +1,1765 @@
+{% load static %}
+
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Échéancier | AcademicPay</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    >
+
+    <!-- Thème Finance global -->
+    <link rel="stylesheet" href="{% static 'css/espace_finance/finance-dashboard.css' %}">
+    <!-- Styles propres à l'échéancier -->
+    <link rel="stylesheet" href="{% static 'css/espace_finance/finance-schedule.css' %}">
+</head>
+
+<body>
+
+<div class="finance-layout">
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside class="finance-sidebar d-none d-xl-flex">
+
+        <a href="{% url 'finance_dashboard' %}" class="sidebar-brand">
+
+            <div class="brand-icon">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+            <div>
+                <strong>AcademicPay</strong>
+                <span>FINANCE</span>
+            </div>
+
+        </a>
+
+
+        <nav class="sidebar-nav">
+
+            <div class="nav-section-label">
+                PRINCIPAL
+            </div>
+
+            <a href="{% url 'finance_dashboard' %}" class="sidebar-link">
+                <i class="bi bi-house-door"></i>
+                <span>ACCUEIL</span>
+            </a>
+
+            <a href="{% url 'finance_payments' %}" class="sidebar-link">
+                <i class="bi bi-credit-card-fill"></i>
+                <span>PAIEMENTS</span>
+            </a>
+
+            <a href="{% url 'finance_statements' %}" class="sidebar-link">
+                <i class="bi bi-bank"></i>
+                <span>EXTRAITS BANCAIRES</span>
+            </a>
+
+            <a
+                href="{% url 'finance_schedule' %}"
+                class="sidebar-link active"
+            >
+                <i class="bi bi-calendar3"></i>
+                <span>ÉCHÉANCIER</span>
+            </a>
+
+
+            <div class="nav-section-label">
+                SUIVI FINANCIER
+            </div>
+
+            <a href="{% url 'finance_students' %}" class="sidebar-link">
+                <i class="bi bi-people"></i>
+                <span>SITUATIONS FINANCIÈRES</span>
+            </a>
+
+            <a
+                href="{% url 'finance_reconciliation' %}"
+                class="sidebar-link"
+            >
+                <i class="bi bi-arrow-left-right"></i>
+                <span>RAPPROCHEMENT GLOBAL</span>
+            </a>
+
+            <a href="{% url 'finance_anomalies' %}" class="sidebar-link">
+
+                <i class="bi bi-exclamation-triangle"></i>
+
+                <span>ANOMALIES</span>
+
+                <span class="nav-badge">
+                    24
+                </span>
+
+            </a>
+
+
+            <div class="nav-section-label">
+                ANALYSE
+            </div>
+
+            <a href="{% url 'finance_reports' %}" class="sidebar-link">
+                <i class="bi bi-bar-chart-line"></i>
+                <span>RAPPORTS</span>
+            </a>
+
+            <a href="{% url 'finance_history' %}" class="sidebar-link">
+                <i class="bi bi-clock-history"></i>
+                <span>HISTORIQUE</span>
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a href="{% url 'finance_profile' %}" class="finance-user">
+
+                <div class="user-avatar">
+                    RF
+                </div>
+
+                <div class="user-information">
+
+                    <strong>
+                        Responsable financier
+                    </strong>
+
+                    <span>
+                        Chef du service financier
+                    </span>
+
+                </div>
+
+                <i class="bi bi-chevron-right"></i>
+
+            </a>
+
+
+            <div class="sidebar-actions">
+
+                <button
+                    type="button"
+                    class="sidebar-action-btn"
+                    id="themeButton"
+                    title="Changer de thème"
+                >
+                    <i class="bi bi-sun"></i>
+                </button>
+
+                <a
+                    href="{% url 'finance_profile' %}"
+                    class="sidebar-action-btn"
+                    title="Paramètres"
+                >
+                    <i class="bi bi-gear"></i>
+                </a>
+
+                <a
+                    href="{% url 'logout' %}"
+                    class="sidebar-action-btn"
+                    title="Déconnexion"
+                >
+                    <i class="bi bi-box-arrow-right"></i>
+                </a>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         CONTENU PRINCIPAL
+    ====================================================== -->
+
+    <main class="finance-main">
+
+        <!-- MOBILE HEADER -->
+
+        <div class="mobile-header d-xl-none">
+
+            <button
+                class="mobile-menu-button"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#financeMobileMenu"
+            >
+                <i class="bi bi-list"></i>
+            </button>
+
+            <div class="mobile-brand">
+                <strong>AcademicPay</strong>
+                <span>FINANCE</span>
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <header class="schedule-header">
+
+            <div>
+
+                <span class="page-eyebrow">
+                    CONFIGURATION FINANCIÈRE
+                </span>
+
+                <h1>
+                    Échéancier des frais
+                </h1>
+
+                <p>
+                    Définissez les frais académiques et leurs
+                    dates limites pour chaque programme académique.
+                </p>
+
+            </div>
+
+
+            <div class="schedule-header-actions">
+
+                <div class="filter-control">
+
+                    <i class="bi bi-calendar3"></i>
+
+                    <select id="academicYearFilter">
+
+                        <option value="2026-2027">
+                            2026 - 2027
+                        </option>
+
+                        <option value="2025-2026">
+                            2025 - 2026
+                        </option>
+
+                        <option value="2024-2025">
+                            2024 - 2025
+                        </option>
+
+                        <option value="2023-2024">
+                            2023 - 2024
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="schedule-create-button"
+                    data-bs-toggle="modal"
+                    data-bs-target="#scheduleModal"
+                    id="newScheduleButton"
+                >
+                    <i class="bi bi-plus-lg"></i>
+                    Nouvel échéancier
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             KPI
+        ================================================== -->
+
+        <section class="schedule-kpi-grid">
+
+            <article class="schedule-kpi">
+
+                <div class="schedule-kpi-icon">
+                    <i class="bi bi-calendar-check"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        ÉCHÉANCIERS ACTIFS
+                    </span>
+
+                    <strong id="activeScheduleCount">
+                        0
+                    </strong>
+
+                    <small>
+                        Configurations actives
+                    </small>
+
+                </div>
+
+            </article>
+
+
+            <article class="schedule-kpi">
+
+                <div class="schedule-kpi-icon">
+                    <i class="bi bi-buildings"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        FACULTÉS COUVERTES
+                    </span>
+
+                    <strong id="coveredFacultyCount">
+                        0
+                    </strong>
+
+                    <small>
+                        Facultés configurées
+                    </small>
+
+                </div>
+
+            </article>
+
+
+            <article class="schedule-kpi">
+
+                <div class="schedule-kpi-icon">
+                    <i class="bi bi-mortarboard"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        PROGRAMMES COUVERTS
+                    </span>
+
+                    <strong id="coveredPromotionCount">
+                        0
+                    </strong>
+
+                    <small>
+                        Programmes académiques configurés
+                    </small>
+
+                </div>
+
+            </article>
+
+
+            <article class="schedule-kpi">
+
+                <div class="schedule-kpi-icon warning">
+                    <i class="bi bi-alarm"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        ÉCHÉANCES PROCHES
+                    </span>
+
+                    <strong id="upcomingDeadlineCount">
+                        0
+                    </strong>
+
+                    <small>
+                        Dans les 30 prochains jours
+                    </small>
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- =================================================
+             PROCHAINE ÉCHÉANCE
+        ================================================== -->
+
+        <section class="next-deadline-card">
+
+            <div class="next-deadline-icon">
+                <i class="bi bi-clock-history"></i>
+            </div>
+
+            <div class="next-deadline-main">
+
+                <span>
+                    PROCHAINE ÉCHÉANCE
+                </span>
+
+                <strong id="nextDeadlineTitle">
+                    —
+                </strong>
+
+                <p id="nextDeadlineScope">
+                    Aucun échéancier disponible
+                </p>
+
+            </div>
+
+            <div class="next-deadline-date">
+
+                <span>
+                    DATE LIMITE
+                </span>
+
+                <strong id="nextDeadlineDate">
+                    —
+                </strong>
+
+            </div>
+
+            <div class="next-deadline-amount">
+
+                <span>
+                    MONTANT CUMULÉ ATTENDU
+                </span>
+
+                <strong id="nextDeadlineAmount">
+                    —
+                </strong>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             FILTRES
+        ================================================== -->
+
+        <section class="schedule-filters">
+
+            <div class="schedule-search">
+
+                <i class="bi bi-search"></i>
+
+                <input
+                    type="search"
+                    id="scheduleSearch"
+                    placeholder="Rechercher un programme académique..."
+                    autocomplete="off"
+                >
+
+                <button
+                    type="button"
+                    id="clearScheduleSearch"
+                    title="Effacer"
+                >
+                    <i class="bi bi-x-lg"></i>
+                </button>
+
+            </div>
+
+
+            <!-- Faculté -->
+
+            <div class="schedule-filter">
+
+                <label for="facultyFilter">
+                    Faculté
+                </label>
+
+                <select id="facultyFilter">
+                    <option value="">
+                        Toutes les facultés
+                    </option>
+                </select>
+
+            </div>
+
+
+            <!-- Département -->
+
+            <div class="schedule-filter">
+
+                <label for="departmentFilter">
+                    Département
+                </label>
+
+                <select
+                    id="departmentFilter"
+                    disabled
+                >
+                    <option value="">
+                        Tous les départements
+                    </option>
+                </select>
+
+            </div>
+
+
+            <!-- Spécialisation -->
+
+            <div class="schedule-filter">
+
+                <label for="programFilter">
+                    Spécialisation
+                </label>
+
+                <select
+                    id="programFilter"
+                    disabled
+                >
+                    <option value="">
+                        Toutes les spécialisations
+                    </option>
+                </select>
+
+            </div>
+
+
+            <!-- Promotion indépendante -->
+
+            <div class="schedule-filter">
+
+                <label for="promotionFilter">
+                    Promotion
+                </label>
+
+                <select id="promotionFilter">
+
+                    <option value="">
+                        Toutes les promotions
+                    </option>
+
+                    <option value="BC0">
+                        BC0
+                    </option>
+
+                    <option value="BAC1">
+                        BAC1
+                    </option>
+
+                    <option value="BAC2">
+                        BAC2
+                    </option>
+
+                    <option value="BAC3">
+                        BAC3
+                    </option>
+
+                    <option value="M1">
+                        Master 1
+                    </option>
+
+                    <option value="M2">
+                        Master 2
+                    </option>
+
+                    <option value="M3">
+                        Master 3
+                    </option>
+
+                    <option value="DOC4">
+                        Doctorat 4
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- Statut -->
+
+            <div class="schedule-filter">
+
+                <label for="scheduleStatusFilter">
+                    Statut
+                </label>
+
+                <select id="scheduleStatusFilter">
+
+                    <option value="">
+                        Tous
+                    </option>
+
+                    <option value="Actif">
+                        Actif
+                    </option>
+
+                    <option value="Brouillon">
+                        Brouillon
+                    </option>
+
+                    <option value="Clôturé">
+                        Clôturé
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="schedule-reset-button"
+                id="resetScheduleFilters"
+            >
+                <i class="bi bi-arrow-counterclockwise"></i>
+                Réinitialiser
+            </button>
+
+        </section>
+
+
+        <!-- =================================================
+             LISTE
+        ================================================== -->
+
+        <section class="schedule-list-card">
+
+            <div class="schedule-section-header">
+
+                <div>
+
+                    <span class="card-eyebrow">
+                        CONFIGURATIONS
+                    </span>
+
+                    <h2>
+                        Échéanciers définis
+                    </h2>
+
+                </div>
+
+
+                <div class="schedule-result-counter">
+
+                    <strong id="scheduleResultCount">
+                        0
+                    </strong>
+
+                    <span>
+                        échéancier(s)
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="schedule-table-wrapper">
+
+                <table class="schedule-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>Faculté</th>
+                            <th>Département</th>
+                            <th>Spécialisation</th>
+                            <th>Promotion</th>
+                            <th>Année</th>
+                            <th>Frais annuels</th>
+                            <th>Échéances</th>
+                            <th>Prochaine échéance</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="scheduleTableBody">
+                    </tbody>
+
+                </table>
+
+
+                <div
+                    class="schedule-empty"
+                    id="scheduleEmpty"
+                    hidden
+                >
+
+                    <div class="schedule-empty-icon">
+                        <i class="bi bi-calendar-x"></i>
+                    </div>
+
+                    <strong>
+                        Aucun échéancier trouvé
+                    </strong>
+
+                    <p>
+                        Aucun échéancier ne correspond aux
+                        critères actuellement sélectionnés.
+                    </p>
+
+                    <button
+                        type="button"
+                        id="scheduleEmptyReset"
+                    >
+                        Réinitialiser les filtres
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- =========================================================
+     MOBILE MENU
+========================================================= -->
+
+<div
+    class="offcanvas offcanvas-start finance-offcanvas"
+    tabindex="-1"
+    id="financeMobileMenu"
+>
+
+    <div class="offcanvas-header">
+
+        <div class="sidebar-brand">
+
+            <div class="brand-icon">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+            <div>
+                <strong>AcademicPay</strong>
+                <span>FINANCE</span>
+            </div>
+
+        </div>
+
+        <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="offcanvas"
+            aria-label="Fermer"
+        ></button>
+
+    </div>
+
+
+    <div class="offcanvas-body">
+
+        <nav class="mobile-navigation">
+
+            <a
+                href="{% url 'finance_dashboard' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-house-door"></i>
+                Accueil
+            </a>
+
+            <a
+                href="{% url 'finance_payments' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-credit-card"></i>
+                Paiements
+            </a>
+
+            <a
+                href="{% url 'finance_statements' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-bank"></i>
+                Extraits bancaires
+            </a>
+
+            <a
+                href="{% url 'finance_schedule' %}"
+                class="mobile-nav-link active"
+            >
+                <i class="bi bi-calendar3"></i>
+                Échéancier
+            </a>
+
+            <a
+                href="{% url 'finance_students' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-people"></i>
+                Situations financières
+            </a>
+
+            <a
+                href="{% url 'finance_reconciliation' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-arrow-left-right"></i>
+                Rapprochement global
+            </a>
+
+            <a
+                href="{% url 'finance_anomalies' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-exclamation-triangle"></i>
+                Anomalies
+
+                <span class="mobile-badge">
+                    24
+                </span>
+            </a>
+
+            <a
+                href="{% url 'finance_reports' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-bar-chart-line"></i>
+                Rapports
+            </a>
+
+            <a
+                href="{% url 'finance_history' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-clock-history"></i>
+                Historique
+            </a>
+
+        </nav>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     MODALE — CRÉER / MODIFIER UN ÉCHÉANCIER
+========================================================= -->
+
+<div
+    class="modal fade"
+    id="scheduleModal"
+    tabindex="-1"
+    aria-labelledby="scheduleModalTitle"
+    aria-hidden="true"
+>
+
+    <div
+        class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl"
+    >
+
+        <div class="modal-content finance-modal">
+
+            <!-- HEADER -->
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span>
+                        CONFIGURATION
+                    </span>
+
+                    <h2 id="scheduleModalTitle">
+                        Nouvel échéancier
+                    </h2>
+
+                    <p class="mb-0 mt-1 text-secondary small">
+                        Définissez le programme concerné,
+                        le montant annuel et les deux échéances de paiement.
+                    </p>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal"
+                    aria-label="Fermer"
+                ></button>
+
+            </div>
+
+
+            <!-- BODY -->
+
+            <div class="modal-body">
+
+                <input
+                    type="hidden"
+                    id="editingScheduleId"
+                >
+
+
+                <!-- =========================================
+                     1. PROGRAMME ACADÉMIQUE
+                ========================================== -->
+
+                <div class="schedule-form-section">
+
+                    <div class="schedule-form-section-title">
+
+                        <i class="bi bi-diagram-3"></i>
+
+                        <div>
+
+                            <strong>
+                                Programme académique concerné
+                            </strong>
+
+                            <span>
+                                Identifiez précisément la formation
+                                à laquelle cet échéancier s'applique.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+                        <!-- Année -->
+
+                        <div class="col-md-6">
+
+                            <div class="schedule-form-group">
+
+                                <label for="scheduleYear">
+                                    Année académique
+                                </label>
+
+                                <select
+                                    id="scheduleYear"
+                                    class="finance-input"
+                                >
+
+                                    <option value="2026-2027">
+                                        2026 - 2027
+                                    </option>
+
+                                    <option value="2025-2026">
+                                        2025 - 2026
+                                    </option>
+
+                                    <option value="2024-2025">
+                                        2024 - 2025
+                                    </option>
+
+                                    <option value="2023-2024">
+                                        2023 - 2024
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Faculté -->
+
+                        <div class="col-md-6">
+
+                            <div class="schedule-form-group">
+
+                                <label for="scheduleFaculty">
+                                    Faculté
+                                </label>
+
+                                <select
+                                    id="scheduleFaculty"
+                                    class="finance-input"
+                                >
+                                    <option value="">
+                                        Sélectionner une faculté
+                                    </option>
+                                </select>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Département -->
+
+                        <div class="col-md-6">
+
+                            <div class="schedule-form-group">
+
+                                <label for="scheduleDepartment">
+                                    Département
+                                </label>
+
+                                <select
+                                    id="scheduleDepartment"
+                                    class="finance-input"
+                                    disabled
+                                >
+                                    <option value="">
+                                        Sélectionner un département
+                                    </option>
+                                </select>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Spécialisation -->
+
+                        <div class="col-md-6">
+
+                            <div class="schedule-form-group">
+
+                                <label for="scheduleProgram">
+                                    Spécialisation
+                                </label>
+
+                                <select
+                                    id="scheduleProgram"
+                                    class="finance-input"
+                                    disabled
+                                >
+                                    <option value="">
+                                        Sélectionner une spécialisation
+                                    </option>
+                                </select>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Promotion -->
+
+                        <div class="col-12">
+
+                            <div class="schedule-form-group">
+
+                                <label for="schedulePromotion">
+                                    Promotion
+                                </label>
+
+                                <select
+                                    id="schedulePromotion"
+                                    class="finance-input"
+                                >
+
+                                    <option value="">
+                                        Sélectionner une promotion
+                                    </option>
+
+                                    <option value="BC0">
+                                        BC0
+                                    </option>
+
+                                    <option value="BAC1">
+                                        BAC1
+                                    </option>
+
+                                    <option value="BAC2">
+                                        BAC2
+                                    </option>
+
+                                    <option value="BAC3">
+                                        BAC3
+                                    </option>
+
+                                    <option value="M1">
+                                        Master 1
+                                    </option>
+
+                                    <option value="M2">
+                                        Master 2
+                                    </option>
+
+                                    <option value="M3">
+                                        Master 3
+                                    </option>
+
+                                    <option value="DOC4">
+                                        Doctorat 4
+                                    </option>
+
+                                </select>
+
+                                <small class="schedule-field-help">
+                                    Les promotions proposées sont adaptées
+                                    automatiquement à la spécialisation
+                                    sélectionnée.
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                     2. FRAIS ACADÉMIQUES
+                ========================================== -->
+
+                <div class="schedule-form-section">
+
+                    <div class="schedule-form-section-title">
+
+                        <i class="bi bi-cash-stack"></i>
+
+                        <div>
+
+                            <strong>
+                                Frais académiques
+                            </strong>
+
+                            <span>
+                                Définissez le montant annuel et
+                                l'état de cette configuration.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+
+                            <div class="schedule-form-group">
+
+                                <label for="scheduleTotalAmount">
+                                    Montant annuel
+                                </label>
+
+                                <div class="schedule-money-input">
+
+                                    <input
+                                        type="number"
+                                        id="scheduleTotalAmount"
+                                        class="finance-input"
+                                        min="0.01"
+                                        step="0.01"
+                                        placeholder="Ex. 1000"
+                                    >
+
+                                    <span>
+                                        USD
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <div class="schedule-form-group">
+
+                                <label for="scheduleStatus">
+                                    Statut
+                                </label>
+
+                                <select
+                                    id="scheduleStatus"
+                                    class="finance-input"
+                                >
+
+                                    <option value="Actif">
+                                        Actif
+                                    </option>
+
+                                    <option value="Brouillon">
+                                        Brouillon
+                                    </option>
+
+                                    <option value="Clôturé">
+                                        Clôturé
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                     3. TRANCHES ET ÉCHÉANCES
+                ========================================== -->
+
+                <div class="schedule-form-section">
+
+                    <div class="schedule-form-section-title">
+
+                        <i class="bi bi-calendar-check"></i>
+
+                        <div>
+
+                            <strong>
+                                Tranches et échéances
+                            </strong>
+
+                            <span>
+                                Répartissez le montant annuel entre
+                                les deux tranches prévues.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="installments-container"
+                        id="installmentsContainer"
+                    >
+
+                        <!-- TRANCHE 1 -->
+
+                        <div
+                            class="installment-item"
+                            data-installment="1"
+                        >
+
+                            <div class="installment-heading">
+
+                                <div class="installment-number">
+                                    1
+                                </div>
+
+                                <div>
+                                    <strong>
+                                        Tranche 1
+                                    </strong>
+
+                                    <span>
+                                        Première échéance
+                                    </span>
+                                </div>
+
+                            </div>
+
+
+                            <div class="row g-3">
+
+                                <div class="col-md-6">
+
+                                    <div class="schedule-form-group">
+
+                                        <label for="installment1Amount">
+                                            Montant
+                                        </label>
+
+                                        <div class="schedule-money-input">
+
+                                            <input
+                                                type="number"
+                                                id="installment1Amount"
+                                                class="finance-input installment-amount"
+                                                min="0.01"
+                                                step="0.01"
+                                                placeholder="Ex. 500"
+                                            >
+
+                                            <span>
+                                                USD
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-md-6">
+
+                                    <div class="schedule-form-group">
+
+                                        <label for="installment1DueDate">
+                                            Date limite
+                                        </label>
+
+                                        <input
+                                            type="date"
+                                            id="installment1DueDate"
+                                            class="finance-input installment-date"
+                                        >
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- TRANCHE 2 -->
+
+                        <div
+                            class="installment-item"
+                            data-installment="2"
+                        >
+
+                            <div class="installment-heading">
+
+                                <div class="installment-number">
+                                    2
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        Tranche 2
+                                    </strong>
+
+                                    <span>
+                                        Deuxième échéance
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="row g-3">
+
+                                <div class="col-md-6">
+
+                                    <div class="schedule-form-group">
+
+                                        <label for="installment2Amount">
+                                            Montant
+                                        </label>
+
+                                        <div class="schedule-money-input">
+
+                                            <input
+                                                type="number"
+                                                id="installment2Amount"
+                                                class="finance-input installment-amount"
+                                                min="0.01"
+                                                step="0.01"
+                                                placeholder="Ex. 500"
+                                            >
+
+                                            <span>
+                                                USD
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-md-6">
+
+                                    <div class="schedule-form-group">
+
+                                        <label for="installment2DueDate">
+                                            Date limite
+                                        </label>
+
+                                        <input
+                                            type="date"
+                                            id="installment2DueDate"
+                                            class="finance-input installment-date"
+                                        >
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                     4. RÉSUMÉ
+                ========================================== -->
+
+                <div class="schedule-form-summary">
+
+                    <div>
+
+                        <span>
+                            Montant annuel
+                        </span>
+
+                        <strong id="summaryAnnualAmount">
+                            0 $
+                        </strong>
+
+                    </div>
+
+
+                    <i class="bi bi-arrow-right"></i>
+
+
+                    <div>
+
+                        <span>
+                            Total des tranches
+                        </span>
+
+                        <strong id="summaryInstallmentAmount">
+                            0 $
+                        </strong>
+
+                    </div>
+
+
+                    <div
+                        class="schedule-balance"
+                        id="scheduleBalanceBox"
+                    >
+
+                        <span>
+                            Écart
+                        </span>
+
+                        <strong id="summaryBalance">
+                            0 $
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ERREUR -->
+
+                <div
+                    class="schedule-form-error"
+                    id="scheduleFormError"
+                ></div>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn modal-cancel"
+                    data-bs-dismiss="modal"
+                >
+                    Annuler
+                </button>
+
+                <button
+                    type="button"
+                    class="btn modal-confirm"
+                    id="saveScheduleButton"
+                >
+                    <i class="bi bi-check-lg"></i>
+                    Enregistrer
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     MODALE — DÉTAIL
+========================================================= -->
+
+<div
+    class="modal fade"
+    id="scheduleDetailModal"
+    tabindex="-1"
+>
+
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+
+        <div class="modal-content finance-modal">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span>
+                        ÉCHÉANCIER
+                    </span>
+
+                    <h2 id="detailScheduleTitle">
+                        —
+                    </h2>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal"
+                    aria-label="Fermer"
+                ></button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <div class="schedule-detail-summary">
+
+                    <div>
+                        <span>Faculté</span>
+                        <strong id="detailFaculty">—</strong>
+                    </div>
+
+                    <div>
+                        <span>Département</span>
+                        <strong id="detailDepartment">—</strong>
+                    </div>
+
+                    <div>
+                        <span>Spécialisation</span>
+                        <strong id="detailProgram">—</strong>
+                    </div>
+
+                    <div>
+                        <span>Promotion</span>
+                        <strong id="detailPromotion">—</strong>
+                    </div>
+
+                    <div>
+                        <span>Année académique</span>
+                        <strong id="detailYear">—</strong>
+                    </div>
+
+                    <div>
+                        <span>Frais annuels</span>
+                        <strong id="detailTotalAmount">—</strong>
+                    </div>
+
+                    <div>
+                        <span>Statut</span>
+                        <strong id="detailStatus">—</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="schedule-detail-installments">
+
+                    <div class="schedule-detail-heading">
+
+                        <span>
+                            PLAN DE PAIEMENT
+                        </span>
+
+                        <strong id="detailInstallmentCount">
+                            2 tranches
+                        </strong>
+
+                    </div>
+
+                    <div id="detailInstallments">
+                    </div>
+
+                </div>
+
+
+                <div class="schedule-detail-information">
+
+                    <i class="bi bi-shield-check"></i>
+
+                    <div>
+
+                        <strong>
+                            Utilisation par AcademicPay
+                        </strong>
+
+                        <p>
+                            Les montants cumulés exigibles permettent
+                            au système de comparer les paiements validés
+                            de l'étudiant aux frais attendus pour son
+                            programme académique.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn modal-cancel"
+                    data-bs-dismiss="modal"
+                >
+                    Fermer
+                </button>
+
+                <button
+                    type="button"
+                    class="btn modal-confirm"
+                    id="editFromDetailButton"
+                >
+                    <i class="bi bi-pencil"></i>
+                    Modifier
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     MODALE — SUPPRESSION
+========================================================= -->
+
+<div
+    class="modal fade"
+    id="deleteScheduleModal"
+    tabindex="-1"
+>
+
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+
+        <div class="modal-content finance-modal">
+
+            <div class="modal-body schedule-delete-body">
+
+                <div class="schedule-delete-icon">
+                    <i class="bi bi-trash3"></i>
+                </div>
+
+                <h2>
+                    Supprimer l'échéancier ?
+                </h2>
+
+                <p>
+                    Cette configuration ne sera plus disponible
+                    pour le calcul de la situation financière.
+                </p>
+
+                <input
+                    type="hidden"
+                    id="deleteScheduleId"
+                >
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn modal-cancel"
+                    data-bs-dismiss="modal"
+                >
+                    Annuler
+                </button>
+
+                <button
+                    type="button"
+                    class="btn schedule-delete-confirm"
+                    id="confirmDeleteSchedule"
+                >
+                    Supprimer
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     TOAST
+========================================================= -->
+
+<div
+    class="toast-container position-fixed bottom-0 end-0 p-3"
+>
+
+    <div
+        id="financeToast"
+        class="toast finance-toast"
+        role="alert"
+    >
+
+        <div class="toast-body">
+
+            <i class="bi bi-check-circle-fill"></i>
+
+            <span id="toastMessage">
+                Opération effectuée.
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     DONNÉES DJANGO POUR JS
+========================================================= -->
+
+<script>
+    const UCB_ACADEMIC_STRUCTURE = {{ academic_structure|safe }};
+    const schedules = {{ schedules|safe }};
+</script>
+
+
+<!-- =========================================================
+     SCRIPTS
+========================================================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js">
+</script>
+
+<script src="{% static 'js/espace_finance/finance-schedule.js' %}"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,1426 @@
+/* ==========================================================
+   ACADEMICPAY — FINANCE / RAPPORTS
+========================================================== */
+
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.reports-header {
+    max-width: 1600px;
+    margin: 0 auto 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.page-eyebrow,
+.card-eyebrow {
+    display: block;
+    margin-bottom: 5px;
+
+    color: var(--accent);
+
+    font-size: .5rem;
+    font-weight: 750;
+    letter-spacing: .09em;
+}
+
+.reports-header h1 {
+    margin: 0 0 5px;
+
+    color: var(--text);
+
+    font-size: clamp(1.35rem, 2vw, 1.8rem);
+    font-weight: 550;
+}
+
+.reports-header p {
+    max-width: 670px;
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: .68rem;
+    line-height: 1.6;
+}
+
+.reports-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.report-action-button {
+    min-height: 40px;
+    padding: 0 14px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    color: var(--soft);
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: 7px;
+
+    font-size: .59rem;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition),
+        transform var(--transition);
+}
+
+.report-action-button:hover {
+    color: var(--text);
+    background: var(--surface-hover);
+    border-color: var(--border-strong);
+
+    transform: translateY(-1px);
+}
+
+.report-action-button.primary {
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-color:
+        color-mix(in srgb, var(--accent) 25%, var(--border));
+}
+
+.report-action-button.primary:hover {
+    border-color:
+        color-mix(in srgb, var(--accent) 45%, var(--border));
+}
+
+
+/* ==========================================================
+   FILTRES
+========================================================== */
+
+.reports-filters {
+    max-width: 1600px;
+    margin: 0 auto 13px;
+    padding: 12px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(5, minmax(0, 1fr))
+        auto;
+
+    align-items: end;
+    gap: 8px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+}
+
+.report-filter {
+    min-width: 0;
+}
+
+.report-filter label {
+    display: block;
+
+    margin: 0 0 5px 2px;
+
+    color: var(--muted);
+
+    font-size: .49rem;
+    font-weight: 700;
+    letter-spacing: .035em;
+}
+
+.report-filter select {
+    width: 100%;
+    height: 38px;
+
+    padding: 0 10px;
+
+    color: var(--soft);
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 7px;
+
+    outline: none;
+
+    font-size: .57rem;
+
+    transition:
+        border-color var(--transition),
+        background var(--transition),
+        box-shadow var(--transition);
+}
+
+.report-filter select:hover {
+    border-color: var(--border-strong);
+}
+
+.report-filter select:focus {
+    background: var(--surface);
+
+    border-color:
+        color-mix(in srgb, var(--accent) 45%, transparent);
+
+    box-shadow:
+        0 0 0 3px var(--accent-soft);
+}
+
+.report-filter option {
+    color: var(--text);
+    background: var(--surface);
+}
+
+.reset-report-filters {
+    height: 38px;
+    padding: 0 12px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    color: var(--muted);
+    background: transparent;
+
+    border: 1px solid var(--border);
+    border-radius: 7px;
+
+    font-size: .55rem;
+    font-weight: 650;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition:
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition);
+}
+
+.reset-report-filters:hover {
+    color: var(--text);
+    background: var(--surface-hover);
+    border-color: var(--border-strong);
+}
+
+
+/* ==========================================================
+   KPI
+========================================================== */
+
+.report-kpi-grid {
+    max-width: 1600px;
+    margin: 0 auto 13px;
+
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    gap: 11px;
+}
+
+.report-kpi {
+    min-height: 108px;
+    padding: 16px;
+
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+
+    transition:
+        background var(--transition),
+        border-color var(--transition),
+        transform var(--transition);
+}
+
+.report-kpi:hover {
+    background: var(--surface-hover);
+    border-color: var(--border-strong);
+
+    transform: translateY(-2px);
+}
+
+.report-kpi-icon {
+    width: 46px;
+    height: 46px;
+    flex: 0 0 46px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-radius: 10px;
+
+    font-size: 1.05rem;
+}
+
+.report-kpi-icon.success {
+    color: var(--green);
+
+    background:
+        color-mix(in srgb, var(--green) 10%, transparent);
+}
+
+.report-kpi-icon.accent {
+    color: var(--accent);
+    background: var(--accent-soft);
+}
+
+.report-kpi-icon.warning {
+    color: #d6a83e;
+    background: rgba(214, 168, 62, .10);
+}
+
+.report-kpi span,
+.report-kpi strong,
+.report-kpi small {
+    display: block;
+}
+
+.report-kpi span {
+    margin-bottom: 5px;
+
+    color: var(--muted);
+
+    font-size: .51rem;
+    font-weight: 700;
+    letter-spacing: .045em;
+}
+
+.report-kpi strong {
+    margin-bottom: 4px;
+
+    color: var(--text);
+
+    font-size: 1.02rem;
+    font-weight: 600;
+}
+
+.report-kpi small {
+    color: var(--muted);
+
+    font-size: .52rem;
+}
+
+
+/* ==========================================================
+   CARTES
+========================================================== */
+
+.report-card {
+    min-width: 0;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+
+    overflow: hidden;
+}
+
+.report-card-header {
+    min-height: 73px;
+    padding: 15px 17px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.report-card-header h2 {
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: .76rem;
+    font-weight: 650;
+}
+
+.report-card-header p {
+    margin: 4px 0 0;
+
+    color: var(--muted);
+
+    font-size: .52rem;
+}
+
+
+/* ==========================================================
+   GRILLE PRINCIPALE
+========================================================== */
+
+.report-main-grid {
+    max-width: 1600px;
+    margin: 0 auto 13px;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1.8fr) minmax(280px, .8fr);
+
+    gap: 11px;
+}
+
+
+/* ==========================================================
+   GRAPHIQUES
+========================================================== */
+
+.report-chart-wrapper {
+    position: relative;
+
+    width: 100%;
+    height: 275px;
+
+    padding: 15px;
+}
+
+.report-chart-wrapper.large {
+    height: 330px;
+}
+
+.report-chart-wrapper.doughnut {
+    height: 225px;
+    padding: 15px 24px 5px;
+}
+
+.report-chart-wrapper canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+
+/* ==========================================================
+   LÉGENDE GRAPHIQUE
+========================================================== */
+
+.report-chart-legend {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    color: var(--muted);
+
+    font-size: .49rem;
+}
+
+.report-chart-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    white-space: nowrap;
+}
+
+.legend-dot {
+    width: 7px;
+    height: 7px;
+
+    display: inline-block;
+
+    border-radius: 50%;
+}
+
+.legend-dot.collected {
+    background: var(--accent);
+}
+
+.legend-dot.expected {
+    background: var(--border-strong);
+}
+
+
+/* ==========================================================
+   LÉGENDE BANQUES
+========================================================== */
+
+.bank-report-legend {
+    padding: 4px 17px 16px;
+
+    display: grid;
+    gap: 8px;
+}
+
+.bank-report-legend > div {
+    padding: 8px 10px;
+
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 7px;
+}
+
+.bank-report-dot {
+    width: 8px;
+    height: 8px;
+    flex: 0 0 8px;
+
+    border-radius: 50%;
+}
+
+.bank-report-dot.rawbank {
+    background: var(--accent);
+}
+
+.bank-report-dot.equity {
+    background: var(--green);
+}
+
+.bank-report-dot.boa {
+    background: #d6a83e;
+}
+
+.bank-report-legend strong,
+.bank-report-legend small {
+    display: block;
+}
+
+.bank-report-legend strong {
+    margin-bottom: 2px;
+
+    color: var(--text);
+
+    font-size: .54rem;
+    font-weight: 650;
+}
+
+.bank-report-legend small {
+    color: var(--muted);
+
+    font-size: .47rem;
+}
+
+
+/* ==========================================================
+   GRILLE SECONDAIRE
+========================================================== */
+
+.report-secondary-grid {
+    max-width: 1600px;
+    margin: 0 auto 13px;
+
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 11px;
+}
+
+
+/* ==========================================================
+   QUALITÉ DU RAPPROCHEMENT
+========================================================== */
+
+.reconciliation-report-content {
+    min-height: 275px;
+    padding: 20px;
+
+    display: grid;
+    grid-template-columns: 180px minmax(0, 1fr);
+    align-items: center;
+
+    gap: 24px;
+}
+
+.report-rate-circle {
+    width: 155px;
+    height: 155px;
+
+    margin: auto;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    position: relative;
+
+    border-radius: 50%;
+
+    background:
+        conic-gradient(
+            var(--accent) 0deg 350.6deg,
+            var(--surface-2) 350.6deg 360deg
+        );
+}
+
+.report-rate-circle::after {
+    content: "";
+
+    position: absolute;
+    inset: 10px;
+
+    background: var(--surface);
+
+    border-radius: 50%;
+}
+
+.report-rate-circle strong,
+.report-rate-circle span {
+    position: relative;
+    z-index: 1;
+}
+
+.report-rate-circle strong {
+    margin-bottom: 4px;
+
+    color: var(--text);
+
+    font-size: 1.15rem;
+    font-weight: 650;
+}
+
+.report-rate-circle span {
+    color: var(--muted);
+
+    font-size: .5rem;
+}
+
+.reconciliation-report-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 8px;
+}
+
+.reconciliation-report-stats > div {
+    padding: 11px;
+
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.reconciliation-report-stats span,
+.reconciliation-report-stats strong {
+    display: block;
+}
+
+.reconciliation-report-stats span {
+    min-height: 26px;
+    margin-bottom: 4px;
+
+    color: var(--muted);
+
+    font-size: .49rem;
+    line-height: 1.45;
+}
+
+.reconciliation-report-stats strong {
+    color: var(--text);
+
+    font-size: .72rem;
+    font-weight: 650;
+}
+
+
+/* ==========================================================
+   TABLEAUX
+========================================================== */
+
+.bank-performance-card,
+.faculty-report-card {
+    max-width: 1600px;
+    margin: 0 auto 13px;
+}
+
+.report-table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+}
+
+.report-table-wrapper::-webkit-scrollbar {
+    height: 8px;
+}
+
+.report-table-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.report-table-wrapper::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+
+    border: 2px solid transparent;
+    border-radius: 999px;
+
+    background-clip: padding-box;
+}
+
+.report-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: var(--muted);
+
+    border: 2px solid transparent;
+    border-radius: 999px;
+
+    background-clip: padding-box;
+}
+
+.report-table {
+    width: 100%;
+    min-width: 900px;
+
+    border-collapse: collapse;
+
+    color: var(--soft);
+}
+
+.report-table th {
+    padding: 11px 14px;
+
+    color: var(--muted);
+    background: var(--surface-2);
+
+    border-bottom: 1px solid var(--border);
+
+    font-size: .5rem;
+    font-weight: 700;
+    letter-spacing: .035em;
+
+    text-align: left;
+
+    white-space: nowrap;
+}
+
+.report-table td {
+    padding: 12px 14px;
+
+    border-bottom: 1px solid var(--border);
+
+    font-size: .56rem;
+
+    vertical-align: middle;
+}
+
+.report-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.report-table tbody tr {
+    transition: background var(--transition);
+}
+
+.report-table tbody tr:hover {
+    background: var(--surface-hover);
+}
+
+.report-table td > strong {
+    color: var(--text);
+    font-weight: 650;
+}
+
+
+/* ==========================================================
+   BANQUE DANS TABLE
+========================================================== */
+
+.report-bank {
+    min-width: 150px;
+
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.report-bank-icon {
+    width: 31px;
+    height: 31px;
+    flex: 0 0 31px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    border-radius: 7px;
+
+    font-size: .66rem;
+}
+
+.report-bank strong,
+.report-bank small {
+    display: block;
+}
+
+.report-bank strong {
+    margin-bottom: 2px;
+
+    color: var(--text);
+
+    font-size: .55rem;
+    font-weight: 650;
+}
+
+.report-bank small {
+    color: var(--muted);
+
+    font-size: .46rem;
+}
+
+
+/* ==========================================================
+   ÉCART / ANOMALIES
+========================================================== */
+
+.report-difference {
+    color: #d6a83e;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.report-anomaly-count {
+    min-width: 27px;
+    height: 24px;
+    padding: 0 7px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #d6a83e;
+    background: rgba(214, 168, 62, .10);
+
+    border-radius: 999px;
+
+    font-size: .49rem;
+    font-weight: 700;
+}
+
+.report-anomaly-count.danger {
+    color: var(--red);
+    background: var(--red-soft);
+}
+
+
+/* ==========================================================
+   BARRES DE PROGRESSION
+========================================================== */
+
+.report-progress {
+    min-width: 150px;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.report-progress > div {
+    height: 5px;
+    flex: 1;
+
+    overflow: hidden;
+
+    background: var(--surface-2);
+
+    border-radius: 999px;
+}
+
+.report-progress > div > span {
+    height: 100%;
+
+    display: block;
+
+    background: var(--accent);
+
+    border-radius: inherit;
+
+    transition: width .35s ease;
+}
+
+.report-progress small {
+    width: 38px;
+
+    color: var(--muted);
+
+    font-size: .48rem;
+
+    text-align: right;
+}
+
+
+/* ==========================================================
+   ANIMATION LÉGÈRE
+========================================================== */
+
+.report-kpi,
+.report-card,
+.reports-filters {
+    animation: reportFadeIn .35s ease both;
+}
+
+.report-kpi:nth-child(2) {
+    animation-delay: .03s;
+}
+
+.report-kpi:nth-child(3) {
+    animation-delay: .06s;
+}
+
+.report-kpi:nth-child(4) {
+    animation-delay: .09s;
+}
+
+@keyframes reportFadeIn {
+
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 1399.98px) {
+
+    .reports-filters {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+
+    .reset-report-filters {
+        width: 100%;
+    }
+
+    .report-kpi-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+@media (max-width: 1099.98px) {
+
+    .report-main-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .bank-chart-card {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 260px;
+    }
+
+    .bank-chart-card .report-card-header {
+        grid-column: 1 / -1;
+    }
+
+    .bank-report-legend {
+        align-content: center;
+        padding: 15px;
+    }
+}
+
+
+@media (max-width: 991.98px) {
+
+    .reports-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .reports-header-actions {
+        width: 100%;
+    }
+
+    .report-secondary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .reconciliation-report-content {
+        min-height: auto;
+    }
+}
+
+
+@media (max-width: 767.98px) {
+
+    .reports-header-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .report-action-button {
+        width: 100%;
+    }
+
+    .reports-filters {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .report-kpi-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .bank-chart-card {
+        display: block;
+    }
+
+    .reconciliation-report-content {
+        grid-template-columns: 1fr;
+    }
+
+    .reconciliation-report-stats {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+@media (max-width: 575.98px) {
+
+    .reports-header-actions,
+    .reports-filters {
+        grid-template-columns: 1fr;
+    }
+
+    .report-chart-wrapper.large {
+        height: 280px;
+    }
+
+    .report-chart-wrapper {
+        height: 245px;
+    }
+
+    .report-chart-wrapper.doughnut {
+        height: 220px;
+    }
+
+    .report-card-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .report-chart-legend {
+        width: 100%;
+    }
+
+    .reconciliation-report-stats {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* ==========================================================
+   IMPRESSION
+
+   Le JS appelle window.print().
+   On masque donc navigation et contrôles inutiles.
+========================================================== */
+
+@media print {
+
+    .finance-sidebar,
+    .mobile-header,
+    .reports-header-actions,
+    .reports-filters,
+    .finance-offcanvas,
+    .toast-container {
+        display: none !important;
+    }
+
+    .finance-main {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .reports-header,
+    .report-kpi-grid,
+    .report-main-grid,
+    .report-secondary-grid,
+    .bank-performance-card,
+    .faculty-report-card {
+        max-width: none;
+    }
+
+    .report-card,
+    .report-kpi {
+        break-inside: avoid;
+    }
+
+    .report-table-wrapper {
+        overflow: visible;
+    }
+
+    .report-table {
+        min-width: 0;
+    }
+}
+/* ==========================================================
+   ACADEMICPAY — CORRECTION TYPOGRAPHIQUE
+   FINANCE / RAPPORTS
+   À placer TOUT À LA FIN de finance-reports.css
+========================================================== */
+
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.page-eyebrow,
+.card-eyebrow {
+    font-size: .68rem;
+}
+
+.reports-header h1 {
+    font-size: clamp(1.5rem, 2vw, 1.9rem);
+}
+
+.reports-header p {
+    font-size: .88rem;
+}
+
+.report-action-button {
+    font-size: .76rem;
+}
+
+
+/* ==========================================================
+   FILTRES
+========================================================== */
+
+.report-filter label {
+    font-size: .67rem;
+}
+
+.report-filter select {
+    font-size: .76rem;
+}
+
+.reset-report-filters {
+    font-size: .74rem;
+}
+
+
+/* ==========================================================
+   KPI
+========================================================== */
+
+.report-kpi-icon {
+    font-size: 1.05rem;
+}
+
+.report-kpi span {
+    font-size: .67rem;
+}
+
+.report-kpi strong {
+    font-size: 1.15rem;
+}
+
+.report-kpi small {
+    font-size: .7rem;
+}
+
+
+/* ==========================================================
+   CARTES / TITRES
+========================================================== */
+
+.report-card-header h2 {
+    font-size: 1rem;
+}
+
+.report-card-header p {
+    font-size: .72rem;
+}
+
+
+/* ==========================================================
+   LÉGENDE DES GRAPHIQUES
+========================================================== */
+
+.report-chart-legend {
+    font-size: .68rem;
+}
+
+
+/* ==========================================================
+   LÉGENDE DES BANQUES
+========================================================== */
+
+.bank-report-legend strong {
+    font-size: .76rem;
+}
+
+.bank-report-legend small {
+    font-size: .67rem;
+}
+
+
+/* ==========================================================
+   QUALITÉ DU RAPPROCHEMENT
+========================================================== */
+
+.report-rate-circle strong {
+    font-size: 1.25rem;
+}
+
+.report-rate-circle span {
+    font-size: .7rem;
+}
+
+.reconciliation-report-stats span {
+    font-size: .68rem;
+}
+
+.reconciliation-report-stats strong {
+    font-size: .84rem;
+}
+
+
+/* ==========================================================
+   TABLEAUX
+========================================================== */
+
+.report-table th {
+    font-size: .68rem;
+}
+
+.report-table td {
+    font-size: .76rem;
+}
+
+
+/* ==========================================================
+   BANQUE DANS TABLEAU
+========================================================== */
+
+.report-bank-icon {
+    font-size: .8rem;
+}
+
+.report-bank strong {
+    font-size: .76rem;
+}
+
+.report-bank small {
+    font-size: .66rem;
+}
+
+
+/* ==========================================================
+   NOMBRE D'ANOMALIES
+========================================================== */
+
+.report-anomaly-count {
+    font-size: .68rem;
+}
+
+
+/* ==========================================================
+   BARRES DE PROGRESSION
+========================================================== */
+
+.report-progress small {
+    font-size: .68rem;
+}
+
+
+/* ==========================================================
+   RESPONSIVE — TABLETTE
+========================================================== */
+
+@media (max-width: 767.98px) {
+
+    .reports-header h1 {
+        font-size: 1.4rem;
+    }
+
+    .reports-header p {
+        font-size: .82rem;
+    }
+
+    .report-action-button {
+        font-size: .74rem;
+    }
+
+    .report-kpi strong {
+        font-size: 1.1rem;
+    }
+
+    .report-card-header h2 {
+        font-size: .95rem;
+    }
+
+    .report-table th {
+        font-size: .67rem;
+    }
+
+    .report-table td {
+        font-size: .74rem;
+    }
+
+    .reconciliation-report-stats strong {
+        font-size: .8rem;
+    }
+}
+
+
+/* ==========================================================
+   RESPONSIVE — MOBILE
+========================================================== */
+
+@media (max-width: 575.98px) {
+
+    .reports-header h1 {
+        font-size: 1.3rem;
+    }
+
+    .reports-header p {
+        font-size: .8rem;
+    }
+
+    .report-filter label {
+        font-size: .66rem;
+    }
+
+    .report-filter select {
+        font-size: .76rem;
+    }
+
+    .report-kpi span {
+        font-size: .66rem;
+    }
+
+    .report-kpi strong {
+        font-size: 1.15rem;
+    }
+
+    .report-kpi small {
+        font-size: .7rem;
+    }
+
+    .report-card-header h2 {
+        font-size: .95rem;
+    }
+
+    .report-card-header p {
+        font-size: .7rem;
+    }
+
+    .report-chart-legend {
+        font-size: .67rem;
+    }
+
+    .bank-report-legend strong {
+        font-size: .74rem;
+    }
+
+    .bank-report-legend small {
+        font-size: .66rem;
+    }
+
+    .report-rate-circle strong {
+        font-size: 1.2rem;
+    }
+
+    .report-rate-circle span {
+        font-size: .68rem;
+    }
+
+    .reconciliation-report-stats span {
+        font-size: .67rem;
+    }
+
+    .reconciliation-report-stats strong {
+        font-size: .8rem;
+    }
+}
+
+
+/* ==========================================================
+   IMPRESSION
+
+   Important :
+   on conserve des tailles lisibles lorsque le rapport
+   est imprimé ou enregistré en PDF.
+========================================================== */
+
+@media print {
+
+    .reports-header h1 {
+        font-size: 1.45rem;
+    }
+
+    .reports-header p {
+        font-size: .78rem;
+    }
+
+    .report-kpi span {
+        font-size: .62rem;
+    }
+
+    .report-kpi strong {
+        font-size: 1rem;
+    }
+
+    .report-kpi small {
+        font-size: .65rem;
+    }
+
+    .report-card-header h2 {
+        font-size: .9rem;
+    }
+
+    .report-card-header p {
+        font-size: .65rem;
+    }
+
+    .report-table th {
+        font-size: .62rem;
+    }
+
+    .report-table td {
+        font-size: .68rem;
+    }
+
+    .report-bank strong {
+        font-size: .68rem;
+    }
+
+    .report-bank small {
+        font-size: .6rem;
+    }
+}

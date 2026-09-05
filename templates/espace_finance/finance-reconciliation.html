@@ -1,0 +1,1762 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Rapprochement global | AcademicPay</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    >
+
+    <!-- CSS global finance -->
+    <link
+        rel="stylesheet"
+        href="{% static 'css/espace_finance/finance-dashboard.css' %}"
+    >
+
+    <!-- CSS spécifique à la page -->
+    <link
+        rel="stylesheet"
+        href="{% static 'css/espace_finance/finance-reconciliation.css' %}"
+    >
+</head>
+
+
+<body>
+
+<div class="finance-layout">
+
+    <!-- =====================================================
+         SIDEBAR DESKTOP
+    ====================================================== -->
+
+    <aside class="finance-sidebar d-none d-xl-flex">
+
+        <a href="{% url 'finance_dashboard' %}" class="sidebar-brand">
+
+            <div class="brand-icon">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+            <div>
+                <strong>AcademicPay</strong>
+                <span>FINANCE</span>
+            </div>
+
+        </a>
+
+
+        <nav class="sidebar-nav">
+
+            <!-- PRINCIPAL -->
+
+            <div class="nav-section-label">
+                PRINCIPAL
+            </div>
+
+
+            <a
+                href="{% url 'finance_dashboard' %}"
+                class="sidebar-link"
+            >
+                <i class="bi bi-house-door-fill"></i>
+                <span>ACCUEIL</span>
+            </a>
+
+
+            <a
+                href="{% url 'finance_payments' %}"
+                class="sidebar-link"
+            >
+                <i class="bi bi-credit-card"></i>
+                <span>PAIEMENTS</span>
+            </a>
+
+
+            <a
+                href="{% url 'finance_statements' %}"
+                class="sidebar-link"
+            >
+                <i class="bi bi-bank"></i>
+                <span>EXTRAITS BANCAIRES</span>
+            </a>
+
+
+            <a
+                href="{% url 'finance_schedule' %}"
+                class="sidebar-link"
+            >
+                <i class="bi bi-calendar3"></i>
+                <span>ÉCHÉANCIER</span>
+            </a>
+
+
+            <!-- SUIVI FINANCIER -->
+
+            <div class="nav-section-label">
+                SUIVI FINANCIER
+            </div>
+
+
+            <a
+                href="{% url 'finance_students' %}"
+                class="sidebar-link"
+            >
+                <i class="bi bi-people"></i>
+                <span>SITUATIONS FINANCIÈRES</span>
+            </a>
+
+
+            <a
+                href="{% url 'finance_reconciliation' %}"
+                class="sidebar-link active"
+                aria-current="page"
+            >
+                <i class="bi bi-arrow-left-right"></i>
+                <span>RAPPROCHEMENT GLOBAL</span>
+            </a>
+
+
+            <a
+                href="{% url 'finance_anomalies' %}"
+                class="sidebar-link"
+            >
+                <i class="bi bi-exclamation-triangle"></i>
+
+                <span>ANOMALIES</span>
+
+                <span
+                    class="nav-badge"
+                    id="sidebarAnomalyCount"
+                >
+                    {{ pending_anomalies }}
+                </span>
+            </a>
+
+
+            <!-- ANALYSE -->
+
+            <div class="nav-section-label">
+                ANALYSE
+            </div>
+
+
+            <a
+                href="{% url 'finance_reports' %}"
+                class="sidebar-link"
+            >
+                <i class="bi bi-bar-chart-line"></i>
+                <span>RAPPORTS</span>
+            </a>
+
+
+            <a
+                href="{% url 'finance_history' %}"
+                class="sidebar-link"
+            >
+                <i class="bi bi-clock-history"></i>
+                <span>HISTORIQUE</span>
+            </a>
+
+        </nav>
+
+
+        <!-- BAS SIDEBAR -->
+
+        <div class="sidebar-bottom">
+
+            <a
+                href="{% url 'finance_profile' %}"
+                class="finance-user"
+            >
+
+                <div class="user-avatar">
+                    {% with initials=user.full_congolese_name|slice:":2" %}
+                        {{ initials|upper }}
+                    {% endwith %}
+                </div>
+
+                <div class="user-information">
+
+                    <strong>
+                        {{ user.full_congolese_name }}
+                    </strong>
+
+                    <span>
+                        {{ user.get_staff_role_display|default:"Responsable financier" }}
+                    </span>
+
+                </div>
+
+                <i class="bi bi-chevron-right"></i>
+
+            </a>
+
+
+            <div class="sidebar-actions">
+
+                <button
+                    type="button"
+                    class="sidebar-action-btn"
+                    id="themeButton"
+                    title="Changer de thème"
+                >
+                    <i class="bi bi-sun"></i>
+                </button>
+
+
+                <a
+                    href="{% url 'finance_profile' %}"
+                    class="sidebar-action-btn"
+                    title="Paramètres"
+                >
+                    <i class="bi bi-gear"></i>
+                </a>
+
+
+                <a
+                    href="{% url 'logout' %}"
+                    class="sidebar-action-btn"
+                    title="Déconnexion"
+                >
+                    <i class="bi bi-box-arrow-right"></i>
+                </a>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         CONTENU PRINCIPAL
+    ====================================================== -->
+
+    <main class="finance-main">
+
+
+        <!-- =================================================
+             HEADER MOBILE
+        ================================================== -->
+
+        <div class="mobile-header d-xl-none">
+
+            <button
+                class="mobile-menu-button"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#financeMobileMenu"
+                aria-controls="financeMobileMenu"
+                aria-label="Ouvrir le menu"
+            >
+                <i class="bi bi-list"></i>
+            </button>
+
+
+            <div class="mobile-brand">
+
+                <strong>
+                    AcademicPay
+                </strong>
+
+                <span>
+                    FINANCE
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             EN-TÊTE PAGE
+        ================================================== -->
+
+        <header class="reconciliation-header">
+
+            <div class="reconciliation-header-content">
+
+                <div class="page-eyebrow">
+                    ANALYSE FINANCIÈRE
+                </div>
+
+                <h1>
+                    Rapprochement global
+                </h1>
+
+                <p>
+                    Comparez les opérations enregistrées par
+                    AcademicPay avec les transactions issues des
+                    extraits bancaires.
+                </p>
+
+            </div>
+
+
+            <div class="reconciliation-header-actions">
+
+
+                <!-- ANNÉE ACADÉMIQUE -->
+
+                <div class="academic-year-filter">
+
+                    <i
+                        class="bi bi-calendar3 academic-year-filter-icon"
+                    ></i>
+
+
+                    <select
+                        id="academicYearFilter"
+                        class="academic-year-select"
+                        aria-label="Année académique"
+                    >
+                        {% for year_value, year_label in academic_years %}
+                        <option value="{{ year_value }}" {% if academic_year == year_value %}selected{% endif %}>
+                            {{ year_label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+
+
+                    <i
+                        class="bi bi-chevron-down academic-year-filter-chevron"
+                    ></i>
+
+                </div>
+
+
+                <!-- EXPORT -->
+
+                <div class="dropdown">
+
+                    <button
+                        type="button"
+                        class="reconciliation-export-button dropdown-toggle"
+                        id="reconciliationExportButton"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                    >
+                        <i class="bi bi-download"></i>
+                        <span>Exporter</span>
+                    </button>
+
+
+                    <ul
+                        class="dropdown-menu dropdown-menu-end reconciliation-export-menu"
+                        aria-labelledby="reconciliationExportButton"
+                    >
+
+                        <li>
+
+                            <button
+                                class="dropdown-item"
+                                type="button"
+                                id="exportCsvButton"
+                            >
+                                <i class="bi bi-filetype-csv"></i>
+                                Exporter en CSV
+                            </button>
+
+                        </li>
+
+
+                        <li>
+
+                            <button
+                                class="dropdown-item"
+                                type="button"
+                                id="exportPdfButton"
+                            >
+                                <i class="bi bi-file-earmark-pdf"></i>
+                                Exporter en PDF
+                            </button>
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             KPI
+        ================================================== -->
+
+        <section class="reconciliation-kpi-grid">
+
+
+            <!-- MONTANT BANCAIRE -->
+
+            <article class="reconciliation-kpi-card">
+
+                <div class="reconciliation-kpi-icon">
+                    <i class="bi bi-bank"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        Montant bancaire
+                    </span>
+
+                    <strong id="totalBankAmount">
+                        {{ total_bank_amount|floatformat:2 }} $
+                    </strong>
+
+                    <small>
+                        Extraits bancaires
+                    </small>
+
+                </div>
+
+            </article>
+
+
+            <!-- ACADEMICPAY -->
+
+            <article class="reconciliation-kpi-card">
+
+                <div class="reconciliation-kpi-icon">
+                    <i class="bi bi-database-check"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        Montant AcademicPay
+                    </span>
+
+                    <strong id="totalSystemAmount">
+                        {{ total_system_amount|floatformat:2 }} $
+                    </strong>
+
+                    <small>
+                        Paiements enregistrés
+                    </small>
+
+                </div>
+
+            </article>
+
+
+            <!-- ÉCART -->
+
+            <article class="reconciliation-kpi-card">
+
+                <div class="reconciliation-kpi-icon warning">
+                    <i class="bi bi-exclamation-circle"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        Écart global
+                    </span>
+
+                    <strong id="totalDifference">
+                        {{ total_difference|floatformat:2 }} $
+                    </strong>
+
+                    <small>
+                        À analyser
+                    </small>
+
+                </div>
+
+            </article>
+
+
+            <!-- COUVERTURE -->
+
+            <article class="reconciliation-kpi-card">
+
+                <div class="reconciliation-kpi-icon success">
+                    <i class="bi bi-percent"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        Taux de couverture
+                    </span>
+
+                    <strong id="coverageRate">
+                        {{ coverage_rate|floatformat:1 }} %
+                    </strong>
+
+                    <small>
+                        Montants rapprochés
+                    </small>
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- =================================================
+             GRAPHIQUE + ÉTAT
+        ================================================== -->
+
+        <section class="reconciliation-overview-grid">
+
+
+            <!-- GRAPHIQUE -->
+
+            <article class="reconciliation-card">
+
+                <div class="reconciliation-card-header">
+
+                    <div>
+
+                        <div class="section-eyebrow">
+                            COMPARAISON
+                        </div>
+
+                        <h2>
+                            Banque vs AcademicPay
+                        </h2>
+
+                    </div>
+
+
+                    <div class="chart-legend">
+
+                        <span>
+                            <i class="legend-dot bank"></i>
+                            Extraits bancaires
+                        </span>
+
+                        <span>
+                            <i class="legend-dot system"></i>
+                            AcademicPay
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="reconciliation-chart-container">
+
+                    <canvas id="reconciliationChart"></canvas>
+
+                </div>
+
+            </article>
+
+
+            <!-- ÉTAT -->
+
+            <article class="reconciliation-card">
+
+                <div class="reconciliation-card-header">
+
+                    <div>
+
+                        <div class="section-eyebrow">
+                            SYNTHÈSE
+                        </div>
+
+                        <h2>
+                            État du rapprochement
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="reconciliation-health">
+
+                    <div class="reconciliation-health-main">
+
+                        <div class="health-circle">
+
+                            <strong id="globalCoverage">
+                                {{ coverage_rate|floatformat:1 }}
+                            </strong>
+
+                            <span>%</span>
+
+                        </div>
+
+
+                        <div>
+
+                            <strong>
+                                Couverture globale
+                            </strong>
+
+                            <p>
+                                Part des montants bancaires retrouvée
+                                dans AcademicPay.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="reconciliation-health-list">
+
+
+                        <div>
+
+                            <span>
+                                <i class="bi bi-check-circle"></i>
+                                Transactions rapprochées
+                            </span>
+
+                            <strong id="matchedCount">
+                                {{ matched_count }}
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                <i class="bi bi-exclamation-triangle"></i>
+                                Anomalies
+                            </span>
+
+                            <strong id="anomalyCount">
+                                {{ anomaly_count }}
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                <i class="bi bi-bank"></i>
+                                Banques analysées
+                            </span>
+
+                            <strong id="bankCount">
+                                {{ bank_summary|length }}
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- =================================================
+             RAPPROCHEMENT PAR BANQUE
+        ================================================== -->
+
+        <section class="reconciliation-card bank-reconciliation-card">
+
+            <div class="reconciliation-card-header">
+
+                <div>
+
+                    <div class="section-eyebrow">
+                        BANQUES PARTENAIRES
+                    </div>
+
+                    <h2>
+                        Rapprochement par banque
+                    </h2>
+
+                    <p>
+                        Vue consolidée des montants issus des extraits
+                        et des paiements présents dans AcademicPay.
+                    </p>
+
+                </div>
+
+
+                <div class="bank-results-actions">
+
+                    <div class="reconciliation-result-count">
+
+                        <span id="bankResultCount">
+                            {{ bank_summary|length }}
+                        </span>
+
+                        banque(s)
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="bank-filter-reset"
+                        id="bankFilterReset"
+                        hidden
+                    >
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        <span>Toutes les banques</span>
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="bank-reconciliation-list">
+
+                {% for bank in bank_summary %}
+                <article
+                    class="bank-reconciliation-item"
+                    data-bank-card="{{ bank.code|lower }}"
+                >
+
+                    <div class="bank-cell-info">
+
+                        <div class="bank-logo">
+                            {{ bank.code|slice:":2"|upper }}
+                        </div>
+
+                        <div>
+                            <strong>{{ bank.name }}</strong>
+                            <span>Banque partenaire</span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="bank-reconciliation-metric">
+                        <span>Extraits bancaires</span>
+                        <strong>{{ bank.statement_amount|floatformat:2 }} $</strong>
+                    </div>
+
+
+                    <div class="bank-reconciliation-metric">
+                        <span>AcademicPay</span>
+                        <strong>{{ bank.system_amount|floatformat:2 }} $</strong>
+                    </div>
+
+
+                    <div class="bank-reconciliation-metric">
+                        <span>Écart</span>
+                        <strong>{{ bank.difference|floatformat:2 }} $</strong>
+                    </div>
+
+
+                    <div class="coverage-cell">
+
+                        <div class="coverage-cell-header">
+                            <span>Couverture</span>
+                            <strong>{{ bank.coverage|floatformat:1 }} %</strong>
+                        </div>
+
+                        <div class="coverage-progress">
+                            <span style="width: {{ bank.coverage|floatformat:0 }}%;"></span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="bank-reconciliation-status">
+
+                        <span class="reconciliation-status {% if bank.anomalies > 10 %}danger{% else %}warning{% endif %}">
+                            <i class="bi {% if bank.anomalies > 10 %}bi-exclamation-triangle{% else %}bi-exclamation-circle{% endif %}"></i>
+                            {{ bank.anomalies }} anomalies
+                        </span>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="bank-view-button"
+                        data-bank-view="{{ bank.code|lower }}"
+                        title="Voir le détail {{ bank.name }}"
+                        aria-label="Voir le détail {{ bank.name }}"
+                    >
+                        <i class="bi bi-eye"></i>
+                    </button>
+
+                </article>
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             TRANSACTIONS À EXAMINER
+        ================================================== -->
+
+        <section class="reconciliation-card unmatched-card">
+
+            <div class="reconciliation-card-header">
+
+                <div>
+
+                    <div class="section-eyebrow">
+                        CONTRÔLE
+                    </div>
+
+                    <h2>
+                        Transactions à examiner
+                    </h2>
+
+                    <p>
+                        Transactions présentant un écart ou nécessitant
+                        une vérification.
+                    </p>
+
+                </div>
+
+
+                <div class="reconciliation-result-count">
+
+                    <span id="transactionResultCount">
+                        {{ result_count }}
+                    </span>
+
+                    résultat(s)
+
+                </div>
+
+            </div>
+
+
+            <!-- FILTRES -->
+
+            <div class="reconciliation-filters">
+
+
+                <!-- RECHERCHE -->
+
+                <div class="reconciliation-search">
+
+                    <i class="bi bi-search"></i>
+
+                    <input
+                        type="search"
+                        id="reconciliationSearch"
+                        placeholder="Référence, étudiant, matricule..."
+                        autocomplete="off"
+                        value="{{ search_query }}"
+                    >
+
+                    <button
+                        type="button"
+                        id="clearReconciliationSearch"
+                        class="clear-reconciliation-search"
+                        aria-label="Effacer la recherche"
+                    >
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+
+                </div>
+
+
+                <!-- BANQUE -->
+
+                <div class="reconciliation-filter">
+
+                    <label for="bankFilter">
+                        Banque
+                    </label>
+
+                    <select id="bankFilter">
+
+                        <option value="">
+                            Toutes les banques
+                        </option>
+
+                        {% for bank in banks %}
+                        <option value="{{ bank.code|lower }}" {% if bank_filter == bank.code|lower %}selected{% endif %}>
+                            {{ bank.name }}
+                        </option>
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- PÉRIODE -->
+
+                <div class="reconciliation-filter">
+
+                    <label for="periodFilter">
+                        Période
+                    </label>
+
+                    <select id="periodFilter">
+
+                        <option value="" {% if not period_filter %}selected{% endif %}>
+                            Toutes les périodes
+                        </option>
+
+                        <option value="today" {% if period_filter == 'today' %}selected{% endif %}>
+                            Aujourd'hui
+                        </option>
+
+                        <option value="7days" {% if period_filter == '7days' %}selected{% endif %}>
+                            7 derniers jours
+                        </option>
+
+                        <option value="30days" {% if period_filter == '30days' %}selected{% endif %}>
+                            30 derniers jours
+                        </option>
+
+                        <option value="semester" {% if period_filter == 'semester' %}selected{% endif %}>
+                            Semestre
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- ÉTAT -->
+
+                <div class="reconciliation-filter">
+
+                    <label for="reconciliationStatusFilter">
+                        État
+                    </label>
+
+                    <select id="reconciliationStatusFilter">
+
+                        <option value="" {% if not status_filter %}selected{% endif %}>
+                            Tous les états
+                        </option>
+
+                        <option value="amount_mismatch" {% if status_filter == 'amount_mismatch' %}selected{% endif %}>
+                            Écart de montant
+                        </option>
+
+                        <option value="bank_only" {% if status_filter == 'bank_only' %}selected{% endif %}>
+                            Banque uniquement
+                        </option>
+
+                        <option value="system_only" {% if status_filter == 'system_only' %}selected{% endif %}>
+                            AcademicPay uniquement
+                        </option>
+
+                        <option value="duplicate" {% if status_filter == 'duplicate' %}selected{% endif %}>
+                            Doublon
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- RESET -->
+
+                <button
+                    type="button"
+                    class="reset-reconciliation-filters"
+                    id="resetReconciliationFilters"
+                >
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                    Réinitialiser
+                </button>
+
+            </div>
+
+
+            <!-- TABLEAU -->
+
+            <div
+                class="reconciliation-table-wrapper"
+                id="reconciliationTableWrapper"
+            >
+
+                <table class="reconciliation-table">
+
+                    <thead>
+
+                    <tr>
+                        <th>Date</th>
+                        <th>Référence</th>
+                        <th>Banque</th>
+                        <th>Montant banque</th>
+                        <th>Étudiant</th>
+                        <th>AcademicPay</th>
+                        <th>Écart</th>
+                        <th>Problème</th>
+                        <th aria-label="Actions"></th>
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody id="reconciliationTableBody">
+
+                    {% for item in reconciliation_items %}
+                    <tr
+                        data-id="{{ item.id }}"
+                        data-date="{{ item.date }}"
+                        data-reference="{{ item.reference }}"
+                        data-bank="{{ item.bank }}"
+                        data-bank-amount="{{ item.bank_amount }}"
+                        data-system-amount="{{ item.system_amount }}"
+                        data-student="{{ item.student }}"
+                        data-matricule="{{ item.matricule }}"
+                        data-status="{{ item.status }}"
+                    >
+
+                        <td>{{ item.date }}</td>
+
+                        <td>
+                            <span class="transaction-reference">
+                                {{ item.reference }}
+                            </span>
+                        </td>
+
+                        <td>{{ item.bank_name }}</td>
+
+                        <td class="reconciliation-money">
+                            {% if item.bank_amount > 0 %}
+                                {{ item.bank_amount|floatformat:2 }} $
+                            {% else %}
+                                <span class="muted-value">—</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if item.student %}
+                            <div class="reconciliation-student-info">
+                                <strong>{{ item.student }}</strong>
+                                <span>{{ item.matricule }}</span>
+                            </div>
+                            {% else %}
+                            <span class="muted-value">Non identifié</span>
+                            {% endif %}
+                        </td>
+
+                        <td class="reconciliation-money">
+                            {% if item.system_amount > 0 %}
+                                {{ item.system_amount|floatformat:2 }} $
+                            {% else %}
+                                <span class="muted-value">—</span>
+                            {% endif %}
+                        </td>
+
+                        <td class="reconciliation-money {% if item.difference > 0 %}difference{% endif %}">
+                            {{ item.difference|floatformat:2 }} $
+                        </td>
+
+                        <td>
+
+                            <span class="diagnostic-badge 
+                                {% if item.status == 'amount_mismatch' %}warning
+                                {% elif item.status == 'bank_only' or item.status == 'system_only' %}danger
+                                {% elif item.status == 'duplicate' %}warning
+                                {% else %}success{% endif %}
+                            ">
+                                {% if item.status == 'amount_mismatch' %}
+                                    Écart de montant
+                                {% elif item.status == 'bank_only' %}
+                                    Banque uniquement
+                                {% elif item.status == 'system_only' %}
+                                    AcademicPay uniquement
+                                {% elif item.status == 'duplicate' %}
+                                    Doublon
+                                {% else %}
+                                    Rapproché
+                                {% endif %}
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <button
+                                type="button"
+                                class="reconciliation-view-button"
+                                title="Examiner"
+                                aria-label="Examiner {{ item.reference }}"
+                            >
+                                <i class="bi bi-eye"></i>
+                            </button>
+
+                        </td>
+
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="9" class="text-center py-4 text-muted">
+                            <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                            Aucune transaction à examiner
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- ÉTAT VIDE -->
+
+            <div
+                class="reconciliation-empty-state"
+                id="reconciliationEmptyState"
+                hidden
+            >
+
+                <div class="reconciliation-empty-icon">
+                    <i class="bi bi-search"></i>
+                </div>
+
+                <h3>
+                    Aucun résultat
+                </h3>
+
+                <p>
+                    Aucune transaction ne correspond aux filtres
+                    actuellement sélectionnés.
+                </p>
+
+                <button
+                    type="button"
+                    id="reconciliationEmptyReset"
+                    class="reconciliation-empty-reset"
+                >
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                    Réinitialiser les filtres
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- =========================================================
+     MODALE DÉTAIL TRANSACTION
+========================================================= -->
+
+<div
+    class="modal fade"
+    id="transactionDetailModal"
+    tabindex="-1"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+
+        <div class="modal-content finance-modal">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <div class="section-eyebrow">
+                        CONTRÔLE DE TRANSACTION
+                    </div>
+
+                    <h2>
+                        Comparaison de l'opération
+                    </h2>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Fermer"
+                ></button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <div class="comparison-grid">
+
+
+                    <!-- BANQUE -->
+
+                    <section class="comparison-block">
+
+                        <div class="comparison-block-heading">
+
+                            <div class="comparison-source-icon">
+                                <i class="bi bi-bank"></i>
+                            </div>
+
+                            <div>
+                                <span>Source bancaire</span>
+                                <h3>Extrait bancaire</h3>
+                            </div>
+
+                        </div>
+
+
+                        <div class="comparison-information-grid">
+
+                            <div>
+                                <span>Référence</span>
+                                <strong id="modalBankReference">
+                                    —
+                                </strong>
+                            </div>
+
+                            <div>
+                                <span>Banque</span>
+                                <strong id="modalBankName">
+                                    —
+                                </strong>
+                            </div>
+
+                            <div>
+                                <span>Date</span>
+                                <strong id="modalBankDate">
+                                    —
+                                </strong>
+                            </div>
+
+                            <div>
+                                <span>Montant</span>
+                                <strong id="modalBankAmount">
+                                    —
+                                </strong>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- ACADEMICPAY -->
+
+                    <section class="comparison-block">
+
+                        <div class="comparison-block-heading">
+
+                            <div class="comparison-source-icon">
+                                <i class="bi bi-database"></i>
+                            </div>
+
+                            <div>
+                                <span>Source interne</span>
+                                <h3>AcademicPay</h3>
+                            </div>
+
+                        </div>
+
+
+                        <div class="comparison-information-grid">
+
+                            <div>
+                                <span>Étudiant</span>
+                                <strong id="modalStudentName">
+                                    —
+                                </strong>
+                            </div>
+
+                            <div>
+                                <span>Matricule</span>
+                                <strong id="modalStudentMatricule">
+                                    —
+                                </strong>
+                            </div>
+
+                            <div>
+                                <span>Référence</span>
+                                <strong id="modalSystemReference">
+                                    —
+                                </strong>
+                            </div>
+
+                            <div>
+                                <span>Montant</span>
+                                <strong id="modalSystemAmount">
+                                    —
+                                </strong>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+
+                <div class="reconciliation-diagnostic">
+
+                    <div>
+
+                        <span>
+                            Diagnostic
+                        </span>
+
+                        <strong id="modalDiagnostic">
+                            —
+                        </strong>
+
+                        <p id="modalDiagnosticDescription">
+                            —
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="difference-box"
+                        id="modalDifferenceBox"
+                    >
+
+                        <span>
+                            Écart constaté
+                        </span>
+
+                        <strong id="modalDifference">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="modal-secondary-button"
+                    data-bs-dismiss="modal"
+                >
+                    Fermer
+                </button>
+
+                <button
+                    type="button"
+                    class="modal-primary-button"
+                    id="openAnomalyButton"
+                >
+                    <i class="bi bi-exclamation-triangle"></i>
+                    Examiner l'anomalie
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     MODALE DÉTAIL BANQUE
+========================================================= -->
+
+<div
+    class="modal fade"
+    id="bankDetailModal"
+    tabindex="-1"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content finance-modal">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <div class="section-eyebrow">
+                        BANQUE PARTENAIRE
+                    </div>
+
+                    <h2 id="bankDetailName">
+                        Banque
+                    </h2>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Fermer"
+                ></button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <div class="bank-detail-grid">
+
+                    <div>
+
+                        <span>
+                            Extraits bancaires
+                        </span>
+
+                        <strong id="bankDetailStatement">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            AcademicPay
+                        </span>
+
+                        <strong id="bankDetailSystem">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Écart
+                        </span>
+
+                        <strong id="bankDetailDifference">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Couverture
+                        </span>
+
+                        <strong id="bankDetailCoverage">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="bank-detail-summary">
+
+                    <div>
+
+                        <span>
+                            Transactions
+                        </span>
+
+                        <strong id="bankDetailTransactions">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Anomalies
+                        </span>
+
+                        <strong id="bankDetailAnomalies">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="modal-secondary-button"
+                    data-bs-dismiss="modal"
+                >
+                    Fermer
+                </button>
+
+
+                <button
+                    type="button"
+                    class="modal-primary-button"
+                    id="filterBankTransactionsButton"
+                >
+                    <i class="bi bi-funnel"></i>
+                    Voir les transactions
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     MENU MOBILE
+========================================================= -->
+
+<div
+    class="offcanvas offcanvas-start finance-offcanvas"
+    tabindex="-1"
+    id="financeMobileMenu"
+>
+
+    <div class="offcanvas-header">
+
+        <div class="sidebar-brand">
+
+            <div class="brand-icon">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+            <div>
+                <strong>AcademicPay</strong>
+                <span>FINANCE</span>
+            </div>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="offcanvas"
+            aria-label="Fermer"
+        ></button>
+
+    </div>
+
+
+    <div class="offcanvas-body">
+
+        <nav class="mobile-navigation">
+
+            <a
+                href="{% url 'finance_dashboard' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-house-door-fill"></i>
+                Accueil
+            </a>
+
+
+            <a
+                href="{% url 'finance_payments' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-credit-card"></i>
+                Paiements
+            </a>
+
+
+            <a
+                href="{% url 'finance_statements' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-bank"></i>
+                Extraits bancaires
+            </a>
+
+
+            <a
+                href="{% url 'finance_schedule' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-calendar3"></i>
+                Échéancier
+            </a>
+
+
+            <a
+                href="{% url 'finance_students' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-people"></i>
+                Situations financières
+            </a>
+
+
+            <a
+                href="{% url 'finance_reconciliation' %}"
+                class="mobile-nav-link active"
+                aria-current="page"
+            >
+                <i class="bi bi-arrow-left-right"></i>
+                Rapprochement global
+            </a>
+
+
+            <a
+                href="{% url 'finance_anomalies' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-exclamation-triangle"></i>
+
+                Anomalies
+
+                <span
+                    class="mobile-badge"
+                    id="mobileAnomalyCount"
+                >
+                    {{ pending_anomalies }}
+                </span>
+            </a>
+
+
+            <a
+                href="{% url 'finance_reports' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-bar-chart-line"></i>
+                Rapports
+            </a>
+
+
+            <a
+                href="{% url 'finance_history' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-clock-history"></i>
+                Historique
+            </a>
+
+
+            <hr>
+
+
+            <a
+                href="{% url 'finance_profile' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-person"></i>
+                Mon compte
+            </a>
+
+
+            <a
+                href="{% url 'logout' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-box-arrow-right"></i>
+                Déconnexion
+            </a>
+
+        </nav>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     TOAST
+========================================================= -->
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+
+    <div
+        id="financeToast"
+        class="toast finance-toast"
+        role="alert"
+        aria-live="polite"
+        aria-atomic="true"
+    >
+
+        <div class="toast-body">
+
+            <i class="bi bi-check-circle-fill"></i>
+
+            <span id="toastMessage">
+                Opération effectuée.
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     SCRIPTS
+========================================================= -->
+
+<!-- Bootstrap -->
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+></script>
+
+
+<!-- Chart.js -->
+<script
+    src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.min.js"
+></script>
+
+
+<!-- jsPDF -->
+<script
+    src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"
+></script>
+
+
+<!-- AutoTable -->
+<script
+    src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"
+></script>
+
+
+<!-- JS page -->
+<script src="{% static 'js/espace_finance/finance-reconciliation.js' %}"></script>
+
+
+</body>
+</html>

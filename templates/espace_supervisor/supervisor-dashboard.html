@@ -1,0 +1,701 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Accueil surveillant | AcademicPay</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    >
+
+    <!-- CSS de la page -->
+    <link rel="stylesheet" href="{% static 'css/espace_supervisor/supervisor-dashboard.css' %}">
+</head>
+
+<body>
+
+<div class="d-flex min-vh-100">
+
+    <!-- =====================================================
+         SIDEBAR DESKTOP
+    ====================================================== -->
+    <aside
+        class="supervisor-sidebar d-none d-lg-flex flex-column
+               justify-content-between position-fixed top-0 start-0"
+    >
+
+        <div>
+
+            <!-- Logo -->
+            <a
+                href="{% url 'supervisor_dashboard' %}"
+                class="sidebar-logo d-flex align-items-center
+                       justify-content-center text-decoration-none"
+                aria-label="Accueil"
+            >
+                <i class="bi bi-mortarboard-fill"></i>
+            </a>
+
+            <!-- Navigation -->
+            <nav class="nav flex-column align-items-center gap-3 mt-4">
+
+                <!-- Accueil -->
+                <a
+                    href="{% url 'supervisor_dashboard' %}"
+                    class="sidebar-icon active"
+                    title="Accueil"
+                    aria-label="Accueil"
+                    aria-current="page"
+                >
+                    <i class="bi bi-house-door-fill"></i>
+                </a>
+
+                <!-- Vérifier étudiant -->
+                <a
+                    href="{% url 'supervisor_verification' %}"
+                    class="sidebar-icon"
+                    title="Vérifier un étudiant"
+                    aria-label="Vérifier un étudiant"
+                >
+                    <i class="bi bi-person-check"></i>
+                </a>
+
+                <!-- Historique -->
+                <a
+                    href="{% url 'supervisor_history' %}"
+                    class="sidebar-icon"
+                    title="Historique des vérifications"
+                    aria-label="Historique des vérifications"
+                >
+                    <i class="bi bi-clock-history"></i>
+                </a>
+
+            </nav>
+
+        </div>
+
+        <!-- Bas sidebar -->
+        <div>
+
+            <!-- Thème -->
+            <div class="d-flex justify-content-center py-3">
+
+                <button
+                    class="sidebar-icon border-0"
+                    type="button"
+                    id="themeToggle"
+                    title="Thème"
+                    aria-label="Changer le thème"
+                >
+                    <i class="bi bi-moon-stars"></i>
+                </button>
+
+            </div>
+
+            <!-- Utilisateur -->
+            <div class="sidebar-user d-flex justify-content-center py-4">
+
+                <div class="dropdown">
+
+                    <button
+                        class="supervisor-avatar border-0 rounded-circle
+                               d-flex align-items-center justify-content-center"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        aria-label="Menu utilisateur"
+                    >
+                        {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" alt="{{ user.full_congolese_name }}" class="rounded-circle" width="40" height="40">
+                        {% else %}
+                        <i class="bi bi-person-fill"></i>
+                        {% endif %}
+                    </button>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+
+                        <li>
+                            <a
+                                class="dropdown-item"
+                                href="{% url 'supervisor_profile' %}"
+                            >
+                                <i class="bi bi-person me-2"></i>
+                                Mon compte
+                            </a>
+                        </li>
+
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <a
+                                class="dropdown-item"
+                                href="{% url 'logout' %}"
+                            >
+                                <i class="bi bi-box-arrow-right me-2"></i>
+                                Déconnexion
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         CONTENU PRINCIPAL
+    ====================================================== -->
+    <main class="supervisor-main flex-grow-1">
+
+        <div class="container-fluid supervisor-container">
+
+            <!-- =================================================
+                 HEADER MOBILE
+            ================================================== -->
+            <header
+                class="d-flex d-lg-none justify-content-between
+                       align-items-center mb-4"
+            >
+
+                <a
+                    href="{% url 'supervisor_dashboard' %}"
+                    class="mobile-logo d-flex align-items-center
+                           justify-content-center text-decoration-none"
+                    aria-label="Accueil"
+                >
+                    <i class="bi bi-mortarboard-fill"></i>
+                </a>
+
+                <button
+                    class="btn mobile-menu-btn"
+                    type="button"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#supervisorMobileMenu"
+                    aria-controls="supervisorMobileMenu"
+                    aria-label="Ouvrir le menu"
+                >
+                    <i class="bi bi-list"></i>
+                </button>
+
+            </header>
+
+
+            <!-- =================================================
+                 EN-TÊTE
+            ================================================== -->
+            <header class="page-header">
+
+                <div class="d-flex flex-column flex-lg-row
+                            justify-content-between gap-3">
+
+                    <div>
+
+                        <span class="page-eyebrow">
+                            Espace surveillant
+                        </span>
+
+                        <h1 class="fw-bold mb-2">
+                            Accueil
+                        </h1>
+
+                        <p class="page-description mb-0">
+                            Vérifiez rapidement la situation financière
+                            des étudiants avant leur accès aux évaluations.
+                        </p>
+
+                    </div>
+
+                    <div class="academic-year">
+
+                        <span>
+                            Année académique
+                        </span>
+
+                        <strong>
+                            {{ current_academic_year }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <!-- =================================================
+                 IDENTITÉ DU SURVEILLANT
+            ================================================== -->
+            <section class="welcome-section">
+
+                <span class="welcome-label">
+                    Bonjour,
+                </span>
+
+                <h2 class="welcome-name">
+                    {{ user.full_congolese_name }}
+                </h2>
+
+                <p class="welcome-role mb-0">
+                    {{ user.get_staff_role_display|default:"Surveillant d'examen" }}
+                </p>
+
+            </section>
+
+
+            <!-- =================================================
+                 ACTION PRINCIPALE
+            ================================================== -->
+            <section class="verification-hero">
+
+                <div class="row align-items-center g-4">
+
+                    <div class="col-12 col-lg-8">
+
+                        <div class="verification-hero-icon">
+                            <i class="bi bi-person-check"></i>
+                        </div>
+
+                        <span class="section-eyebrow">
+                            Contrôle d'accès aux évaluations
+                        </span>
+
+                        <h2>
+                            Vérifier un étudiant
+                        </h2>
+
+                        <p>
+                            Recherchez l'étudiant par son matricule pour
+                            connaître immédiatement son statut d'autorisation.
+                        </p>
+
+                    </div>
+
+                    <div class="col-12 col-lg-4">
+
+                        <a
+                            href="{% url 'supervisor_verification' %}"
+                            class="btn verification-btn w-100"
+                        >
+                            <i class="bi bi-search me-2"></i>
+                            Commencer une vérification
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 STATISTIQUES
+            ================================================== -->
+            <section class="dashboard-section">
+
+                <div class="section-heading">
+
+                    <div>
+                        <span class="section-eyebrow">
+                            Session actuelle
+                        </span>
+
+                        <h2>
+                            Vérifications
+                        </h2>
+                    </div>
+
+                </div>
+
+                <div class="row g-3">
+
+                    <!-- Vérifiés -->
+                    <div class="col-12 col-sm-6 col-xl-3">
+
+                        <article class="stat-card h-100">
+
+                            <div class="stat-card-top">
+
+                                <div class="stat-icon">
+                                    <i class="bi bi-people"></i>
+                                </div>
+
+                                <span>
+                                    Aujourd'hui
+                                </span>
+
+                            </div>
+
+                            <span class="stat-label">
+                                Étudiants vérifiés
+                            </span>
+
+                            <strong class="stat-value">
+                                {{ verified_today }}
+                            </strong>
+
+                        </article>
+
+                    </div>
+
+                    <!-- Autorisés -->
+                    <div class="col-12 col-sm-6 col-xl-3">
+
+                        <article class="stat-card h-100">
+
+                            <div class="stat-card-top">
+
+                                <div class="stat-icon success">
+                                    <i class="bi bi-check-lg"></i>
+                                </div>
+
+                                <span>
+                                    Aujourd'hui
+                                </span>
+
+                            </div>
+
+                            <span class="stat-label">
+                                Autorisés
+                            </span>
+
+                            <strong class="stat-value">
+                                {{ authorized_today }}
+                            </strong>
+
+                        </article>
+
+                    </div>
+
+                    <!-- Non autorisés -->
+                    <div class="col-12 col-sm-6 col-xl-3">
+
+                        <article class="stat-card h-100">
+
+                            <div class="stat-card-top">
+
+                                <div class="stat-icon danger">
+                                    <i class="bi bi-x-lg"></i>
+                                </div>
+
+                                <span>
+                                    Aujourd'hui
+                                </span>
+
+                            </div>
+
+                            <span class="stat-label">
+                                Non autorisés
+                            </span>
+
+                            <strong class="stat-value">
+                                {{ not_authorized_today }}
+                            </strong>
+
+                        </article>
+
+                    </div>
+
+                    <!-- Taux -->
+                    <div class="col-12 col-sm-6 col-xl-3">
+
+                        <article class="stat-card h-100">
+
+                            <div class="stat-card-top">
+
+                                <div class="stat-icon">
+                                    <i class="bi bi-percent"></i>
+                                </div>
+
+                                <span>
+                                    Session
+                                </span>
+
+                            </div>
+
+                            <span class="stat-label">
+                                Taux d'autorisation
+                            </span>
+
+                            <strong class="stat-value">
+                                {{ auth_rate }} %
+                            </strong>
+
+                        </article>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 ACTIVITÉ RÉCENTE
+            ================================================== -->
+            <section class="dashboard-section">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-eyebrow">
+                            Activité récente
+                        </span>
+
+                        <h2>
+                            Dernières vérifications
+                        </h2>
+
+                    </div>
+
+                    <a
+                        href="{% url 'supervisor_history' %}"
+                        class="section-link"
+                    >
+                        Voir tout
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+
+                </div>
+
+                <div class="recent-card">
+
+                    {% for verification in recent_verifications %}
+                    <div class="verification-row">
+
+                        <div class="student-information">
+
+                            <div class="student-icon">
+                                <i class="bi bi-person"></i>
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    {{ verification.student.full_congolese_name }}
+                                </strong>
+
+                                <span>
+                                    {{ verification.student.registration_num|default:"Sans ID" }}
+                                    {% if verification.student.academic_program %}
+                                        · {{ verification.student.academic_program.program.name }}
+                                    {% endif %}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="verification-time">
+                            {{ verification.verified_at|date:"H:i" }}
+                        </div>
+
+                        <div>
+                            <span class="status-badge {% if verification.is_financially_clear %}authorized{% else %}unauthorized{% endif %}">
+                                <i class="bi {% if verification.is_financially_clear %}bi-check-circle-fill{% else %}bi-x-circle-fill{% endif %}"></i>
+                                {% if verification.is_financially_clear %}
+                                    Autorisé
+                                {% else %}
+                                    Non autorisé
+                                {% endif %}
+                            </span>
+                        </div>
+
+                        <a
+                            href="{% url 'supervisor_student_detail' verification.student.id %}"
+                            class="row-action"
+                            aria-label="Consulter {{ verification.student.full_congolese_name }}"
+                        >
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+
+                    </div>
+                    {% empty %}
+                    <div class="text-center text-muted py-4">
+                        <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                        <p class="mb-0">Aucune vérification effectuée aujourd'hui</p>
+                    </div>
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 INFORMATION
+            ================================================== -->
+            <section class="rule-card">
+
+                <div class="rule-icon">
+                    <i class="bi bi-info-circle"></i>
+                </div>
+
+                <div>
+
+                    <strong>
+                        À propos du statut d'autorisation
+                    </strong>
+
+                    <p class="mb-0">
+                        L'autorisation est déterminée automatiquement par
+                        AcademicPay selon la situation financière de l'étudiant
+                        et les règles définies par l'établissement.
+                        Le surveillant consulte le résultat sans modifier
+                        les informations financières.
+                    </p>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- =========================================================
+     MENU MOBILE
+========================================================= -->
+<div
+    class="offcanvas offcanvas-start supervisor-offcanvas"
+    tabindex="-1"
+    id="supervisorMobileMenu"
+    aria-labelledby="supervisorMobileMenuLabel"
+>
+
+    <div class="offcanvas-header">
+
+        <div class="d-flex align-items-center gap-3">
+
+            <div class="offcanvas-brand">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+            <div>
+                <strong id="supervisorMobileMenuLabel">
+                    AcademicPay
+                </strong>
+
+                <span>
+                    Espace surveillant
+                </span>
+            </div>
+
+        </div>
+
+        <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="offcanvas"
+            aria-label="Fermer"
+        ></button>
+
+    </div>
+
+    <div class="offcanvas-body">
+
+        <nav class="nav flex-column gap-1">
+
+            <!-- Accueil -->
+            <a
+                href="{% url 'supervisor_dashboard' %}"
+                class="mobile-nav-link active"
+                aria-current="page"
+            >
+                <i class="bi bi-house-door-fill"></i>
+                <span>Accueil</span>
+            </a>
+
+            <!-- Vérification -->
+            <a
+                href="{% url 'supervisor_verification' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-person-check"></i>
+                <span>Vérifier un étudiant</span>
+            </a>
+
+            <!-- Historique -->
+            <a
+                href="{% url 'supervisor_history' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-clock-history"></i>
+                <span>Historique</span>
+            </a>
+
+            <hr>
+
+            <!-- Compte -->
+            <a
+                href="{% url 'supervisor_profile' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-person"></i>
+                <span>Mon compte</span>
+            </a>
+
+            <!-- Déconnexion -->
+            <a
+                href="{% url 'logout' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Déconnexion</span>
+            </a>
+
+        </nav>
+
+    </div>
+
+</div>
+
+
+<!-- Bootstrap JS -->
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+></script>
+
+<!-- Theme Toggle -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('dark-theme');
+                const icon = this.querySelector('i');
+                if (document.body.classList.contains('dark-theme')) {
+                    icon.className = 'bi bi-sun-fill';
+                } else {
+                    icon.className = 'bi bi-moon-stars';
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+
+</html>
