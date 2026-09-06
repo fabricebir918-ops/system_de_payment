@@ -1183,12 +1183,6 @@ function createPaymentRow(claim) {
                             )}
                         </strong>
 
-                        <span>
-                            ${escapeHtml(
-                                claim.matricule
-                            )}
-                        </span>
-
                     </div>
 
                 </div>
@@ -1197,25 +1191,27 @@ function createPaymentRow(claim) {
 
 
             <td>
+                ${escapeHtml(
+                    claim.matricule
+                )}
+            </td>
 
-                <div class="reference-cell">
 
-                    <strong>
-                        ${escapeHtml(
-                            claim.reference
-                        )}
-                    </strong>
+            <td>
+                <strong>
+                    ${escapeHtml(
+                        claim.reference
+                    )}
+                </strong>
+            </td>
 
-                    <span>
-                        ${escapeHtml(
-                            getBankName(
-                                claim.bank
-                            )
-                        )}
-                    </span>
 
-                </div>
-
+            <td>
+                ${escapeHtml(
+                    getBankName(
+                        claim.bank
+                    )
+                )}
             </td>
 
 
@@ -1500,51 +1496,34 @@ function renderPagination(
 
 function renderKpis() {
 
-    const academicYear =
-        academicYearFilter?.value ||
-        CURRENT_ACADEMIC_YEAR;
+    /*
+     * Ces KPI sont désormais calculés côté serveur (voir
+     * payments_data.kpi dans espace_finance.py), à partir des
+     * mêmes sources que le tableau de bord et les rapports :
+     *   - collectedAmount : somme des Payment (status=PAID) pour
+     *     l'année académique sélectionnée.
+     *   - anomalyCount : nombre de PaymentAnomaly encore OPEN pour
+     *     cette année (get_pending_anomalies_count).
+     *
+     * Ils ne sont plus recalculés ici à partir de claim.scenario,
+     * qui ne vaut "ANOMALY" que si claim.status == REJECTED — un
+     * statut que la logique de rapprochement ne pose jamais
+     * aujourd'hui, ce qui faisait que ce compteur ne reflétait
+     * quasiment jamais les véritables anomalies.
+     *
+     * Le tableau (liste des déclarations) reste, lui, filtré et
+     * recalculé côté client via getFilteredClaims(), puisqu'il
+     * s'agit d'un affichage brut des PaymentClaim et non d'un KPI
+     * agrégé.
+     */
 
-    const claims =
-        paymentClaims.filter(
-            claim =>
-                claim.academicYear ===
-                academicYear
-        );
+    const kpi = payments_data.kpi || {};
 
-
-    const approved =
-        claims.filter(
-            claim =>
-                claim.scenario ===
-                "APPROVED"
-        );
-
-    const anomalies =
-        claims.filter(
-            claim =>
-                claim.scenario ===
-                "ANOMALY"
-        );
-
-
-    const approvedAmount =
-        approved.reduce(
-            (sum, claim) =>
-                sum +
-                Number(
-                    claim.amount
-                ),
-            0
-        );
-
-    const paidRate =
-        claims.length > 0
-            ? (
-                approved.length /
-                claims.length
-            ) * 100
-            : 0;
-
+    const collectedAmount = Number(kpi.collectedAmount || 0);
+    const anomalyCount = Number(kpi.anomalyCount || 0);
+    const totalClaims = Number(kpi.totalClaims || 0);
+    const approvedClaims = Number(kpi.approvedClaims || 0);
+    const approvalRate = Number(kpi.approvalRate || 0);
 
     /*
      * Ces IDs correspondent aux cartes KPI
@@ -1554,7 +1533,7 @@ function renderKpis() {
     setText(
         "totalCollected",
         formatMoney(
-            approvedAmount
+            collectedAmount
         )
     );
 
@@ -1565,22 +1544,22 @@ function renderKpis() {
 
     setText(
         "totalPayments",
-        claims.length
+        totalClaims
     );
 
     setText(
         "paidPayments",
-        approved.length
+        approvedClaims
     );
 
     setText(
         "paidRate",
-        `${paidRate.toFixed(1)} % des déclarations`
+        `${approvalRate.toFixed(1)} % des déclarations`
     );
 
     setText(
         "anomalyPayments",
-        anomalies.length
+        anomalyCount
     );
 }
 
@@ -2332,18 +2311,39 @@ function initializeSimpleFilters() {
             "change",
             () => {
 
-                state.currentPage = 1;
-
-
                 if (
                     filter ===
                     academicYearFilter
                 ) {
 
-                    renderKpis();
+                    /*
+                     * Les KPI (total encaissé, anomalies, etc.)
+                     * sont calculés côté serveur pour une année
+                     * académique donnée (voir payments_data.kpi).
+                     * On recharge la page avec l'année choisie
+                     * plutôt que de ré-agréger côté client, pour
+                     * garantir que ces chiffres restent exacts et
+                     * cohérents avec le tableau de bord et les
+                     * rapports.
+                     */
 
-                    renderBankStatistics();
+                    const params =
+                        new URLSearchParams(
+                            window.location.search
+                        );
+
+                    params.set(
+                        "academic_year",
+                        academicYearFilter.value
+                    );
+
+                    window.location.search =
+                        params.toString();
+
+                    return;
                 }
+
+                state.currentPage = 1;
 
 
                 if (

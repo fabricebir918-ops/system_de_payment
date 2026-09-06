@@ -84,6 +84,34 @@ ACADEMIC_YEAR_CHOICES = [
 ZERO = Decimal("0.00")
 
 
+def get_pending_anomalies_count(academic_year=None):
+    """
+    Source unique pour le badge "anomalies" affiché dans la barre
+    latérale et sur les tableaux de bord finance.
+
+    Avant cette fonction, chaque vue recalculait ce nombre
+    séparément avec des filtres légèrement différents (certaines
+    ignoraient l'année académique, une autre se basait sur une
+    recherche de texte dans la description plutôt que sur le champ
+    `status`), ce qui faisait apparaître un nombre différent selon
+    la page consultée alors qu'il s'agit conceptuellement de la
+    même donnée.
+
+    Toujours filtré sur `status=OPEN` et sur l'année académique
+    couramment sélectionnée (ou ACADEMIC_YEAR par défaut), pour que
+    le badge soit cohérent avec les KPI de chaque page.
+    """
+    year = academic_year or ACADEMIC_YEAR
+
+    return (
+        PaymentAnomaly.objects.filter(
+            status=PaymentAnomaly.Status.OPEN,
+            claim__academic_year=year,
+        )
+        .count()
+    )
+
+
 # ============================================================
 # AUTORISATION
 # ============================================================
@@ -447,14 +475,7 @@ def finance_dashboard(request):
         total=Sum("amount")
     )["total"] or ZERO
 
-    pending_anomalies = (
-        PaymentAnomaly.objects
-        .filter(
-            status=PaymentAnomaly.Status.OPEN,
-            claim__academic_year=ACADEMIC_YEAR,
-        )
-        .count()
-    )
+    pending_anomalies = get_pending_anomalies_count(ACADEMIC_YEAR)
 
     # ========================================================
     # COMPARAISON ANNÉE PRÉCÉDENTE
@@ -1019,6 +1040,8 @@ def serialize_payment_claims():
 @finance_required
 def finance_payments(request):
 
+    academic_year = request.GET.get("academic_year") or ACADEMIC_YEAR
+
     payments_data = {
         "banks": serialize_banks(),
         "academicStructure": serialize_academic_structure(),
@@ -1026,20 +1049,82 @@ def finance_payments(request):
         "claims": serialize_payment_claims(),
     }
 
-    # Calculate bank summary
-    claims = PaymentClaim.objects.filter(
-        student__role=User.Role.STUDENT
-    ).select_related('bank')
+    # ------------------------------------------------------------
+    # KPI "Total encaissé" / "Anomalies" — calculés côté serveur à
+    # partir des mêmes sources que le tableau de bord et les
+    # rapports (Payment pour le montant réellement encaissé,
+    # PaymentAnomaly pour les anomalies), afin que ces chiffres
+    # soient identiques partout dans l'application.
+    #
+    # Avant ce correctif, ces KPI étaient recalculés côté JS à
+    # partir de `claim.scenario`, qui ne vaut "ANOMALY" que si
+    # claim.status == REJECTED — un statut qu'aucune règle de
+    # rapprochement ne définit actuellement. Le compteur
+    # "anomalies" sur cette page ne comptait donc quasiment jamais
+    # les véritables anomalies (AMOUNT_MISMATCH, BANK_MISMATCH,
+    # DATE_MISMATCH, REFERENCE_NOT_FOUND, etc.), qui laissent le
+    # claim PENDING.
+    kpi_collected_amount = (
+        Payment.objects.filter(
+            academic_year=academic_year,
+            status=Payment.Status.PAID,
+        )
+        .aggregate(total=Sum("amount"))["total"]
+        or ZERO
+    )
+
+    kpi_anomaly_count = get_pending_anomalies_count(academic_year)
+
+    kpi_total_claims = PaymentClaim.objects.filter(
+        academic_year=academic_year,
+        student__role=User.Role.STUDENT,
+    ).count()
+
+    kpi_approved_claims = PaymentClaim.objects.filter(
+        academic_year=academic_year,
+        student__role=User.Role.STUDENT,
+        status=PaymentClaim.ClaimStatus.APPROVED,
+    ).count()
+
+    payments_data["kpi"] = {
+        "collectedAmount": str(kpi_collected_amount),
+        "anomalyCount": kpi_anomaly_count,
+        "totalClaims": kpi_total_claims,
+        "approvedClaims": kpi_approved_claims,
+        "approvalRate": (
+            (kpi_approved_claims / kpi_total_claims) * 100
+            if kpi_total_claims > 0
+            else 0
+        ),
+    }
+
+    # ------------------------------------------------------------
+    # Répartition par banque du montant réellement encaissé
+    # ------------------------------------------------------------
+    # NOTE : ce total doit correspondre à celui du tableau de bord
+    # (finance_dashboard), qui se base sur la table Payment (montants
+    # réellement rapprochés et confirmés), filtrée par statut PAID et
+    # par année académique.
+    #
+    # L'ancienne version sommait PaymentClaim.amount sans filtrer ni
+    # le statut ni l'année académique : elle comptait donc aussi les
+    # déclarations encore PENDING ou déjà REJECTED, et mélangeait
+    # plusieurs années académiques ensemble — d'où l'écart avec le
+    # tableau de bord.
+    payments = Payment.objects.filter(
+        academic_year=academic_year,
+        status=Payment.Status.PAID,
+    ).select_related("claim__bank")
 
     bank_summary = []
     total_collected = 0
 
     for bank in Bank.objects.filter(is_active=True).order_by("name"):
-        bank_claims = claims.filter(bank=bank)
-        bank_total = bank_claims.aggregate(
+        bank_payments = payments.filter(claim__bank=bank)
+        bank_total = bank_payments.aggregate(
             total=Sum('amount')
         )['total'] or Decimal('0')
-        bank_count = bank_claims.count()
+        bank_count = bank_payments.count()
 
         bank_summary.append({
             'code': bank.code,
@@ -1058,10 +1143,13 @@ def finance_payments(request):
         )
 
     # Academic years for the dropdown
+    # Ordre du plus récent au plus ancien, pour que la valeur
+    # sélectionnée par défaut (forloop.first dans le template)
+    # corresponde à ACADEMIC_YEAR et non à la plus ancienne année.
     current_year = datetime.now().year
 
     academic_years = []
-    for year in range(current_year - 3, current_year + 1):
+    for year in range(current_year, current_year - 4, -1):
         academic_years.append({
             'value': f"{year}-{year+1}",
             'label': f"{year} - {year+1}"
@@ -1073,7 +1161,11 @@ def finance_payments(request):
         {
             "payments_data": json.dumps(payments_data),
             "bank_summary": bank_summary,
+            "total_collected": total_collected,
             "academic_years": academic_years,
+            "academic_year": academic_year,
+            "pending_anomalies": get_pending_anomalies_count(academic_year),
+            "current_academic_year": academic_year,
         }
     )
 
@@ -1249,10 +1341,8 @@ def finance_statements(request):
         "academic_year_choices": STATEMENT_ACADEMIC_YEAR_CHOICES,
         "banks": banks,
         "bootstrap_data": _statement_safe_json(payload),
-        "pending_anomalies": PaymentAnomaly.objects.filter(
-            status=PaymentAnomaly.Status.OPEN
-        ).count(),
-        "current_academic_year": ACADEMIC_YEAR,
+        "pending_anomalies": get_pending_anomalies_count(academic_year),
+        "current_academic_year": academic_year,
     }
 
     return render(request, "espace_finance/finance-statements.html", context)
@@ -2601,10 +2691,8 @@ def finance_students(request):
         "banks": bootstrap["banks"],
         "bootstrap_data": _student_safe_json(bootstrap["payload"]),
         "open_student_id": None,
-        "pending_anomalies": PaymentAnomaly.objects.filter(
-            status=PaymentAnomaly.Status.OPEN
-        ).count(),
-        "current_academic_year": ACADEMIC_YEAR,
+        "pending_anomalies": get_pending_anomalies_count(academic_year),
+        "current_academic_year": academic_year,
     }
 
     return render(request, "espace_finance/finance-students.html", context)
@@ -2655,10 +2743,8 @@ def finance_student_detail(request, student_id):
         "banks": bootstrap["banks"],
         "bootstrap_data": _student_safe_json(bootstrap["payload"]),
         "open_student_id": student.id,
-        "pending_anomalies": PaymentAnomaly.objects.filter(
-            status=PaymentAnomaly.Status.OPEN
-        ).count(),
-        "current_academic_year": ACADEMIC_YEAR,
+        "pending_anomalies": get_pending_anomalies_count(academic_year),
+        "current_academic_year": academic_year,
     }
 
     return render(request, "espace_finance/finance-students.html", context)
@@ -3078,10 +3164,8 @@ def finance_reconciliation(request):
         "academic_year_choices": RECONCILIATION_ACADEMIC_YEAR_CHOICES,
         "banks": banks,
         "bootstrap_data": _reconciliation_safe_json(payload),
-        "pending_anomalies": PaymentAnomaly.objects.filter(
-            status=PaymentAnomaly.Status.OPEN
-        ).count(),
-        "current_academic_year": ACADEMIC_YEAR,
+        "pending_anomalies": get_pending_anomalies_count(academic_year),
+        "current_academic_year": academic_year,
     }
 
     return render(request, "espace_finance/finance-reconciliation.html", context)
@@ -3236,8 +3320,8 @@ def finance_anomalies(request):
         "bootstrap_data": json.dumps(
             bootstrap_payload, cls=DjangoJSONEncoder
         ).replace("</", "<\\/"),
-        "pending_anomalies": kpi["pending"] + kpi["processing"],
-        "current_academic_year": ACADEMIC_YEAR,
+        "pending_anomalies": get_pending_anomalies_count(academic_year),
+        "current_academic_year": academic_year,
     }
 
     return render(request, "espace_finance/finance-anomalies.html", context)
@@ -3601,10 +3685,8 @@ def finance_reports(request):
             "report": payload,
             "academicStructure": academic_structure,
         }),
-        "pending_anomalies": PaymentAnomaly.objects.filter(
-            status=PaymentAnomaly.Status.OPEN
-        ).count(),
-        "current_academic_year": ACADEMIC_YEAR,
+        "pending_anomalies": get_pending_anomalies_count(academic_year),
+        "current_academic_year": academic_year,
     }
 
     return render(request, "espace_finance/finance-reports.html", context)
@@ -3936,10 +4018,8 @@ def finance_history(request):
             'entries': entries_json,
             'kpi': kpi,
         }),
-        'pending_anomalies': PaymentAnomaly.objects.filter(
-            status=PaymentAnomaly.Status.OPEN
-        ).count(),
-        'current_academic_year': ACADEMIC_YEAR,
+        'pending_anomalies': get_pending_anomalies_count(academic_year),
+        'current_academic_year': academic_year,
     }
 
     return render(request, 'espace_finance/finance-history.html', context)
@@ -4184,9 +4264,7 @@ def finance_profile(request):
         service = "Service inconnu"
         role_system = "Personnel"
 
-    pending_anomalies = PaymentAnomaly.objects.filter(
-        status=PaymentAnomaly.Status.OPEN
-    ).count()
+    pending_anomalies = get_pending_anomalies_count(ACADEMIC_YEAR)
 
     context = {
         'user': user,

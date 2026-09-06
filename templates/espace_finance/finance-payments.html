@@ -261,7 +261,7 @@
 
                     <select id="academicYearFilter" aria-label="Année académique">
                         {% for year in academic_years %}
-                        <option value="{{ year.value }}" {% if forloop.first %}selected{% endif %}>
+                        <option value="{{ year.value }}" {% if year.value == academic_year %}selected{% endif %}>
                             {{ year.label }}
                         </option>
                         {% endfor %}
