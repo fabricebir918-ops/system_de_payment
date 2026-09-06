@@ -540,6 +540,8 @@ def student_declare_payment(request):
             errors.append("Veuillez sélectionner la banque.")
         
         # Validate reference
+        reference_already_used = False
+
         if not reference:
             errors.append("Veuillez saisir la référence de transaction.")
         elif len(reference) < 5:
@@ -547,12 +549,15 @@ def student_declare_payment(request):
         elif not all(c.isalnum() or c in '-/' for c in reference):
             errors.append("La référence contient des caractères non autorisés.")
         else:
-            # Check if reference already exists
-            if PaymentClaim.objects.filter(
+            # Référence déjà déclarée : on ne bloque plus la
+            # soumission. La déclaration est tout de même créée,
+            # mais une anomalie REFERENCE_ALREADY_USED est ouverte
+            # dessus pour que le responsable financier tranche
+            # (double déclaration légitime vs erreur/fraude).
+            reference_already_used = PaymentClaim.objects.filter(
                 submitted_reference=reference,
                 academic_year=ACADEMIC_YEAR
-            ).exists():
-                errors.append("Cette référence a déjà été déclarée.")
+            ).exists()
         
         # Validate amount
         try:
@@ -625,16 +630,40 @@ def student_declare_payment(request):
                     status=PaymentClaim.ClaimStatus.PENDING,
                     is_verified=False,
                 )
-                
+
+                if reference_already_used:
+                    PaymentAnomaly.objects.create(
+                        claim=claim,
+                        anomaly_type=PaymentAnomaly.Type.REFERENCE_ALREADY_USED,
+                        description=(
+                            "Cette référence de transaction a déjà été "
+                            "déclarée par ailleurs pour cette année "
+                            "académique. À vérifier : double déclaration "
+                            "légitime (paiement partagé, erreur de "
+                            "saisie) ou tentative frauduleuse."
+                        ),
+                        status=PaymentAnomaly.Status.OPEN,
+                    )
+
+                success_message = (
+                    "Votre déclaration a été enregistrée avec succès."
+                    if not reference_already_used
+                    else (
+                        "Votre déclaration a été enregistrée, mais cette "
+                        "référence a déjà été utilisée par ailleurs. "
+                        "Elle sera examinée par le responsable financier."
+                    )
+                )
+
                 if is_ajax:
                     return JsonResponse({
                         'success': True,
-                        'message': 'Votre déclaration a été enregistrée avec succès.',
+                        'message': success_message,
                         'reference': reference,
                         'claim_id': claim.id,
                     })
                 else:
-                    messages.success(request, f"Votre déclaration pour la référence {reference} a été enregistrée avec succès.")
+                    messages.success(request, success_message)
                     return redirect('student_payments')
                     
         except Bank.DoesNotExist:

@@ -1,3 +1,6 @@
+
+
+
 from decimal import Decimal
 from datetime import timedelta, date, datetime, time
 from django.contrib.auth.decorators import login_required
@@ -1380,7 +1383,15 @@ def _anomaly_type_for_mismatch(claim, transaction):
     """
     Détermine le type d'anomalie le plus pertinent quand une
     transaction bancaire porte la même référence qu'une déclaration
-    mais ne correspond pas parfaitement (montant, banque, date).
+    mais ne correspond pas parfaitement.
+
+    Ordre de vérification (le premier écart trouvé détermine le
+    type d'anomalie ; un seul type est créé par rapprochement même
+    si plusieurs champs diffèrent à la fois) :
+
+        1. Montant   -> AMOUNT_MISMATCH
+        2. Banque     -> BANK_MISMATCH
+        3. Date       -> DATE_MISMATCH (tout écart, même d'un jour)
     """
     if claim.amount != transaction.amount:
         return PaymentAnomaly.Type.AMOUNT_MISMATCH
@@ -1392,10 +1403,66 @@ def _anomaly_type_for_mismatch(claim, transaction):
         else None
     )
 
-    if claim_bank_code and transaction_bank_code and claim_bank_code != transaction_bank_code:
+    if claim_bank_code != transaction_bank_code:
         return PaymentAnomaly.Type.BANK_MISMATCH
 
+    claim_date = claim.payment_date.date() if claim.payment_date else None
+    transaction_date = (
+        transaction.payment_date.date() if transaction.payment_date else None
+    )
+
+    if claim_date != transaction_date:
+        return PaymentAnomaly.Type.DATE_MISMATCH
+
     return PaymentAnomaly.Type.OTHER
+
+
+def _describe_mismatch(claim, transaction, anomaly_type):
+    """
+    Construit un message explicite selon le type d'écart détecté,
+    pour que le responsable financier comprenne immédiatement quoi
+    vérifier sans avoir à comparer les deux enregistrements
+    lui-même.
+    """
+    if anomaly_type == PaymentAnomaly.Type.AMOUNT_MISMATCH:
+        return (
+            "Écart de montant détecté lors du rapprochement "
+            f"automatique : déclaré {claim.amount} $, reçu "
+            f"{transaction.amount} $ (référence "
+            f"{transaction.transaction_reference})."
+        )
+
+    if anomaly_type == PaymentAnomaly.Type.BANK_MISMATCH:
+        claim_bank_name = claim.bank.name if claim.bank else "—"
+        transaction_bank_name = (
+            transaction.bank_account.bank.name
+            if transaction.bank_account and transaction.bank_account.bank
+            else "—"
+        )
+        return (
+            "Écart de banque détecté lors du rapprochement "
+            f"automatique : banque déclarée {claim_bank_name}, "
+            f"transaction reçue de {transaction_bank_name} "
+            f"(référence {transaction.transaction_reference})."
+        )
+
+    if anomaly_type == PaymentAnomaly.Type.DATE_MISMATCH:
+        claim_date = claim.payment_date.date() if claim.payment_date else "—"
+        transaction_date = (
+            transaction.payment_date.date() if transaction.payment_date else "—"
+        )
+        return (
+            "Écart de date détecté lors du rapprochement "
+            f"automatique : date déclarée {claim_date}, date "
+            f"bancaire {transaction_date} (référence "
+            f"{transaction.transaction_reference})."
+        )
+
+    return (
+        "Écart détecté lors du rapprochement automatique pour la "
+        f"référence {transaction.transaction_reference} : "
+        "vérification manuelle requise."
+    )
 
 
 def auto_reconcile_transactions(transactions, academic_year):
@@ -1425,7 +1492,7 @@ def auto_reconcile_transactions(transactions, academic_year):
 
     for transaction in transactions:
 
-        claim = (
+        candidate_claims = list(
             PaymentClaim.objects.select_related("bank")
             .filter(
                 submitted_reference=transaction.transaction_reference,
@@ -1433,40 +1500,77 @@ def auto_reconcile_transactions(transactions, academic_year):
             )
             .exclude(status=PaymentClaim.ClaimStatus.REJECTED)
             .order_by("-created_at")
-            .first()
         )
 
-        if not claim:
+        if not candidate_claims:
             # Transaction bancaire sans déclaration correspondante :
             # rien à rattacher, on l'ignore silencieusement (elle
             # reste visible en tant que "banque uniquement" sur la
             # page Rapprochement global, calculée à la volée).
             continue
 
-        if claim.bank_transaction_id:
-            # Cette déclaration est déjà liée à une autre transaction
-            # (paiement déjà rapproché précédemment, ou double envoi
-            # du même extrait par la banque). On ne touche pas au
-            # lien existant, mais on signale le doublon pour examen.
-            PaymentAnomaly.objects.create(
-                claim=claim,
-                anomaly_type=PaymentAnomaly.Type.DUPLICATE_CLAIM,
-                description=(
-                    "Nouvelle transaction bancaire "
-                    f"({transaction.transaction_reference}, "
-                    f"{transaction.amount} $) reçue pour une "
-                    "déclaration déjà rapprochée. Vérifier s'il "
-                    "s'agit d'un double paiement ou d'un doublon "
-                    "d'extrait."
-                ),
-                status=PaymentAnomaly.Status.OPEN,
+        # Plusieurs déclarations peuvent légitimement partager la
+        # même référence (cf. REFERENCE_ALREADY_USED, qui n'est plus
+        # bloquée à la saisie). On cherche celle qui correspond
+        # exactement à la transaction reçue ; les autres sont
+        # traitées séparément ci-dessous, sans être ignorées.
+
+        matched_claim = None
+
+        for claim in candidate_claims:
+
+            if claim.bank_transaction_id:
+                # Cette déclaration est déjà liée à une autre
+                # transaction (paiement déjà rapproché
+                # précédemment, ou double envoi du même extrait par
+                # la banque). On ne touche pas au lien existant,
+                # mais on signale le doublon pour examen.
+                PaymentAnomaly.objects.create(
+                    claim=claim,
+                    anomaly_type=PaymentAnomaly.Type.DUPLICATE_CLAIM,
+                    description=(
+                        "Nouvelle transaction bancaire "
+                        f"({transaction.transaction_reference}, "
+                        f"{transaction.amount} $) reçue pour une "
+                        "déclaration déjà rapprochée. Vérifier s'il "
+                        "s'agit d'un double paiement ou d'un doublon "
+                        "d'extrait."
+                    ),
+                    status=PaymentAnomaly.Status.OPEN,
+                )
+                anomalies_created += 1
+                continue
+
+            claim_bank_code = claim.bank.code if claim.bank else None
+            transaction_bank_code = (
+                transaction.bank_account.bank.code
+                if transaction.bank_account and transaction.bank_account.bank
+                else None
             )
-            anomalies_created += 1
-            continue
+            claim_date = claim.payment_date.date() if claim.payment_date else None
+            transaction_date = (
+                transaction.payment_date.date()
+                if transaction.payment_date
+                else None
+            )
 
-        amount_matches = claim.amount == transaction.amount
+            fully_matches = (
+                claim.amount == transaction.amount
+                and claim_bank_code == transaction_bank_code
+                and claim_date == transaction_date
+            )
 
-        if amount_matches:
+            if fully_matches and matched_claim is None:
+                # Premier candidat qui correspond exactement : on le
+                # rapproche. S'il existe d'autres candidats
+                # correspondant tout aussi bien (cas rarissime), ils
+                # seront traités comme REFERENCE_ALREADY_USED
+                # ci-dessous plutôt que rapprochés en double.
+                matched_claim = claim
+
+        if matched_claim:
+            claim = matched_claim
+
             claim.bank_transaction = transaction
             claim.status = PaymentClaim.ClaimStatus.APPROVED
             claim.is_verified = True
@@ -1487,21 +1591,47 @@ def auto_reconcile_transactions(transactions, academic_year):
             )
 
             approved_count += 1
-            continue
 
-        anomaly_type = _anomaly_type_for_mismatch(claim, transaction)
+        # Toute autre déclaration non liée, non approuvée, partageant
+        # cette référence : elle n'est ni rapprochée ni ignorée. Si
+        # une transaction bancaire existe bien pour cette référence
+        # mais qu'elle a déjà servi à une autre déclaration, il
+        # s'agit d'une référence utilisée en double.
+        for claim in candidate_claims:
 
-        PaymentAnomaly.objects.create(
-            claim=claim,
-            anomaly_type=anomaly_type,
-            description=(
-                "Écart détecté lors du rapprochement automatique : "
-                f"déclaré {claim.amount} $, reçu {transaction.amount} $ "
-                f"(référence {transaction.transaction_reference})."
-            ),
-            status=PaymentAnomaly.Status.OPEN,
-        )
-        anomalies_created += 1
+            if claim.bank_transaction_id or claim is matched_claim:
+                continue
+
+            if matched_claim is not None:
+                PaymentAnomaly.objects.create(
+                    claim=claim,
+                    anomaly_type=PaymentAnomaly.Type.REFERENCE_ALREADY_USED,
+                    description=(
+                        "La référence "
+                        f"{transaction.transaction_reference} a déjà "
+                        "été rapprochée avec une autre déclaration "
+                        "pour cette transaction bancaire. Vérifier "
+                        "s'il s'agit d'une erreur de saisie ou d'une "
+                        "tentative d'usurpation."
+                    ),
+                    status=PaymentAnomaly.Status.OPEN,
+                )
+                anomalies_created += 1
+                continue
+
+            # Aucun candidat ne correspondait exactement à cette
+            # transaction : on signale l'écart précis (montant,
+            # banque ou date) sur chacune des déclarations
+            # concurrentes.
+            anomaly_type = _anomaly_type_for_mismatch(claim, transaction)
+
+            PaymentAnomaly.objects.create(
+                claim=claim,
+                anomaly_type=anomaly_type,
+                description=_describe_mismatch(claim, transaction, anomaly_type),
+                status=PaymentAnomaly.Status.OPEN,
+            )
+            anomalies_created += 1
 
     return {
         "approved": approved_count,
