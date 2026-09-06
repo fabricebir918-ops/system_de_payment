@@ -1,5 +1,4 @@
 {% load static %}
-
 <!doctype html>
 <html lang="fr" data-theme="dark">
 
@@ -136,14 +135,12 @@
             <a href="{% url 'finance_profile' %}" class="finance-user">
 
                 <div class="user-avatar">
-                    {% with initials=user.full_congolese_name|slice:":2" %}
-                        {{ initials|upper }}
-                    {% endwith %}
+                    RF
                 </div>
 
                 <div class="user-information">
-                    <strong>{{ user.full_congolese_name }}</strong>
-                    <span>{{ user.get_staff_role_display|default:"Responsable financier" }}</span>
+                    <strong>Responsable financier</strong>
+                    <span>Chef du service financier</span>
                 </div>
 
                 <i class="bi bi-chevron-right"></i>
@@ -280,11 +277,16 @@
                 </label>
 
                 <select id="academicYearFilter">
-                    {% for year_value, year_label in academic_years %}
-                    <option value="{{ year_value }}" {% if academic_year == year_value %}selected{% endif %}>
-                        {{ year_label }}
+
+                    {% for year in academic_year_choices %}
+                    <option
+                        value="{{ year }}"
+                        {% if year == academic_year %}selected{% endif %}
+                    >
+                        {{ year }}
                     </option>
                     {% endfor %}
+
                 </select>
 
             </div>
@@ -300,19 +302,19 @@
 
                 <select id="periodFilter">
 
-                    <option value="year" {% if period_filter == 'year' %}selected{% endif %}>
+                    <option value="year">
                         Toute l'année
                     </option>
 
-                    <option value="semester1" {% if period_filter == 'semester1' %}selected{% endif %}>
+                    <option value="semester1">
                         Premier semestre
                     </option>
 
-                    <option value="semester2" {% if period_filter == 'semester2' %}selected{% endif %}>
+                    <option value="semester2">
                         Deuxième semestre
                     </option>
 
-                    <option value="month" {% if period_filter == 'month' %}selected{% endif %}>
+                    <option value="month">
                         Ce mois
                     </option>
 
@@ -331,12 +333,12 @@
 
                 <select id="bankFilter">
 
-                    <option value="" {% if not bank_filter %}selected{% endif %}>
+                    <option value="">
                         Toutes les banques
                     </option>
 
                     {% for bank in banks %}
-                    <option value="{{ bank.code|lower }}" {% if bank_filter == bank.code|lower %}selected{% endif %}>
+                    <option value="{{ bank.code }}">
                         {{ bank.name }}
                     </option>
                     {% endfor %}
@@ -346,7 +348,13 @@
             </div>
 
 
-            <!-- FACULTÉ -->
+            <!-- =================================================
+                 FACULTÉ
+
+                 IMPORTANT :
+                 Les value correspondent exactement aux clés
+                 utilisées dans academicStructure du JS.
+            ================================================== -->
 
             <div class="report-filter">
 
@@ -356,12 +364,12 @@
 
                 <select id="facultyFilter">
 
-                    <option value="" {% if not faculty_filter %}selected{% endif %}>
+                    <option value="">
                         Toutes les facultés
                     </option>
 
                     {% for faculty in faculties %}
-                    <option value="{{ faculty.code }}" {% if faculty_filter == faculty.code %}selected{% endif %}>
+                    <option value="{{ faculty.id }}">
                         {{ faculty.name }}
                     </option>
                     {% endfor %}
@@ -371,7 +379,12 @@
             </div>
 
 
-            <!-- DÉPARTEMENT -->
+            <!-- =================================================
+                 DÉPARTEMENT
+
+                 Rempli dynamiquement par JavaScript après
+                 sélection d'une faculté.
+            ================================================== -->
 
             <div class="report-filter">
 
@@ -391,7 +404,12 @@
             </div>
 
 
-            <!-- PARCOURS / SPÉCIALISATION -->
+            <!-- =================================================
+                 PARCOURS / SPÉCIALISATION
+
+                 Rempli dynamiquement après sélection
+                 d'un département.
+            ================================================== -->
 
             <div class="report-filter">
 
@@ -411,7 +429,29 @@
             </div>
 
 
-            <!-- NIVEAU ACADÉMIQUE -->
+            <!-- =================================================
+                 NIVEAU ACADÉMIQUE
+
+                 Rempli dynamiquement en fonction du parcours.
+
+                 Standard :
+                 BAC1 BAC2 BAC3 M1 M2
+
+                 Génie logiciel :
+                 BAC0 BAC1 BAC2 BAC3 M1 M2
+
+                 Réseaux et télécommunications :
+                 BAC0 BAC1 BAC2 BAC3 M1 M2
+
+                 Architecture :
+                 BAC0 BAC1 BAC2 BAC3 M1 M2
+
+                 Polytechnique :
+                 BAC0 BAC1 BAC2 BAC3 M1 M2
+
+                 Médecine humaine :
+                 BAC1 BAC2 BAC3 M1 M2 M3 DOC4
+            ================================================== -->
 
             <div class="report-filter">
 
@@ -466,15 +506,7 @@
                 </span>
 
                 <p id="activeReportContextText">
-                    {% if faculty_filter %}
-                        {% for faculty in faculties %}
-                            {% if faculty.code == faculty_filter %}
-                                {{ faculty.name }}
-                            {% endif %}
-                        {% endfor %}
-                    {% else %}
-                        Toutes les facultés
-                    {% endif %}
+                    Toutes les facultés
                 </p>
 
             </div>
@@ -499,7 +531,7 @@
                     <span>TOTAL ENCAISSÉ</span>
 
                     <strong id="totalCollectedKpi">
-                        {{ total_collected|floatformat:2 }} $
+                        925 450 $
                     </strong>
 
                     <small>
@@ -522,7 +554,7 @@
                     <span>TAUX DE RECOUVREMENT</span>
 
                     <strong id="recoveryRateKpi">
-                        {{ recovery_rate|floatformat:1 }} %
+                        78,4 %
                     </strong>
 
                     <small>
@@ -545,7 +577,7 @@
                     <span>RAPPROCHEMENT</span>
 
                     <strong id="reconciliationRateKpi">
-                        {{ reconciliation_rate|floatformat:1 }} %
+                        97,4 %
                     </strong>
 
                     <small>
@@ -568,7 +600,7 @@
                     <span>ANOMALIES OUVERTES</span>
 
                     <strong id="openAnomaliesKpi">
-                        {{ open_anomalies }}
+                        20
                     </strong>
 
                     <small>
@@ -666,21 +698,8 @@
                 </div>
 
 
-                <div class="bank-report-legend">
-
-                    {% for bank in bank_distribution %}
-                    <div>
-
-                        <span class="bank-report-dot {{ bank.code|lower }}"></span>
-
-                        <div>
-                            <strong>{{ bank.name }}</strong>
-                            <small>{{ bank.collected|floatformat:2 }} $</small>
-                        </div>
-
-                    </div>
-                    {% endfor %}
-
+                <div class="bank-report-legend" id="bankReportLegend">
+                    <!-- Généré dynamiquement par finance-reports.js -->
                 </div>
 
             </article>
@@ -757,7 +776,7 @@
                     <div class="report-rate-circle">
 
                         <strong id="reconciliationCircleRate">
-                            {{ reconciliation_rate|floatformat:1 }} %
+                            97,4 %
                         </strong>
 
                         <span>
@@ -776,7 +795,7 @@
                             </span>
 
                             <strong id="matchedTransactionsCount">
-                                {{ matched_claims }}
+                                2 394
                             </strong>
 
                         </div>
@@ -789,7 +808,7 @@
                             </span>
 
                             <strong id="unassignedTransactionsCount">
-                                {{ unassigned_claims }}
+                                7
                             </strong>
 
                         </div>
@@ -802,7 +821,7 @@
                             </span>
 
                             <strong id="missingReferencesCount">
-                                {{ missing_references }}
+                                5
                             </strong>
 
                         </div>
@@ -815,7 +834,7 @@
                             </span>
 
                             <strong id="amountMismatchCount">
-                                {{ amount_mismatches }}
+                                8
                             </strong>
 
                         </div>
@@ -878,62 +897,7 @@
 
                     <tbody id="bankPerformanceBody">
 
-                    {% for bank in bank_performance %}
-                    <tr data-bank="{{ bank.code|lower }}">
-
-                        <td>
-
-                            <div class="report-bank">
-
-                                <div class="report-bank-icon">
-                                    <i class="bi bi-bank"></i>
-                                </div>
-
-                                <div>
-                                    <strong>{{ bank.name }}</strong>
-                                    <small>Banque partenaire</small>
-                                </div>
-
-                            </div>
-
-                        </td>
-
-                        <td>{{ bank.statement_amount|floatformat:2 }} $</td>
-
-                        <td>{{ bank.system_amount|floatformat:2 }} $</td>
-
-                        <td>
-                            <span class="report-difference">
-                                {{ bank.difference|floatformat:2 }} $
-                            </span>
-                        </td>
-
-                        <td>{{ bank.transactions }}</td>
-
-                        <td>
-                            <span class="report-anomaly-count {% if bank.anomalies > 10 %}danger{% endif %}">
-                                {{ bank.anomalies }}
-                            </span>
-                        </td>
-
-                        <td>
-
-                            <div class="report-progress">
-
-                                <div>
-                                    <span style="width: {{ bank.reconciliation|floatformat:0 }}%;"></span>
-                                </div>
-
-                                <small>
-                                    {{ bank.reconciliation|floatformat:1 }} %
-                                </small>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-                    {% endfor %}
+                    <!-- Lignes générées dynamiquement par finance-reports.js -->
 
                     </tbody>
 
@@ -992,41 +956,7 @@
 
                     <tbody id="facultyReportBody">
 
-                    {% for faculty in faculty_recovery %}
-                    <tr data-faculty="{{ faculty.code }}">
-
-                        <td>
-                            <strong>
-                                {{ faculty.name }}
-                            </strong>
-                        </td>
-
-                        <td>{{ faculty.students }}</td>
-
-                        <td>{{ faculty.expected|floatformat:2 }} $</td>
-
-                        <td>{{ faculty.collected|floatformat:2 }} $</td>
-
-                        <td>{{ faculty.remaining|floatformat:2 }} $</td>
-
-                        <td>
-
-                            <div class="report-progress">
-
-                                <div>
-                                    <span style="width: {{ faculty.recovery_rate|floatformat:0 }}%;"></span>
-                                </div>
-
-                                <small>
-                                    {{ faculty.recovery_rate|floatformat:1 }} %
-                                </small>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-                    {% endfor %}
+                    <!-- Lignes générées dynamiquement par finance-reports.js -->
 
                     </tbody>
 
@@ -1184,12 +1114,15 @@
 
 
 <!-- =========================================================
-     REPORT DATA FOR JAVASCRIPT
+     DONNÉES SERVEUR (calculées dans finance_reports, injectées
+     une seule fois au chargement — filtres appliqués côté
+     client sur ces données déjà chargées)
 ========================================================= -->
 
-<script id="report-data" type="application/json">
-    {{ report_data_json|safe }}
-</script>
+<script
+    id="finance-reports-bootstrap"
+    type="application/json"
+>{{ bootstrap_data|safe }}</script>
 
 
 <!-- Bootstrap -->

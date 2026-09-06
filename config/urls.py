@@ -137,7 +137,6 @@ urlpatterns = [
     
     path('finance/students/',finance_students, name='finance_students'),
     path('finance/students/<int:student_id>/', finance_student_detail, name='finance_student_detail'),
-   # path("finance/students/export/csv/",finance_students_export_csv,name="finance_students_export_csv",),
     path('finance/reconciliation/', finance_reconciliation, name='finance_reconciliation'),
     path('finance/anomalies/', finance_anomalies, name='finance_anomalies'),
     path('finance/anomalies/update/', finance_anomaly_update, name='finance_anomaly_update'),
@@ -177,4 +176,3 @@ if settings.DEBUG:
 
 
 
-    

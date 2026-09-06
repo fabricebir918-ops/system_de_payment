@@ -708,6 +708,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
+    dropzone?.addEventListener("click", () => {
+        fileInput?.click();
+    });
+
+
     dropzone?.addEventListener("dragover", event => {
         event.preventDefault();
         dropzone.classList.add("dragover");

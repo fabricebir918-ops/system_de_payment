@@ -1,187 +1,177 @@
 /* ==========================================================
    ACADEMICPAY — FINANCE / ANOMALIES
-   ========================================================== */
+   finance-anomalies.js
+
+   Données réelles injectées par Django (finance_anomalies) dans
+   le bloc <script id="finance-anomalies-bootstrap"
+   type="application/json"> du template finance-anomalies.html.
+
+   "Enregistrer le traitement" et "Marquer comme résolue" envoient
+   un vrai POST vers finance_anomaly_update (status + note),
+   remplaçant les anciennes mutations locales uniquement.
+========================================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    /* ======================================================
-       1. CSRF TOKEN HELPER
-    ====================================================== */
+    "use strict";
 
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
+    const $ = id => document.getElementById(id);
+
+
+    /* ======================================================
+       DONNÉES INJECTÉES PAR LE SERVEUR
+       ====================================================== */
+
+    function readBootstrapData() {
+
+        const node = $("finance-anomalies-bootstrap");
+
+        const empty = {
+            academicYear: "",
+            anomalies: [],
+            banks: [],
+            typeCounts: {
+                difference: 0, unassigned: 0, missing: 0, duplicate: 0
+            },
+            kpi: { total: 0, pending: 0, processing: 0, resolved: 0 }
+        };
+
+        if (!node) {
+            console.error(
+                "AcademicPay : bloc de données " +
+                "finance-anomalies-bootstrap introuvable."
+            );
+            return empty;
         }
-        return cookieValue;
+
+        try {
+            return JSON.parse(node.textContent);
+        } catch (error) {
+            console.error(
+                "AcademicPay : données bootstrap invalides.",
+                error
+            );
+            return empty;
+        }
     }
 
-    /* ======================================================
-       2. ÉLÉMENTS — FILTRES
-    ====================================================== */
 
-    const searchInput =
-        document.getElementById("anomalySearch");
+    const BOOTSTRAP = readBootstrapData();
 
-    const bankFilter =
-        document.getElementById("bankFilter");
-
-    const typeFilter =
-        document.getElementById("typeFilter");
-
-    const statusFilter =
-        document.getElementById("statusFilter");
-
-    const priorityFilter =
-        document.getElementById("priorityFilter");
-
-    const resetFiltersButton =
-        document.getElementById("resetFilters");
-
-    const typeCards =
-        document.querySelectorAll(".anomaly-type-card");
+    const ANOMALY_UPDATE_URL =
+        document.body.dataset.anomalyUpdateUrl || "";
 
 
     /* ======================================================
-       3. TABLEAU
-    ====================================================== */
+       ÉLÉMENTS — FILTRES
+       ====================================================== */
 
-    const anomalyRows =
-        Array.from(
-            document.querySelectorAll(".anomaly-row")
-        );
-
-    const resultCount =
-        document.getElementById("resultCount");
-
-    const emptyState =
-        document.getElementById("emptyState");
-
-    const tableResponsive =
-        document.querySelector(
-            ".anomalies-list-card .table-responsive"
-        );
+    const searchInput = $("anomalySearch");
+    const bankFilter = $("bankFilter");
+    const typeFilter = $("typeFilter");
+    const statusFilter = $("statusFilter");
+    const priorityFilter = $("priorityFilter");
+    const resetFiltersButton = $("resetFilters");
+    const typeCards = document.querySelectorAll(".anomaly-type-card");
 
 
     /* ======================================================
-       4. KPI
-    ====================================================== */
+       TABLEAU
+       ====================================================== */
 
-    const totalAnomaliesKpi =
-        document.getElementById("totalAnomaliesKpi");
+    const tableBody = $("anomaliesTableBody");
+    const resultCount = $("resultCount");
+    const emptyState = $("emptyState");
 
-    const pendingAnomaliesKpi =
-        document.getElementById("pendingAnomaliesKpi");
-
-    const processingAnomaliesKpi =
-        document.getElementById("processingAnomaliesKpi");
-
-    const resolvedAnomaliesKpi =
-        document.getElementById("resolvedAnomaliesKpi");
-
-    const sidebarAnomalyCount =
-        document.getElementById("sidebarAnomalyCount");
-
-    const mobileAnomalyCount =
-        document.getElementById("mobileAnomalyCount");
+    const tableResponsive = document.querySelector(
+        ".anomalies-list-card .table-responsive"
+    );
 
 
     /* ======================================================
-       5. THÈME
-    ====================================================== */
+       KPI
+       ====================================================== */
 
-    const themeButton =
-        document.getElementById("themeButton");
-
-
-    /* ======================================================
-       6. TOAST
-    ====================================================== */
-
-    const toastElement =
-        document.getElementById("financeToast");
-
-    const toastMessage =
-        document.getElementById("toastMessage");
+    const totalAnomaliesKpi = $("totalAnomaliesKpi");
+    const pendingAnomaliesKpi = $("pendingAnomaliesKpi");
+    const processingAnomaliesKpi = $("processingAnomaliesKpi");
+    const resolvedAnomaliesKpi = $("resolvedAnomaliesKpi");
 
 
     /* ======================================================
-       7. MODALE
-    ====================================================== */
+       TOAST
+       ====================================================== */
 
-    const modalElement =
-        document.getElementById("anomalyDetailModal");
-
-    const modalStudent =
-        document.getElementById("modalStudent");
-
-    const modalMatricule =
-        document.getElementById("modalMatricule");
-
-    const modalReference =
-        document.getElementById("modalReference");
-
-    const modalBank =
-        document.getElementById("modalBank");
-
-    const modalDeclaredAmount =
-        document.getElementById("modalDeclaredAmount");
-
-    const modalDate =
-        document.getElementById("modalDate");
-
-    const modalBankReference =
-        document.getElementById("modalBankReference");
-
-    const modalBankAmount =
-        document.getElementById("modalBankAmount");
-
-    const modalAnomalyType =
-        document.getElementById("modalAnomalyType");
-
-    const modalAmount =
-        document.getElementById("modalAmount");
-
-    const modalDescription =
-        document.getElementById("modalDescription");
-
-    const modalAnomalyStatus =
-        document.getElementById("modalAnomalyStatus");
-
-    const modalAnomalyPriority =
-        document.getElementById("modalAnomalyPriority");
-
-    const treatmentStatus =
-        document.getElementById("anomalyTreatmentStatus");
-
-    const treatmentNote =
-        document.getElementById("anomalyTreatmentNote");
-
-    const saveAnomalyButton =
-        document.getElementById("saveAnomalyButton");
-
-    const resolveAnomalyButton =
-        document.getElementById("resolveAnomalyButton");
+    const toastElement = $("financeToast");
+    const toastMessage = $("toastMessage");
 
 
     /* ======================================================
-       8. ÉTAT
-    ====================================================== */
+       MODALE
+       ====================================================== */
 
-    let selectedRow = null;
+    const modalElement = $("anomalyDetailModal");
+    const modalStudent = $("modalStudent");
+    const modalMatricule = $("modalMatricule");
+    const modalReference = $("modalReference");
+    const modalBank = $("modalBank");
+    const modalDeclaredAmount = $("modalDeclaredAmount");
+    const modalDate = $("modalDate");
+    const modalBankReference = $("modalBankReference");
+    const modalBankAmount = $("modalBankAmount");
+    const modalAnomalyType = $("modalAnomalyType");
+    const modalAmount = $("modalAmount");
+    const modalDescription = $("modalDescription");
+    const modalAnomalyStatus = $("modalAnomalyStatus");
+    const modalAnomalyPriority = $("modalAnomalyPriority");
+    const treatmentStatus = $("anomalyTreatmentStatus");
+    const treatmentNote = $("anomalyTreatmentNote");
+    const saveAnomalyButton = $("saveAnomalyButton");
+    const resolveAnomalyButton = $("resolveAnomalyButton");
+
+
+    /* ======================================================
+       ÉTAT
+       ====================================================== */
+
+    let anomalies = BOOTSTRAP.anomalies.map(adaptAnomaly);
     let selectedAnomalyId = null;
 
 
+    function adaptAnomaly(raw) {
+
+        return {
+            id: raw.id,
+            student: raw.student,
+            matricule: raw.matricule,
+            reference: raw.reference,
+            bank: raw.bank.code,
+            bankName: raw.bank.name,
+            type: raw.type,
+            typeLabel: raw.typeLabel,
+            amount: raw.amount,
+            priority: raw.priority,
+            priorityLabel: raw.priorityLabel,
+            status: raw.status,
+            date: raw.date,
+            time: raw.time,
+            description: raw.description,
+            note: raw.note,
+            claimId: raw.claimId,
+            bankReference: raw.bankReference,
+            bankAmount: raw.bankAmount
+        };
+    }
+
+
+    function findAnomaly(id) {
+        return anomalies.find(a => String(a.id) === String(id)) || null;
+    }
+
+
     /* ======================================================
-       9. LIBELLÉS
-    ====================================================== */
+       LIBELLÉS
+       ====================================================== */
 
     const statusNames = {
         pending: "À traiter",
@@ -195,10 +185,17 @@ document.addEventListener("DOMContentLoaded", () => {
         low: "Faible"
     };
 
+    const typeBadgeClass = {
+        missing: "danger",
+        difference: "warning",
+        duplicate: "accent",
+        other: "info"
+    };
+
 
     /* ======================================================
-       10. OUTILS
-    ====================================================== */
+       OUTILS
+       ====================================================== */
 
     function normalizeText(value) {
         return String(value || "")
@@ -208,37 +205,51 @@ document.addEventListener("DOMContentLoaded", () => {
             .trim();
     }
 
-    function setText(id, value) {
-        const element = document.getElementById(id);
-        if (element) element.textContent = value;
+
+    function money(value) {
+        const number = Number(value) || 0;
+        return new Intl.NumberFormat(
+            "fr-FR", { maximumFractionDigits: 0 }
+        ).format(number) + " $";
+    }
+
+
+    function initials(name) {
+        const words = String(name ?? "").trim().split(/\s+/).filter(Boolean);
+        if (!words.length) return "—";
+        if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+        return (words[0].charAt(0) + words[1].charAt(0)).toUpperCase();
     }
 
 
     /* ======================================================
-       11. TOAST
-    ====================================================== */
+       TOAST
+       ====================================================== */
 
     function showToast(message) {
-        if (!toastElement || !toastMessage) return;
+
+        if (!toastElement || !toastMessage) {
+            return;
+        }
 
         toastMessage.textContent = message;
 
-        if (typeof bootstrap === "undefined") return;
+        if (typeof bootstrap === "undefined") {
+            return;
+        }
 
         bootstrap.Toast
-            .getOrCreateInstance(
-                toastElement,
-                { delay: 2600 }
-            )
+            .getOrCreateInstance(toastElement, { delay: 2600 })
             .show();
     }
 
 
     /* ======================================================
-       12. COMPTEUR DES RÉSULTATS
-    ====================================================== */
+       COMPTEUR DES RÉSULTATS
+       ====================================================== */
 
     function updateResultCount(count) {
+
         if (resultCount) {
             resultCount.textContent =
                 count === 1
@@ -257,51 +268,126 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* ======================================================
-       13. FILTRAGE
-    ====================================================== */
+       FILTRAGE + RENDU
+       ====================================================== */
 
-    function applyFilters() {
+    function matchesFilters(anomaly) {
+
         const searchTerm = normalizeText(searchInput?.value);
         const selectedBank = bankFilter?.value || "all";
         const selectedType = typeFilter?.value || "all";
         const selectedStatus = statusFilter?.value || "all";
         const selectedPriority = priorityFilter?.value || "all";
 
-        let visibleCount = 0;
+        if (selectedBank !== "all" && anomaly.bank !== selectedBank) {
+            return false;
+        }
 
-        anomalyRows.forEach(row => {
-            const rowText = normalizeText(row.textContent);
+        if (selectedType !== "all" && anomaly.type !== selectedType) {
+            return false;
+        }
 
-            const matchesSearch = searchTerm === "" || rowText.includes(searchTerm);
-            const matchesBank = selectedBank === "all" || row.dataset.bank === selectedBank;
-            const matchesType = selectedType === "all" || row.dataset.type === selectedType;
-            const matchesStatus = selectedStatus === "all" || row.dataset.status === selectedStatus;
-            const matchesPriority = selectedPriority === "all" || row.dataset.priority === selectedPriority;
+        if (selectedStatus !== "all" && anomaly.status !== selectedStatus) {
+            return false;
+        }
 
-            const shouldDisplay = matchesSearch && matchesBank && matchesType && matchesStatus && matchesPriority;
+        if (selectedPriority !== "all" && anomaly.priority !== selectedPriority) {
+            return false;
+        }
 
-            row.hidden = !shouldDisplay;
+        if (searchTerm) {
+            const haystack = normalizeText([
+                anomaly.student, anomaly.matricule,
+                anomaly.reference, anomaly.bankName
+            ].join(" "));
 
-            if (shouldDisplay) {
-                visibleCount++;
+            if (!haystack.includes(searchTerm)) {
+                return false;
             }
-        });
+        }
 
-        updateResultCount(visibleCount);
+        return true;
+    }
+
+
+    function applyFilters() {
+
+        const filtered = anomalies.filter(matchesFilters);
+
+        renderTable(filtered);
+        updateResultCount(filtered.length);
         updateActiveTypeCard();
     }
 
 
+    function renderTable(rows) {
+
+        if (!tableBody) {
+            return;
+        }
+
+        tableBody.innerHTML = "";
+
+        rows.forEach(anomaly => {
+
+            const tr = document.createElement("tr");
+            tr.className = "anomaly-row";
+            tr.dataset.id = anomaly.id;
+
+            tr.innerHTML = `
+                <td>
+                    <div class="student-cell">
+                        <span class="student-avatar">${initials(anomaly.student)}</span>
+                        <div>
+                            <strong>${anomaly.student}</strong>
+                            <small>${anomaly.matricule}</small>
+                        </div>
+                    </div>
+                </td>
+                <td class="reference">${anomaly.reference}</td>
+                <td>${anomaly.bankName}</td>
+                <td>
+                    <span class="anomaly-type-badge ${typeBadgeClass[anomaly.type] || "info"}">
+                        ${anomaly.typeLabel}
+                    </span>
+                </td>
+                <td>${money(anomaly.amount)}</td>
+                <td>
+                    <span class="priority-badge ${anomaly.priority}">
+                        ${anomaly.priorityLabel}
+                    </span>
+                </td>
+                <td>
+                    <span class="anomaly-status ${anomaly.status}">
+                        ${statusNames[anomaly.status] || anomaly.status}
+                    </span>
+                </td>
+                <td>
+                    ${anomaly.date}
+                    <small>${anomaly.time}</small>
+                </td>
+                <td>
+                    <button
+                        type="button"
+                        class="anomaly-view-button"
+                        title="Examiner"
+                        data-anomaly-id="${anomaly.id}"
+                    >
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </td>
+            `;
+
+            tableBody.appendChild(tr);
+        });
+    }
+
+
     /* ======================================================
-       14. RECHERCHE
-    ====================================================== */
+       RECHERCHE / FILTRES SELECT
+       ====================================================== */
 
     searchInput?.addEventListener("input", applyFilters);
-
-
-    /* ======================================================
-       15. FILTRES SELECT
-    ====================================================== */
 
     [bankFilter, typeFilter, statusFilter, priorityFilter].forEach(filter => {
         filter?.addEventListener("change", applyFilters);
@@ -309,38 +395,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* ======================================================
-       16. CARTES DE TYPE
-    ====================================================== */
+       CARTES DE TYPE
+       ====================================================== */
 
     typeCards.forEach(card => {
+
         card.addEventListener("click", () => {
-            if (!typeFilter) return;
+
+            if (!typeFilter) {
+                return;
+            }
 
             const selectedType = card.dataset.typeFilter;
 
-            if (!selectedType) return;
-
-            if (typeFilter.value === selectedType) {
-                typeFilter.value = "all";
-            } else {
-                typeFilter.value = selectedType;
+            if (!selectedType) {
+                return;
             }
+
+            typeFilter.value =
+                typeFilter.value === selectedType ? "all" : selectedType;
 
             applyFilters();
 
-            document.querySelector(".anomalies-list-card")?.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
+            document.querySelector(".anomalies-list-card")
+                ?.scrollIntoView({ behavior: "smooth", block: "start" });
         });
     });
 
 
-    /* ======================================================
-       17. CARTE TYPE ACTIVE
-    ====================================================== */
-
     function updateActiveTypeCard() {
+
         const selectedType = typeFilter?.value || "all";
 
         typeCards.forEach(card => {
@@ -354,122 +438,126 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* ======================================================
-       18. RÉINITIALISATION DES FILTRES
-    ====================================================== */
+       RÉINITIALISATION DES FILTRES
+       ====================================================== */
 
     function resetAllFilters() {
+
         if (searchInput) searchInput.value = "";
         if (bankFilter) bankFilter.value = "all";
         if (typeFilter) typeFilter.value = "all";
         if (statusFilter) statusFilter.value = "all";
         if (priorityFilter) priorityFilter.value = "all";
 
-        typeCards.forEach(card => card.classList.remove("active"));
-
         applyFilters();
-        searchInput?.focus();
+    }
+
+
+    resetFiltersButton?.addEventListener("click", () => {
+        resetAllFilters();
         showToast("Filtres réinitialisés.");
-    }
+    });
 
 
     /* ======================================================
-       19. BOUTON RÉINITIALISER
-    ====================================================== */
-
-    if (resetFiltersButton) {
-        resetFiltersButton.addEventListener("click", (event) => {
-            event.preventDefault();
-            resetAllFilters();
-        });
-    }
-
-
-    /* ======================================================
-       20. KPI
-    ====================================================== */
+       KPI + COMPTEURS PAR TYPE (recalculés depuis l'état local,
+       pour refléter les changements de statut en direct)
+       ====================================================== */
 
     function updateKpis() {
-        const total = anomalyRows.length;
-        const pending = anomalyRows.filter(row => row.dataset.status === "pending").length;
-        const processing = anomalyRows.filter(row => row.dataset.status === "processing").length;
-        const resolved = anomalyRows.filter(row => row.dataset.status === "resolved").length;
+
+        const total = anomalies.length;
+        const pending = anomalies.filter(a => a.status === "pending").length;
+        const processing = anomalies.filter(a => a.status === "processing").length;
+        const resolved = anomalies.filter(a => a.status === "resolved").length;
 
         if (totalAnomaliesKpi) totalAnomaliesKpi.textContent = total;
         if (pendingAnomaliesKpi) pendingAnomaliesKpi.textContent = pending;
         if (processingAnomaliesKpi) processingAnomaliesKpi.textContent = processing;
         if (resolvedAnomaliesKpi) resolvedAnomaliesKpi.textContent = resolved;
 
-        const unresolved = pending + processing;
+        const notResolved = a => a.status !== "resolved";
 
-        if (sidebarAnomalyCount) sidebarAnomalyCount.textContent = unresolved;
-        if (mobileAnomalyCount) mobileAnomalyCount.textContent = unresolved;
+        const difference = anomalies.filter(a => a.type === "difference" && notResolved(a)).length;
+        const unassigned = anomalies.filter(a => a.type === "missing" && notResolved(a)).length;
+        const duplicate = anomalies.filter(a => a.type === "duplicate" && notResolved(a)).length;
+
+        setTypeCount("typeCountDifference", difference);
+        setTypeCount("typeCountUnassigned", unassigned);
+        setTypeCount("typeCountMissing", unassigned);
+        setTypeCount("typeCountDuplicate", duplicate);
+    }
+
+
+    function setTypeCount(id, count) {
+        const el = $(id);
+        if (el) {
+            el.textContent = count === 1 ? "1 anomalie" : `${count} anomalies`;
+        }
     }
 
 
     /* ======================================================
-       21. BOUTONS EXAMINER
-    ====================================================== */
+       BOUTONS EXAMINER
+       ====================================================== */
 
-    document.addEventListener("click", (event) => {
+    tableBody?.addEventListener("click", event => {
+
         const button = event.target.closest(".anomaly-view-button");
-        if (!button) return;
 
-        const row = button.closest(".anomaly-row");
-        if (!row) return;
+        if (!button) {
+            return;
+        }
 
-        openAnomaly(row, button);
+        openAnomaly(button.dataset.anomalyId);
     });
 
 
     /* ======================================================
-       22. OUVRIR UNE ANOMALIE
-    ====================================================== */
+       OUVRIR UNE ANOMALIE
+       ====================================================== */
 
-    function openAnomaly(row, button) {
-        selectedRow = row;
-        selectedAnomalyId = button.dataset.anomalyId || null;
+    function openAnomaly(anomalyId) {
 
-        const student = button.dataset.student || "—";
-        const matricule = button.dataset.matricule || "—";
-        const reference = button.dataset.reference || "—";
-        const bank = button.dataset.bank || "—";
-        const typeLabel = button.dataset.typeLabel || "—";
-        const amount = button.dataset.amount || "—";
-        const declaredAmount = button.dataset.declaredAmount || "—";
-        const bankReference = button.dataset.bankReference || "—";
-        const bankAmount = button.dataset.bankAmount || "—";
-        const date = button.dataset.date || "—";
-        const description = button.dataset.description || "Aucune description fournie.";
-        const status = row.dataset.status || "pending";
-        const priority = row.dataset.priority || "medium";
-        const note = button.dataset.note || "";
+        const anomaly = findAnomaly(anomalyId);
 
-        // Student
-        if (modalStudent) modalStudent.textContent = student;
-        if (modalMatricule) modalMatricule.textContent = matricule;
+        if (!anomaly) {
+            return;
+        }
 
-        // Declaration
-        if (modalReference) modalReference.textContent = reference;
-        if (modalBank) modalBank.textContent = bank;
-        if (modalDeclaredAmount) modalDeclaredAmount.textContent = declaredAmount;
-        if (modalDate) modalDate.textContent = date;
+        selectedAnomalyId = anomaly.id;
 
-        // Bank transaction
-        if (modalBankReference) modalBankReference.textContent = bankReference;
-        if (modalBankAmount) modalBankAmount.textContent = bankAmount;
+        if (modalStudent) modalStudent.textContent = anomaly.student || "—";
+        if (modalMatricule) modalMatricule.textContent = anomaly.matricule || "—";
+        if (modalReference) modalReference.textContent = anomaly.reference || "—";
+        if (modalBank) modalBank.textContent = anomaly.bankName || "—";
 
-        // Diagnostic
-        if (modalAnomalyType) modalAnomalyType.textContent = typeLabel;
-        if (modalAmount) modalAmount.textContent = amount;
-        if (modalDescription) modalDescription.textContent = description;
+        if (modalDeclaredAmount) {
+            modalDeclaredAmount.textContent = money(anomaly.amount);
+        }
 
-        // Status / priority
-        updateModalStatusBadge(status);
-        updateModalPriorityBadge(priority);
+        if (modalDate) {
+            modalDate.textContent = `${anomaly.date} à ${anomaly.time}`;
+        }
 
-        // Treatment
-        if (treatmentStatus) treatmentStatus.value = status;
-        if (treatmentNote) treatmentNote.value = note;
+        if (modalBankReference) {
+            modalBankReference.textContent = anomaly.bankReference || "—";
+        }
+
+        if (modalBankAmount) {
+            modalBankAmount.textContent =
+                anomaly.bankAmount != null ? money(anomaly.bankAmount) : "—";
+        }
+
+        if (modalAnomalyType) modalAnomalyType.textContent = anomaly.typeLabel || "—";
+        if (modalAmount) modalAmount.textContent = money(anomaly.amount);
+        if (modalDescription) modalDescription.textContent = anomaly.description || "—";
+
+        updateModalStatusBadge(anomaly.status);
+        updateModalPriorityBadge(anomaly.priority);
+
+        if (treatmentStatus) treatmentStatus.value = anomaly.status;
+        if (treatmentNote) treatmentNote.value = anomaly.note || "";
 
         updateResolveButton();
 
@@ -480,75 +568,124 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* ======================================================
-       23. BADGE STATUT MODALE
-    ====================================================== */
+       BADGES MODALE
+       ====================================================== */
 
     function updateModalStatusBadge(status) {
         if (!modalAnomalyStatus) return;
-
         modalAnomalyStatus.className = `anomaly-status ${status}`;
         modalAnomalyStatus.textContent = statusNames[status] || "—";
     }
 
 
-    /* ======================================================
-       24. BADGE PRIORITÉ MODALE
-    ====================================================== */
-
     function updateModalPriorityBadge(priority) {
         if (!modalAnomalyPriority) return;
-
         modalAnomalyPriority.className = `priority-badge ${priority}`;
         modalAnomalyPriority.textContent = priorityNames[priority] || "—";
     }
 
 
-    /* ======================================================
-       25. STATUT DANS LE TABLEAU
-    ====================================================== */
+    function updateRowStatus(anomalyId, status) {
 
-    function updateRowStatus(row, status) {
-        const badge = row.querySelector(".anomaly-status");
-        if (!badge) return;
+        const row = tableBody?.querySelector(`tr[data-id="${anomalyId}"]`);
+        const badge = row?.querySelector(".anomaly-status");
 
-        badge.className = `anomaly-status ${status}`;
-        badge.textContent = statusNames[status] || status;
+        if (badge) {
+            badge.className = `anomaly-status ${status}`;
+            badge.textContent = statusNames[status] || status;
+        }
     }
 
 
     /* ======================================================
-       26. CHANGEMENT STATUT DANS MODALE
-    ====================================================== */
+       ENVOI RÉEL VERS LE SERVEUR
+       ====================================================== */
 
-    treatmentStatus?.addEventListener("change", updateResolveButton);
+    function getCsrfToken() {
+        const match = document.cookie.match(/(?:^|;\s*)csrftoken=([^;]+)/);
+        return match ? decodeURIComponent(match[1]) : "";
+    }
+
+
+    async function persistAnomalyUpdate(anomalyId, status, note) {
+
+        if (!ANOMALY_UPDATE_URL) {
+            showToast("Configuration manquante : impossible de contacter le serveur.");
+            return false;
+        }
+
+        const formData = new FormData();
+        formData.append("anomaly_id", anomalyId);
+        formData.append("status", status);
+        formData.append("note", note || "");
+
+        try {
+
+            const response = await fetch(ANOMALY_UPDATE_URL, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCsrfToken(),
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                const message =
+                    (data.errors && data.errors.join(" ")) ||
+                    "Une erreur est survenue lors de la mise à jour.";
+                showToast(message);
+                return false;
+            }
+
+            const anomaly = findAnomaly(anomalyId);
+
+            if (anomaly) {
+                anomaly.status = status;
+                anomaly.note = note || "";
+            }
+
+            return true;
+
+        } catch (error) {
+            console.error("AcademicPay : échec de la mise à jour.", error);
+            showToast("Impossible de contacter le serveur. Vérifiez votre connexion.");
+            return false;
+        }
+    }
 
 
     /* ======================================================
-       27. ENREGISTRER LE TRAITEMENT (AJAX)
-    ====================================================== */
+       ENREGISTRER LE TRAITEMENT
+       ====================================================== */
 
-    saveAnomalyButton?.addEventListener("click", () => {
-        if (!selectedRow) {
+    saveAnomalyButton?.addEventListener("click", async () => {
+
+        if (!selectedAnomalyId) {
             showToast("Aucune anomalie sélectionnée.");
             return;
         }
 
-        const newStatus = treatmentStatus?.value || selectedRow.dataset.status || "pending";
+        const newStatus = treatmentStatus?.value || "pending";
         const note = treatmentNote?.value.trim() || "";
 
-        // Update local UI first
-        selectedRow.dataset.status = newStatus;
-        selectedRow.dataset.note = note;
+        saveAnomalyButton.disabled = true;
 
-        updateRowStatus(selectedRow, newStatus);
-        updateModalStatusBadge(newStatus);
-        updateResolveButton();
+        const success = await persistAnomalyUpdate(
+            selectedAnomalyId, newStatus, note
+        );
 
-        // Send to server
-        if (selectedAnomalyId) {
-            updateAnomalyOnServer(selectedAnomalyId, newStatus, note);
+        saveAnomalyButton.disabled = false;
+
+        if (!success) {
+            return;
         }
 
+        updateRowStatus(selectedAnomalyId, newStatus);
+        updateModalStatusBadge(newStatus);
+        updateResolveButton();
         updateKpis();
         applyFilters();
 
@@ -557,32 +694,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* ======================================================
-       28. MARQUER COMME RÉSOLUE (AJAX)
-    ====================================================== */
+       MARQUER COMME RÉSOLUE
+       ====================================================== */
 
-    resolveAnomalyButton?.addEventListener("click", () => {
-        if (!selectedRow) {
+    resolveAnomalyButton?.addEventListener("click", async () => {
+
+        if (!selectedAnomalyId) {
             showToast("Aucune anomalie sélectionnée.");
             return;
         }
 
-        const note = treatmentNote?.value.trim() || "Anomalie résolue.";
+        const note = treatmentNote?.value.trim() || "";
 
-        // Update local UI first
-        selectedRow.dataset.status = "resolved";
-        selectedRow.dataset.note = note;
+        resolveAnomalyButton.disabled = true;
 
-        if (treatmentStatus) treatmentStatus.value = "resolved";
+        const success = await persistAnomalyUpdate(
+            selectedAnomalyId, "resolved", note
+        );
 
-        updateRowStatus(selectedRow, "resolved");
-        updateModalStatusBadge("resolved");
-        updateResolveButton();
+        resolveAnomalyButton.disabled = false;
 
-        // Send to server
-        if (selectedAnomalyId) {
-            updateAnomalyOnServer(selectedAnomalyId, "resolved", note);
+        if (!success) {
+            return;
         }
 
+        if (treatmentStatus) {
+            treatmentStatus.value = "resolved";
+        }
+
+        updateRowStatus(selectedAnomalyId, "resolved");
+        updateModalStatusBadge("resolved");
+        updateResolveButton();
         updateKpis();
         applyFilters();
 
@@ -591,48 +733,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* ======================================================
-       29. AJAX UPDATE ANOMALY
-    ====================================================== */
-
-    function updateAnomalyOnServer(anomalyId, status, note) {
-        const formData = new FormData();
-        formData.append('anomaly_id', anomalyId);
-        formData.append('status', status);
-        formData.append('note', note);
-
-        const csrftoken = getCookie('csrftoken');
-
-        fetch("/finance/anomalies/update/", {
-            method: 'POST',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRFToken': csrftoken,
-            },
-            body: formData,
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (!data.success) {
-                if (data.errors && data.errors.length > 0) {
-                    showToast("Erreur: " + data.errors[0]);
-                } else {
-                    showToast("Une erreur est survenue.");
-                }
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showToast("Une erreur est survenue. Veuillez réessayer.");
-        });
-    }
-
-
-    /* ======================================================
-       30. BOUTON RÉSOUDRE
-    ====================================================== */
+       BOUTON RÉSOUDRE
+       ====================================================== */
 
     function updateResolveButton() {
-        if (!resolveAnomalyButton) return;
+
+        if (!resolveAnomalyButton) {
+            return;
+        }
 
         const resolved = treatmentStatus?.value === "resolved";
 
@@ -644,37 +752,105 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    treatmentStatus?.addEventListener("change", updateResolveButton);
+
+
     /* ======================================================
-       31. FERMETURE DE LA MODALE
-    ====================================================== */
+       FERMETURE DE LA MODALE
+       ====================================================== */
 
     modalElement?.addEventListener("hidden.bs.modal", () => {
-        selectedRow = null;
         selectedAnomalyId = null;
-        if (treatmentNote) treatmentNote.value = "";
+        if (treatmentNote) {
+            treatmentNote.value = "";
+        }
     });
 
 
     /* ======================================================
-       32. THÈME
-    ====================================================== */
+       OUVERTURE DEPUIS UNE URL
+       Exemple : finance-anomalies.html?reference=TRX8492051
+       (utilisé notamment par le lien "Examiner l'anomalie" de
+       la page Rapprochement global)
+       ====================================================== */
 
+    function openFromUrl() {
+
+        const params = new URLSearchParams(window.location.search);
+        const reference = params.get("reference");
+
+        if (!reference) {
+            return;
+        }
+
+        const target = anomalies.find(a => a.reference === reference);
+
+        if (!target) {
+            showToast("L'anomalie demandée n'a pas été trouvée.");
+            return;
+        }
+
+        resetAllFilters();
+
+        applyFilters();
+
+        setTimeout(() => {
+
+            const row = tableBody?.querySelector(
+                `tr[data-id="${target.id}"]`
+            );
+
+            if (row) {
+                row.classList.add("highlighted-anomaly");
+
+                row.scrollIntoView({
+                    behavior: "smooth", block: "center"
+                });
+
+                setTimeout(() => {
+                    row.classList.remove("highlighted-anomaly");
+                }, 4000);
+            }
+
+            openAnomaly(target.id);
+
+        }, 200);
+    }
+
+
+    /* ======================================================
+       THÈME
+       ====================================================== */
+
+    const themeButton = $("themeButton");
     const THEME_KEY = "academicpay-finance-theme";
 
+
     function initializeTheme() {
+
         const savedTheme = localStorage.getItem(THEME_KEY);
+
         if (savedTheme === "light") {
             document.body.classList.add("light-theme");
         } else {
             document.body.classList.remove("light-theme");
         }
+
         updateThemeIcon();
     }
 
+
     function updateThemeIcon() {
-        if (!themeButton) return;
+
+        if (!themeButton) {
+            return;
+        }
+
         const icon = themeButton.querySelector("i");
-        if (!icon) return;
+
+        if (!icon) {
+            return;
+        }
 
         const lightMode = document.body.classList.contains("light-theme");
 
@@ -687,94 +863,49 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+
     themeButton?.addEventListener("click", () => {
+
         document.body.classList.toggle("light-theme");
+
         const lightMode = document.body.classList.contains("light-theme");
+
         localStorage.setItem(THEME_KEY, lightMode ? "light" : "dark");
+
         updateThemeIcon();
     });
 
 
     /* ======================================================
-       33. OUVERTURE DEPUIS UNE URL
-    ====================================================== */
-
-    function openFromUrl() {
-        const params = new URLSearchParams(window.location.search);
-        const reference = params.get("reference");
-        const searchParam = params.get("search");
-
-        if (!reference && !searchParam) return;
-
-        // If search param exists, set it in the search input
-        if (searchParam && searchInput) {
-            searchInput.value = searchParam;
-        }
-
-        if (!reference) {
-            applyFilters();
-            return;
-        }
-
-        const targetRow = anomalyRows.find(row => {
-            const button = row.querySelector(".anomaly-view-button");
-            return button?.dataset.reference === reference;
-        });
-
-        if (!targetRow) {
-            showToast("L'anomalie demandée n'a pas été trouvée.");
-            applyFilters();
-            return;
-        }
-
-        // Reset filters
-        if (bankFilter) bankFilter.value = "all";
-        if (typeFilter) typeFilter.value = "all";
-        if (statusFilter) statusFilter.value = "all";
-        if (priorityFilter) priorityFilter.value = "all";
-
-        applyFilters();
-
-        // Highlight the row
-        targetRow.classList.add("highlighted-anomaly");
-
-        setTimeout(() => {
-            targetRow.scrollIntoView({ behavior: "smooth", block: "center" });
-        }, 200);
-
-        setTimeout(() => {
-            const button = targetRow.querySelector(".anomaly-view-button");
-            if (button) {
-                openAnomaly(targetRow, button);
-            }
-        }, 500);
-
-        setTimeout(() => {
-            targetRow.classList.remove("highlighted-anomaly");
-        }, 4000);
-    }
-
-
-    /* ======================================================
-       34. ACCESSIBILITÉ DES CARTES
-    ====================================================== */
+       ACCESSIBILITÉ DES CARTES
+       ====================================================== */
 
     typeCards.forEach(card => {
+
+        card.setAttribute("tabindex", "0");
+
         card.addEventListener("keydown", event => {
-            if (event.key !== "Enter" && event.key !== " ") return;
-            event.preventDefault();
-            card.click();
+
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                card.click();
+            }
         });
     });
 
 
     /* ======================================================
-       35. INITIALISATION
-    ====================================================== */
+       INITIALISATION
+       ====================================================== */
 
     initializeTheme();
     updateKpis();
     applyFilters();
     openFromUrl();
+
+    console.info(
+        `AcademicPay : ${BOOTSTRAP.banks.length} banques chargées, ` +
+        `${anomalies.length} anomalies calculées.`
+    );
 
 });

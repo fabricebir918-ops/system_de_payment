@@ -1,5 +1,4 @@
 {% load static %}
-
 <!doctype html>
 <html lang="fr">
 
@@ -29,7 +28,10 @@
 </head>
 
 
-<body>
+<body
+    data-anomaly-update-url="{% url 'finance_anomaly_update' %}"
+    data-anomalies-list-url="{% url 'finance_anomalies' %}"
+>
 
 <div class="finance-layout">
 
@@ -129,14 +131,12 @@
             <a href="{% url 'finance_profile' %}" class="finance-user">
 
                 <div class="user-avatar">
-                    {% with initials=user.full_congolese_name|slice:":2" %}
-                        {{ initials|upper }}
-                    {% endwith %}
+                    RF
                 </div>
 
                 <div class="user-information">
-                    <strong>{{ user.full_congolese_name }}</strong>
-                    <span>{{ user.get_staff_role_display|default:"Responsable financier" }}</span>
+                    <strong>Responsable financier</strong>
+                    <span>Chef du service financier</span>
                 </div>
 
                 <i class="bi bi-chevron-right"></i>
@@ -245,7 +245,7 @@
 
                 <div>
                     <span>TOTAL ANOMALIES</span>
-                    <strong id="totalAnomaliesKpi">{{ total_anomalies }}</strong>
+                    <strong id="totalAnomaliesKpi">0</strong>
                     <small>Détectées sur la période</small>
                 </div>
 
@@ -260,7 +260,7 @@
 
                 <div>
                     <span>À TRAITER</span>
-                    <strong id="pendingAnomaliesKpi">{{ pending_anomalies }}</strong>
+                    <strong id="pendingAnomaliesKpi">0</strong>
                     <small>Intervention nécessaire</small>
                 </div>
 
@@ -275,7 +275,7 @@
 
                 <div>
                     <span>EN COURS</span>
-                    <strong id="processingAnomaliesKpi">{{ processing_anomalies }}</strong>
+                    <strong id="processingAnomaliesKpi">0</strong>
                     <small>Cas actuellement examinés</small>
                 </div>
 
@@ -290,7 +290,7 @@
 
                 <div>
                     <span>RÉSOLUES</span>
-                    <strong id="resolvedAnomaliesKpi">{{ resolved_anomalies }}</strong>
+                    <strong id="resolvedAnomaliesKpi">0</strong>
                     <small>Anomalies clôturées</small>
                 </div>
 
@@ -317,7 +317,7 @@
 
                 <div>
                     <strong>Montants incohérents</strong>
-                    <span id="differenceCount">{{ difference_count }} anomalies</span>
+                    <span id="typeCountDifference">0 anomalie</span>
                 </div>
 
                 <i class="bi bi-chevron-right"></i>
@@ -337,7 +337,7 @@
 
                 <div>
                     <strong>Transactions non attribuées</strong>
-                    <span id="unassignedCount">{{ unassigned_count }} anomalies</span>
+                    <span id="typeCountUnassigned">0 anomalie</span>
                 </div>
 
                 <i class="bi bi-chevron-right"></i>
@@ -357,7 +357,7 @@
 
                 <div>
                     <strong>Références introuvables</strong>
-                    <span id="missingCount">{{ missing_count }} anomalies</span>
+                    <span id="typeCountMissing">0 anomalie</span>
                 </div>
 
                 <i class="bi bi-chevron-right"></i>
@@ -377,10 +377,11 @@
 
                 <div>
                     <strong>Doublons</strong>
-                    <span id="duplicateCount">{{ duplicate_count }} anomalies</span>
+                    <span id="typeCountDuplicate">0 anomalie</span>
                 </div>
 
                 <i class="bi bi-chevron-right"></i>
+
 
             </button>
 
@@ -402,7 +403,6 @@
                     id="anomalySearch"
                     placeholder="Rechercher étudiant, matricule ou référence..."
                     autocomplete="off"
-                    value="{{ search_query }}"
                 >
 
             </div>
@@ -414,12 +414,12 @@
 
                 <select id="bankFilter">
 
-                    <option value="all" {% if bank_filter == 'all' %}selected{% endif %}>
+                    <option value="all">
                         Toutes les banques
                     </option>
 
                     {% for bank in banks %}
-                    <option value="{{ bank.code|lower }}" {% if bank_filter == bank.code|lower %}selected{% endif %}>
+                    <option value="{{ bank.code }}">
                         {{ bank.name }}
                     </option>
                     {% endfor %}
@@ -435,23 +435,23 @@
 
                 <select id="typeFilter">
 
-                    <option value="all" {% if type_filter == 'all' %}selected{% endif %}>
+                    <option value="all">
                         Tous les types
                     </option>
 
-                    <option value="difference" {% if type_filter == 'difference' %}selected{% endif %}>
+                    <option value="difference">
                         Montant incohérent
                     </option>
 
-                    <option value="unassigned" {% if type_filter == 'unassigned' %}selected{% endif %}>
+                    <option value="unassigned">
                         Transaction non attribuée
                     </option>
 
-                    <option value="missing" {% if type_filter == 'missing' %}selected{% endif %}>
+                    <option value="missing">
                         Référence introuvable
                     </option>
 
-                    <option value="duplicate" {% if type_filter == 'duplicate' %}selected{% endif %}>
+                    <option value="duplicate">
                         Doublon
                     </option>
 
@@ -466,19 +466,19 @@
 
                 <select id="statusFilter">
 
-                    <option value="all" {% if status_filter == 'all' %}selected{% endif %}>
+                    <option value="all">
                         Tous les statuts
                     </option>
 
-                    <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>
+                    <option value="pending">
                         À traiter
                     </option>
 
-                    <option value="processing" {% if status_filter == 'processing' %}selected{% endif %}>
+                    <option value="processing">
                         En cours
                     </option>
 
-                    <option value="resolved" {% if status_filter == 'resolved' %}selected{% endif %}>
+                    <option value="resolved">
                         Résolue
                     </option>
 
@@ -493,19 +493,19 @@
 
                 <select id="priorityFilter">
 
-                    <option value="all" {% if priority_filter == 'all' %}selected{% endif %}>
+                    <option value="all">
                         Toutes les priorités
                     </option>
 
-                    <option value="high" {% if priority_filter == 'high' %}selected{% endif %}>
+                    <option value="high">
                         Élevée
                     </option>
 
-                    <option value="medium" {% if priority_filter == 'medium' %}selected{% endif %}>
+                    <option value="medium">
                         Moyenne
                     </option>
 
-                    <option value="low" {% if priority_filter == 'low' %}selected{% endif %}>
+                    <option value="low">
                         Faible
                     </option>
 
@@ -524,9 +524,7 @@
             </button>
 
         </section>
-
-
-        <!-- =================================================
+                <!-- =================================================
              LISTE DES ANOMALIES
         ================================================== -->
 
@@ -550,7 +548,7 @@
                     class="anomaly-result-count"
                     id="resultCount"
                 >
-                    {{ result_count }} anomalie{{ result_count|pluralize }} affichée{{ result_count|pluralize }}
+                    6 anomalies affichées
                 </span>
 
             </div>
@@ -577,192 +575,15 @@
                     </thead>
 
 
-                    <tbody>
+                    <tbody id="anomaliesTableBody">
 
-                        {% for anomaly in anomalies %}
-                        <tr
-                            class="anomaly-row"
-                            data-type="{{ anomaly.type }}"
-                            data-bank="{{ anomaly.bank }}"
-                            data-status="
-                                {% if anomaly.status == 'OPEN' and anomaly.status_display == 'En cours' %}processing
-                                {% elif anomaly.status == 'OPEN' %}pending
-                                {% else %}resolved{% endif %}"
-                            data-priority="{{ anomaly.priority }}"
-                        >
-
-                            <td>
-
-                                <div class="student-cell">
-
-                                    <span class="student-avatar">
-                                        {% with initials=anomaly.student_name|slice:":2" %}
-                                            {{ initials|upper }}
-                                        {% endwith %}
-                                    </span>
-
-                                    <div>
-
-                                        <strong>
-                                            {{ anomaly.student_name }}
-                                        </strong>
-
-                                        <small>
-                                            {{ anomaly.student_registration }}
-                                        </small>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-
-                            <td class="reference">
-                                {{ anomaly.reference }}
-                            </td>
-
-
-                            <td>
-                                {{ anomaly.bank_name }}
-                            </td>
-
-
-                            <td>
-
-                                <span class="anomaly-type-badge {{ anomaly.type_badge_class }}">
-                                    {{ anomaly.type_label }}
-                                </span>
-
-                            </td>
-
-
-                            <td>
-                                {{ anomaly.amount|floatformat:2 }} $
-                            </td>
-
-
-                            <td>
-
-                                <span class="priority-badge {{ anomaly.priority }}">
-                                    {{ anomaly.priority_label }}
-                                </span>
-
-                            </td>
-
-
-                            <td>
-
-                                <span class="anomaly-status 
-                                    {% if anomaly.status == 'OPEN' and anomaly.status_display == 'En cours' %}processing
-                                    {% elif anomaly.status == 'OPEN' %}pending
-                                    {% else %}resolved{% endif %}">
-                                    {{ anomaly.status_display }}
-                                </span>
-
-                            </td>
-
-
-                            <td>
-
-                                {{ anomaly.date }}
-
-                                <small>
-                                    {{ anomaly.time }}
-                                </small>
-
-                            </td>
-
-
-                            <td>
-
-                                <button
-                                    type="button"
-                                    class="anomaly-view-button"
-                                    title="Examiner"
-                                    data-student="{{ anomaly.student_name }}"
-                                    data-matricule="{{ anomaly.student_registration }}"
-                                    data-reference="{{ anomaly.reference }}"
-                                    data-bank="{{ anomaly.bank_name }}"
-                                    data-type-label="{{ anomaly.type_label }}"
-                                    data-amount="{{ anomaly.amount|floatformat:2 }} $"
-                                    data-priority-label="{{ anomaly.priority_label }}"
-                                    data-status-label="{{ anomaly.status_display }}"
-                                    data-date="{{ anomaly.date }} à {{ anomaly.time }}"
-                                    data-description="{{ anomaly.description }}"
-                                    data-bank-reference="{{ anomaly.bank_reference }}"
-                                    data-bank-amount="{% if anomaly.bank_amount %}{{ anomaly.bank_amount|floatformat:2 }} ${% else %}—{% endif %}"
-                                    data-declared-amount="{{ anomaly.amount|floatformat:2 }} $"
-                                    data-anomaly-id="{{ anomaly.id }}"
-                                    data-claim-id="{{ anomaly.claim_id }}"
-                                    data-status="
-                                        {% if anomaly.status == 'OPEN' and anomaly.status_display == 'En cours' %}processing
-                                        {% elif anomaly.status == 'OPEN' %}pending
-                                        {% else %}resolved{% endif %}"
-                                    data-priority="{{ anomaly.priority }}"
-                                    data-note=""
-                                >
-                                    <i class="bi bi-eye"></i>
-                                </button>
-
-                            </td>
-
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="9" class="text-center py-4 text-muted">
-                                <i class="bi bi-check-circle fs-2 d-block mb-2 text-success"></i>
-                                <p class="mb-0">Aucune anomalie trouvée</p>
-                            </td>
-                        </tr>
-                        {% endfor %}
+                    <!-- Lignes générées dynamiquement par finance-anomalies.js -->
 
                     </tbody>
 
                 </table>
 
             </div>
-
-
-            <!-- =================================================
-                 PAGINATION
-            ================================================== -->
-
-            {% if anomalies_page.has_other_pages %}
-            <nav aria-label="Navigation des anomalies" class="mt-4">
-                <ul class="pagination justify-content-center">
-
-                    {% if anomalies_page.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ anomalies_page.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if bank_filter != 'all' %}&bank={{ bank_filter }}{% endif %}{% if type_filter != 'all' %}&type={{ type_filter }}{% endif %}{% if status_filter != 'all' %}&status={{ status_filter }}{% endif %}{% if priority_filter != 'all' %}&priority={{ priority_filter }}{% endif %}">
-                            <i class="bi bi-chevron-left"></i>
-                        </a>
-                    </li>
-                    {% endif %}
-
-                    {% for num in anomalies_page.paginator.page_range %}
-                        {% if anomalies_page.number == num %}
-                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
-                        {% elif num > anomalies_page.number|add:'-3' and num < anomalies_page.number|add:'3' %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if bank_filter != 'all' %}&bank={{ bank_filter }}{% endif %}{% if type_filter != 'all' %}&type={{ type_filter }}{% endif %}{% if status_filter != 'all' %}&status={{ status_filter }}{% endif %}{% if priority_filter != 'all' %}&priority={{ priority_filter }}{% endif %}">
-                                    {{ num }}
-                                </a>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-
-                    {% if anomalies_page.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ anomalies_page.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if bank_filter != 'all' %}&bank={{ bank_filter }}{% endif %}{% if type_filter != 'all' %}&type={{ type_filter }}{% endif %}{% if status_filter != 'all' %}&status={{ status_filter }}{% endif %}{% if priority_filter != 'all' %}&priority={{ priority_filter }}{% endif %}">
-                            <i class="bi bi-chevron-right"></i>
-                        </a>
-                    </li>
-                    {% endif %}
-
-                </ul>
-            </nav>
-            {% endif %}
 
 
             <!-- =================================================
@@ -949,8 +770,6 @@
     </div>
 
 </div>
-
-
 <!-- =====================================================
      MODALE — EXAMINER UNE ANOMALIE
 ===================================================== -->
@@ -1448,6 +1267,18 @@
 
 
 <!-- =====================================================
+     DONNÉES SERVEUR (calculées dans finance_anomalies,
+     injectées une seule fois au chargement — aucun appel
+     fetch() supplémentaire requis pour la liste/KPI)
+===================================================== -->
+
+<script
+    id="finance-anomalies-bootstrap"
+    type="application/json"
+>{{ bootstrap_data|safe }}</script>
+
+
+<!-- =====================================================
      JAVASCRIPT
 ===================================================== -->
 
@@ -1456,7 +1287,8 @@
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
 ></script>
 
-<!-- Page JavaScript -->
+
+<!-- JavaScript de la page -->
 <script src="{% static 'js/espace_finance/finance-anomalies.js' %}"></script>
 
 

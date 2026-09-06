@@ -1,5 +1,4 @@
 {% load static %}
-
 <!doctype html>
 <html lang="fr">
 
@@ -129,14 +128,12 @@
             <a href="{% url 'finance_profile' %}" class="finance-user">
 
                 <div class="user-avatar">
-                    {% with initials=user.full_congolese_name|slice:":2" %}
-                        {{ initials|upper }}
-                    {% endwith %}
+                    RF
                 </div>
 
                 <div class="user-information">
-                    <strong>{{ user.full_congolese_name }}</strong>
-                    <span>{{ user.get_staff_role_display|default:"Responsable financier" }}</span>
+                    <strong>Responsable financier</strong>
+                    <span>Chef du service financier</span>
                 </div>
 
                 <i class="bi bi-chevron-right"></i>
@@ -241,14 +238,14 @@
                     Actualiser
                 </button>
 
-                <a
-                    href="{% url 'finance_export_history' %}?{% if search_query %}search={{ search_query }}&{% endif %}{% if period_filter %}period={{ period_filter }}&{% endif %}{% if module_filter %}module={{ module_filter }}&{% endif %}{% if action_filter %}action={{ action_filter }}&{% endif %}{% if status_filter %}status={{ status_filter }}&{% endif %}{% if actor_filter %}actor={{ actor_filter }}&{% endif %}"
+                <button
+                    type="button"
                     class="history-action-button primary"
                     id="exportHistoryButton"
                 >
                     <i class="bi bi-download"></i>
                     Exporter CSV
-                </a>
+                </button>
 
             </div>
 
@@ -270,7 +267,7 @@
                 <div>
                     <span>OPÉRATIONS</span>
                     <strong id="totalOperationsKpi">
-                        {{ total_operations }}
+                        248
                     </strong>
                     <small>
                         Sur la période sélectionnée
@@ -289,7 +286,7 @@
                 <div>
                     <span>RÉUSSIES</span>
                     <strong id="successfulOperationsKpi">
-                        {{ successful_ops }}
+                        231
                     </strong>
                     <small>
                         Opérations exécutées avec succès
@@ -308,7 +305,7 @@
                 <div>
                     <span>À VÉRIFIER</span>
                     <strong id="warningOperationsKpi">
-                        {{ warning_ops }}
+                        12
                     </strong>
                     <small>
                         Opérations nécessitant un contrôle
@@ -327,7 +324,7 @@
                 <div>
                     <span>ÉCHECS</span>
                     <strong id="failedOperationsKpi">
-                        {{ failed_ops }}
+                        5
                     </strong>
                     <small>
                         Opérations non exécutées
@@ -376,7 +373,6 @@
                         id="historySearch"
                         placeholder="Rechercher acteur, référence, action..."
                         autocomplete="off"
-                        value="{{ search_query }}"
                     >
 
                     <button
@@ -406,19 +402,19 @@
 
                     <select id="historyPeriodFilter">
 
-                        <option value="" {% if not period_filter %}selected{% endif %}>
+                        <option value="">
                             Toutes les périodes
                         </option>
 
-                        <option value="today" {% if period_filter == 'today' %}selected{% endif %}>
+                        <option value="today">
                             Aujourd'hui
                         </option>
 
-                        <option value="week" {% if period_filter == 'week' %}selected{% endif %}>
+                        <option value="week">
                             7 derniers jours
                         </option>
 
-                        <option value="month" {% if period_filter == 'month' %}selected{% endif %}>
+                        <option value="month">
                             30 derniers jours
                         </option>
 
@@ -435,31 +431,31 @@
 
                     <select id="historyModuleFilter">
 
-                        <option value="" {% if not module_filter %}selected{% endif %}>
+                        <option value="">
                             Tous les modules
                         </option>
 
-                        <option value="payment" {% if module_filter == 'payment' %}selected{% endif %}>
+                        <option value="payment">
                             Paiements
                         </option>
 
-                        <option value="statement" {% if module_filter == 'statement' %}selected{% endif %}>
+                        <option value="statement">
                             Extraits bancaires
                         </option>
 
-                        <option value="schedule" {% if module_filter == 'schedule' %}selected{% endif %}>
+                        <option value="schedule">
                             Échéancier
                         </option>
 
-                        <option value="student" {% if module_filter == 'student' %}selected{% endif %}>
+                        <option value="student">
                             Situation financière
                         </option>
 
-                        <option value="reconciliation" {% if module_filter == 'reconciliation' %}selected{% endif %}>
+                        <option value="reconciliation">
                             Rapprochement
                         </option>
 
-                        <option value="anomaly" {% if module_filter == 'anomaly' %}selected{% endif %}>
+                        <option value="anomaly">
                             Anomalies
                         </option>
 
@@ -476,35 +472,35 @@
 
                     <select id="historyActionFilter">
 
-                        <option value="" {% if not action_filter %}selected{% endif %}>
+                        <option value="">
                             Toutes les actions
                         </option>
 
-                        <option value="create" {% if action_filter == 'create' %}selected{% endif %}>
+                        <option value="create">
                             Création
                         </option>
 
-                        <option value="import" {% if action_filter == 'import' %}selected{% endif %}>
+                        <option value="import">
                             Importation
                         </option>
 
-                        <option value="update" {% if action_filter == 'update' %}selected{% endif %}>
+                        <option value="update">
                             Modification
                         </option>
 
-                        <option value="validate" {% if action_filter == 'validate' %}selected{% endif %}>
+                        <option value="validate">
                             Validation
                         </option>
 
-                        <option value="reconcile" {% if action_filter == 'reconcile' %}selected{% endif %}>
+                        <option value="reconcile">
                             Rapprochement
                         </option>
 
-                        <option value="resolve" {% if action_filter == 'resolve' %}selected{% endif %}>
+                        <option value="resolve">
                             Résolution
                         </option>
 
-                        <option value="export" {% if action_filter == 'export' %}selected{% endif %}>
+                        <option value="export">
                             Exportation
                         </option>
 
@@ -521,19 +517,19 @@
 
                     <select id="historyStatusFilter">
 
-                        <option value="" {% if not status_filter %}selected{% endif %}>
+                        <option value="">
                             Tous les résultats
                         </option>
 
-                        <option value="success" {% if status_filter == 'success' %}selected{% endif %}>
+                        <option value="success">
                             Réussie
                         </option>
 
-                        <option value="warning" {% if status_filter == 'warning' %}selected{% endif %}>
+                        <option value="warning">
                             À vérifier
                         </option>
 
-                        <option value="failed" {% if status_filter == 'failed' %}selected{% endif %}>
+                        <option value="failed">
                             Échec
                         </option>
 
@@ -550,23 +546,19 @@
 
                     <select id="historyActorFilter">
 
-                        <option value="" {% if not actor_filter %}selected{% endif %}>
+                        <option value="">
                             Tous les acteurs
                         </option>
 
-                        <option value="finance" {% if actor_filter == 'finance' %}selected{% endif %}>
+                        <option value="finance">
                             Responsable financier
                         </option>
 
-                        <option value="cashier" {% if actor_filter == 'cashier' %}selected{% endif %}>
+                        <option value="cashier">
                             Agent de caisse
                         </option>
 
-                        <option value="student" {% if actor_filter == 'student' %}selected{% endif %}>
-                            Étudiant
-                        </option>
-
-                        <option value="system" {% if actor_filter == 'system' %}selected{% endif %}>
+                        <option value="system">
                             Système
                         </option>
 
@@ -613,105 +605,7 @@
 
                     <tbody id="historyTableBody">
 
-                    {% for entry in history_entries %}
-                    <tr
-                        data-id="{{ entry.id }}"
-                        data-date="{{ entry.date|date:'c' }}"
-                        data-actor="{{ entry.actor }}"
-                        data-module="{{ entry.module }}"
-                        data-action="{{ entry.action }}"
-                        data-status="{{ entry.status }}"
-                        data-reference="{{ entry.reference }}"
-                        data-description="{{ entry.description }}"
-                    >
-
-                        <td>
-                            <div class="history-date">
-                                <strong>{{ entry.date|date:"d M Y" }}</strong>
-                                <small>{{ entry.date|date:"H:i" }}</small>
-                            </div>
-                        </td>
-
-                        <td>
-                            <div class="history-actor">
-
-                                <div class="history-avatar 
-                                    {% if entry.actor == 'system' %}system
-                                    {% elif entry.actor == 'finance' %}finance
-                                    {% elif entry.actor == 'cashier' %}cashier
-                                    {% else %}student{% endif %}">
-                                    {% if entry.actor == 'system' %}
-                                        <i class="bi bi-cpu"></i>
-                                    {% else %}
-                                        {{ entry.actor_display|slice:":2"|upper }}
-                                    {% endif %}
-                                </div>
-
-                                <div>
-                                    <strong>{{ entry.actor_display }}</strong>
-                                    <small>
-                                        {% if entry.actor == 'system' %}AcademicPay
-                                        {% elif entry.actor == 'finance' %}Service financier
-                                        {% elif entry.actor == 'cashier' %}Caisse
-                                        {% else %}Étudiant{% endif %}
-                                    </small>
-                                </div>
-
-                            </div>
-                        </td>
-
-                        <td>
-                            <span class="history-module {{ entry.module_class }}">
-                                <i class="bi {{ entry.icon }}"></i>
-                                {{ entry.module_display }}
-                            </span>
-                        </td>
-
-                        <td>
-                            <span class="history-action">
-                                {{ entry.action_display }}
-                            </span>
-                        </td>
-
-                        <td>
-                            <strong class="history-reference">
-                                {{ entry.reference }}
-                            </strong>
-                        </td>
-
-                        <td class="history-description">
-                            {{ entry.description }}
-                        </td>
-
-                        <td>
-                            <span class="history-status {{ entry.status }}">
-                                <i class="bi 
-                                    {% if entry.status == 'success' %}bi-check-circle-fill
-                                    {% elif entry.status == 'warning' %}bi-exclamation-circle-fill
-                                    {% else %}bi-x-circle-fill{% endif %}"></i>
-                                {{ entry.status_display }}
-                            </span>
-                        </td>
-
-                        <td>
-                            <button
-                                type="button"
-                                class="history-view-button"
-                                aria-label="Voir les détails"
-                            >
-                                <i class="bi bi-chevron-right"></i>
-                            </button>
-                        </td>
-
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="8" class="text-center py-4 text-muted">
-                            <i class="bi bi-clock-history fs-2 d-block mb-2"></i>
-                            <p class="mb-0">Aucune opération trouvée</p>
-                        </td>
-                    </tr>
-                    {% endfor %}
+                    <!-- Lignes générées dynamiquement par finance-history.js -->
 
                     </tbody>
 
@@ -746,7 +640,7 @@
             <div class="history-table-footer">
 
                 <span id="historyResultCount">
-                    {{ result_count }} opération{{ result_count|pluralize }} affichée{{ result_count|pluralize }}
+                    6 opérations affichées
                 </span>
 
             </div>
@@ -754,113 +648,6 @@
         </section>
 
     </main>
-
-</div>
-
-
-<!-- =========================================================
-     OFFCANVAS MOBILE
-========================================================= -->
-
-<div
-    class="offcanvas offcanvas-start finance-offcanvas"
-    tabindex="-1"
-    id="financeMobileMenu"
->
-
-    <div class="offcanvas-header">
-
-        <div class="sidebar-brand">
-
-            <div class="brand-icon">
-                <i class="bi bi-mortarboard-fill"></i>
-            </div>
-
-            <div>
-                <strong>AcademicPay</strong>
-                <span>FINANCE</span>
-            </div>
-
-        </div>
-
-
-        <button
-            type="button"
-            class="btn-close btn-close-white"
-            data-bs-dismiss="offcanvas"
-            aria-label="Fermer"
-        ></button>
-
-    </div>
-
-
-    <div class="offcanvas-body">
-
-        <nav class="mobile-navigation">
-
-            <a href="{% url 'finance_dashboard' %}" class="mobile-nav-link">
-                <i class="bi bi-house-door"></i>
-                Accueil
-            </a>
-
-            <a href="{% url 'finance_payments' %}" class="mobile-nav-link">
-                <i class="bi bi-credit-card-fill"></i>
-                Paiements
-            </a>
-
-            <a href="{% url 'finance_statements' %}" class="mobile-nav-link">
-                <i class="bi bi-bank"></i>
-                Extraits bancaires
-            </a>
-
-            <a href="{% url 'finance_schedule' %}" class="mobile-nav-link">
-                <i class="bi bi-calendar3"></i>
-                Échéancier
-            </a>
-
-            <a href="{% url 'finance_students' %}" class="mobile-nav-link">
-                <i class="bi bi-people"></i>
-                Situations financières
-            </a>
-
-            <a href="{% url 'finance_reconciliation' %}" class="mobile-nav-link">
-                <i class="bi bi-arrow-left-right"></i>
-                Rapprochement global
-            </a>
-
-            <a href="{% url 'finance_anomalies' %}" class="mobile-nav-link">
-                <i class="bi bi-exclamation-triangle"></i>
-                Anomalies
-            </a>
-
-            <a href="{% url 'finance_reports' %}" class="mobile-nav-link">
-                <i class="bi bi-bar-chart-line"></i>
-                Rapports
-            </a>
-
-            <a href="{% url 'finance_history' %}" class="mobile-nav-link active">
-                <i class="bi bi-clock-history"></i>
-                Historique
-            </a>
-
-            <hr>
-
-            <a href="{% url 'finance_profile' %}" class="mobile-nav-link">
-                <i class="bi bi-person"></i>
-                Mon compte
-            </a>
-
-            <a
-                href="{% url 'logout' %}"
-                class="mobile-nav-link"
-            >
-                <i class="bi bi-box-arrow-right"></i>
-                Déconnexion
-            </a>
-
-        </nav>
-
-    </div>
 
 </div>
 
@@ -1025,6 +812,113 @@
 
 
 <!-- =========================================================
+     OFFCANVAS MOBILE
+========================================================= -->
+
+<div
+    class="offcanvas offcanvas-start finance-offcanvas"
+    tabindex="-1"
+    id="financeMobileMenu"
+>
+
+    <div class="offcanvas-header">
+
+        <div class="sidebar-brand">
+
+            <div class="brand-icon">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+            <div>
+                <strong>AcademicPay</strong>
+                <span>FINANCE</span>
+            </div>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="offcanvas"
+            aria-label="Fermer"
+        ></button>
+
+    </div>
+
+
+    <div class="offcanvas-body">
+
+        <nav class="mobile-navigation">
+
+            <a href="{% url 'finance_dashboard' %}" class="mobile-nav-link">
+                <i class="bi bi-house-door"></i>
+                Accueil
+            </a>
+
+            <a href="{% url 'finance_payments' %}" class="mobile-nav-link">
+                <i class="bi bi-credit-card-fill"></i>
+                Paiements
+            </a>
+
+            <a href="{% url 'finance_statements' %}" class="mobile-nav-link">
+                <i class="bi bi-bank"></i>
+                Extraits bancaires
+            </a>
+
+            <a href="{% url 'finance_schedule' %}" class="mobile-nav-link">
+                <i class="bi bi-calendar3"></i>
+                Échéancier
+            </a>
+
+            <a href="{% url 'finance_students' %}" class="mobile-nav-link">
+                <i class="bi bi-people"></i>
+                Situations financières
+            </a>
+
+            <a href="{% url 'finance_reconciliation' %}" class="mobile-nav-link">
+                <i class="bi bi-arrow-left-right"></i>
+                Rapprochement global
+            </a>
+
+            <a href="{% url 'finance_anomalies' %}" class="mobile-nav-link">
+                <i class="bi bi-exclamation-triangle"></i>
+                Anomalies
+            </a>
+
+            <a href="{% url 'finance_reports' %}" class="mobile-nav-link">
+                <i class="bi bi-bar-chart-line"></i>
+                Rapports
+            </a>
+
+            <a href="{% url 'finance_history' %}" class="mobile-nav-link active">
+                <i class="bi bi-clock-history"></i>
+                Historique
+            </a>
+
+            <hr>
+
+            <a href="{% url 'finance_profile' %}" class="mobile-nav-link">
+                <i class="bi bi-person"></i>
+                Mon compte
+            </a>
+
+            <a
+                href="{% url 'logout' %}"
+                class="mobile-nav-link"
+            >
+                <i class="bi bi-box-arrow-right"></i>
+                Déconnexion
+            </a>
+
+        </nav>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
      TOAST
 ========================================================= -->
 
@@ -1051,6 +945,18 @@
 </div>
 
 
+<!-- =========================================================
+     DONNÉES SERVEUR (calculées dans finance_history, injectées
+     une seule fois au chargement — recherche/filtres appliqués
+     côté client sur ces données déjà chargées)
+========================================================= -->
+
+<script
+    id="finance-history-bootstrap"
+    type="application/json"
+>{{ bootstrap_data|safe }}</script>
+
+
 <!-- Bootstrap JS -->
 <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
@@ -1061,5 +967,3 @@
 
 </body>
 </html>
-
-

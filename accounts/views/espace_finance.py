@@ -1372,6 +1372,217 @@ def _parse_statement_date(date_str):
     return None
 
 
+# ============================================================
+# RAPPROCHEMENT AUTOMATIQUE (déclenché à l'import d'un extrait)
+# ============================================================
+
+def _anomaly_type_for_mismatch(claim, transaction):
+    """
+    Détermine le type d'anomalie le plus pertinent quand une
+    transaction bancaire porte la même référence qu'une déclaration
+    mais ne correspond pas parfaitement (montant, banque, date).
+    """
+    if claim.amount != transaction.amount:
+        return PaymentAnomaly.Type.AMOUNT_MISMATCH
+
+    claim_bank_code = claim.bank.code if claim.bank else None
+    transaction_bank_code = (
+        transaction.bank_account.bank.code
+        if transaction.bank_account and transaction.bank_account.bank
+        else None
+    )
+
+    if claim_bank_code and transaction_bank_code and claim_bank_code != transaction_bank_code:
+        return PaymentAnomaly.Type.BANK_MISMATCH
+
+    return PaymentAnomaly.Type.OTHER
+
+
+def auto_reconcile_transactions(transactions, academic_year):
+    """
+    Rapprochement automatique déclenché juste après l'import d'un
+    extrait bancaire : pour chaque nouvelle BankTransaction,
+
+    - si sa référence correspond à une PaymentClaim (même année
+      académique) ET que les montants concordent : la claim est
+      approuvée/vérifiée et liée à la transaction (paiement
+      confirmé, sans action humaine) ;
+
+    - si la référence correspond à une claim mais que quelque
+      chose ne concorde pas (montant différent, banque différente,
+      claim déjà liée à une autre transaction) : une PaymentAnomaly
+      réelle est créée sur cette claim, prête à être traitée sur la
+      page Anomalies ;
+
+    - si aucune claim ne porte cette référence : rien n'est créé
+      (PaymentAnomaly.claim est obligatoire ; sans déclaration
+      étudiante correspondante, il n'y a rien à rattacher).
+
+    Retourne un résumé {"approved": int, "anomalies_created": int}.
+    """
+    approved_count = 0
+    anomalies_created = 0
+
+    for transaction in transactions:
+
+        claim = (
+            PaymentClaim.objects.select_related("bank")
+            .filter(
+                submitted_reference=transaction.transaction_reference,
+                academic_year=academic_year,
+            )
+            .exclude(status=PaymentClaim.ClaimStatus.REJECTED)
+            .order_by("-created_at")
+            .first()
+        )
+
+        if not claim:
+            # Transaction bancaire sans déclaration correspondante :
+            # rien à rattacher, on l'ignore silencieusement (elle
+            # reste visible en tant que "banque uniquement" sur la
+            # page Rapprochement global, calculée à la volée).
+            continue
+
+        if claim.bank_transaction_id:
+            # Cette déclaration est déjà liée à une autre transaction
+            # (paiement déjà rapproché précédemment, ou double envoi
+            # du même extrait par la banque). On ne touche pas au
+            # lien existant, mais on signale le doublon pour examen.
+            PaymentAnomaly.objects.create(
+                claim=claim,
+                anomaly_type=PaymentAnomaly.Type.DUPLICATE_CLAIM,
+                description=(
+                    "Nouvelle transaction bancaire "
+                    f"({transaction.transaction_reference}, "
+                    f"{transaction.amount} $) reçue pour une "
+                    "déclaration déjà rapprochée. Vérifier s'il "
+                    "s'agit d'un double paiement ou d'un doublon "
+                    "d'extrait."
+                ),
+                status=PaymentAnomaly.Status.OPEN,
+            )
+            anomalies_created += 1
+            continue
+
+        amount_matches = claim.amount == transaction.amount
+
+        if amount_matches:
+            claim.bank_transaction = transaction
+            claim.status = PaymentClaim.ClaimStatus.APPROVED
+            claim.is_verified = True
+            claim.save(update_fields=["bank_transaction", "status", "is_verified"])
+
+            transaction.is_verified = True
+            transaction.save(update_fields=["is_verified"])
+
+            Payment.objects.create(
+                student=claim.student,
+                claim=claim,
+                bank_reference=transaction.transaction_reference,
+                amount=transaction.amount,
+                academic_year=academic_year,
+                semester=claim.semester,
+                status=Payment.Status.PAID,
+                payment_date=transaction.payment_date,
+            )
+
+            approved_count += 1
+            continue
+
+        anomaly_type = _anomaly_type_for_mismatch(claim, transaction)
+
+        PaymentAnomaly.objects.create(
+            claim=claim,
+            anomaly_type=anomaly_type,
+            description=(
+                "Écart détecté lors du rapprochement automatique : "
+                f"déclaré {claim.amount} $, reçu {transaction.amount} $ "
+                f"(référence {transaction.transaction_reference})."
+            ),
+            status=PaymentAnomaly.Status.OPEN,
+        )
+        anomalies_created += 1
+
+    return {
+        "approved": approved_count,
+        "anomalies_created": anomalies_created,
+    }
+
+
+def flag_unmatched_pending_claims(statement, academic_year):
+    """
+    Complément de auto_reconcile_transactions, dans l'autre sens.
+
+    auto_reconcile_transactions part des NOUVELLES BankTransaction
+    et cherche une PaymentClaim correspondante.
+
+    Cette fonction part des PaymentClaim encore PENDING dont la
+    date de paiement déclarée est couverte par la période de
+    l'extrait qui vient d'être importé (statement.start_date ->
+    statement.end_date). Si, après le rapprochement automatique,
+    aucune BankTransaction ne porte leur référence, cela signifie
+    que la banque n'a rapporté aucune transaction sous cette
+    référence alors qu'elle aurait dû figurer dans cet extrait :
+    la déclaration est donc marquée comme anomalie
+    (REFERENCE_NOT_FOUND).
+
+    Les déclarations dont la date de paiement est postérieure à la
+    période de l'extrait ne sont pas concernées : elles attendent
+    simplement un extrait plus récent qui couvrira leur date, et
+    restent PENDING.
+
+    Ne crée pas de doublon si une anomalie REFERENCE_NOT_FOUND est
+    déjà ouverte sur la même déclaration (import répété d'extraits
+    successifs sans nouvelle info sur cette référence).
+
+    Retourne le nombre d'anomalies créées.
+    """
+    anomalies_created = 0
+
+    candidate_claims = (
+        PaymentClaim.objects.select_related("bank")
+        .filter(
+            academic_year=academic_year,
+            status=PaymentClaim.ClaimStatus.PENDING,
+            payment_date__date__gte=statement.start_date,
+            payment_date__date__lte=statement.end_date,
+        )
+        .exclude(
+            anomalies__status=PaymentAnomaly.Status.OPEN,
+            anomalies__anomaly_type=PaymentAnomaly.Type.REFERENCE_NOT_FOUND,
+        )
+        .distinct()
+    )
+
+    for claim in candidate_claims:
+        reference_exists = BankTransaction.objects.filter(
+            transaction_reference=claim.submitted_reference
+        ).exists()
+
+        if reference_exists:
+            # Une transaction avec cette référence existe déjà
+            # (rapprochée dans cet import ou un souci distinct déjà
+            # traité) : on ne crée pas d'anomalie supplémentaire ici.
+            continue
+
+        PaymentAnomaly.objects.create(
+            claim=claim,
+            anomaly_type=PaymentAnomaly.Type.REFERENCE_NOT_FOUND,
+            description=(
+                "Aucune transaction bancaire correspondant à la "
+                f"référence {claim.submitted_reference} n'a été "
+                "trouvée dans l'extrait couvrant la période "
+                f"{statement.start_date} → {statement.end_date}, "
+                "bien que la date de paiement déclarée soit "
+                "comprise dans cette période."
+            ),
+            status=PaymentAnomaly.Status.OPEN,
+        )
+        anomalies_created += 1
+
+    return anomalies_created
+
+
 @login_required
 @finance_required
 @require_http_methods(["POST"])
@@ -1465,6 +1676,7 @@ def finance_import_statement(request):
 
         created_count = 0
         skipped_count = 0
+        new_transactions = []
 
         for tx_data in transactions_data:
             parsed_date = _parse_statement_date(tx_data["date"]) if tx_data.get("date") else None
@@ -1475,7 +1687,7 @@ def finance_import_statement(request):
             )
 
             try:
-                BankTransaction.objects.create(
+                transaction = BankTransaction.objects.create(
                     transaction_reference=tx_data["reference"],
                     statement=statement,
                     bank_account=bank_account,
@@ -1484,26 +1696,54 @@ def finance_import_statement(request):
                     is_verified=False,
                 )
                 created_count += 1
+                new_transactions.append(transaction)
             except Exception:
                 # Référence en doublon ou autre contrainte : on ignore
                 # cette ligne et on continue l'import.
                 skipped_count += 1
                 continue
 
+        reconciliation_summary = auto_reconcile_transactions(
+            new_transactions, academic_year
+        )
+
+        unmatched_anomalies_count = flag_unmatched_pending_claims(
+            statement, academic_year
+        )
+        reconciliation_summary["anomalies_created"] += unmatched_anomalies_count
+
         statement_totals = {
             statement.id: {
                 "amount": sum((tx["amount"] for tx in transactions_data), ZERO),
                 "count": created_count,
-                "verified": 0,
+                "verified": reconciliation_summary["approved"],
             }
         }
 
+        message_parts = [
+            f"Extrait importé avec succès. {created_count} transaction(s) enregistrée(s)."
+        ]
+
+        if skipped_count:
+            message_parts.append(
+                f"{skipped_count} ligne(s) ignorée(s) (référence en doublon)."
+            )
+
+        if reconciliation_summary["approved"]:
+            message_parts.append(
+                f"{reconciliation_summary['approved']} paiement(s) rapproché(s) "
+                "et validé(s) automatiquement."
+            )
+
+        if reconciliation_summary["anomalies_created"]:
+            message_parts.append(
+                f"{reconciliation_summary['anomalies_created']} anomalie(s) "
+                "détectée(s) et enregistrée(s)."
+            )
+
         return JsonResponse({
             "success": True,
-            "message": (
-                f"Extrait importé avec succès. {created_count} transaction(s) enregistrée(s)."
-                + (f" {skipped_count} ligne(s) ignorée(s) (référence en doublon)." if skipped_count else "")
-            ),
+            "message": " ".join(message_parts),
             "statement": serialize_statement(statement, statement_totals),
         })
 
@@ -2438,336 +2678,283 @@ def finance_students_export_csv(request):
 
 
 # ============================================================
-# FINANCE RECONCILIATION
+# FINANCE RECONCILIATION — RAPPROCHEMENT GLOBAL
+# ============================================================
+
+RECONCILIATION_ACADEMIC_YEAR_CHOICES = [year for year, _ in ACADEMIC_YEAR_CHOICES]
+
+RECONCILIATION_STATUS_LABELS = {
+    "matched": "Rapproché",
+    "amount_mismatch": "Écart de montant",
+    "bank_only": "Banque uniquement",
+    "system_only": "AcademicPay uniquement",
+}
+
+
+def _reconciliation_safe_json(data):
+    """
+    Sérialise en JSON pour injection directe dans un tag <script>.
+    Échappe les séquences "</" pour éviter toute fermeture prématurée
+    du tag si une valeur textuelle en contient.
+    """
+    return json.dumps(data, cls=DjangoJSONEncoder).replace("</", "<\\/")
+
+
+def _reconciliation_academic_year_range(academic_year):
+    start_year, end_year = academic_year.split("-")
+    start_date = datetime(int(start_year), 7, 1)
+    end_date = datetime(int(end_year), 6, 30, 23, 59, 59)
+    return start_date, end_date
+
+
+def build_reconciliation_items(academic_year):
+    """
+    Compare les BankTransaction de l'année académique donnée avec
+    les PaymentClaim approuvées et vérifiées de la même année, et
+    construit une liste d'items de rapprochement — un par
+    transaction bancaire (matched / amount_mismatch / bank_only)
+    plus un par claim sans transaction bancaire (system_only).
+
+    Reproduit la logique déjà en place dans l'ancienne vue
+    finance_reconciliation, avec les mêmes règles de statut.
+    """
+    start_date, end_date = _reconciliation_academic_year_range(academic_year)
+
+    bank_transactions = (
+        BankTransaction.objects.select_related(
+            "bank_account", "bank_account__bank"
+        )
+        .filter(
+            bank_account__is_active=True,
+            payment_date__range=[start_date, end_date],
+        )
+        .order_by("-payment_date")
+    )
+
+    claims = (
+        PaymentClaim.objects.select_related("student", "bank", "bank_transaction")
+        .filter(
+            academic_year=academic_year,
+            status=PaymentClaim.ClaimStatus.APPROVED,
+            is_verified=True,
+        )
+    )
+
+    claims_by_transaction_id = {
+        claim.bank_transaction_id: claim
+        for claim in claims
+        if claim.bank_transaction_id
+    }
+
+    items = []
+
+    for tx in bank_transactions:
+        claim = claims_by_transaction_id.get(tx.id)
+
+        if claim:
+            if claim.amount != tx.amount:
+                status = "amount_mismatch"
+                difference = abs(claim.amount - tx.amount)
+            else:
+                status = "matched"
+                difference = ZERO
+
+            items.append({
+                "id": f"tx-{tx.id}",
+                "date": tx.payment_date.date(),
+                "reference": tx.transaction_reference,
+                "bankCode": tx.bank_account.bank.code,
+                "bankName": tx.bank_account.bank.name,
+                "bankAmount": tx.amount,
+                "systemAmount": claim.amount,
+                "difference": difference,
+                "student": claim.student.full_congolese_name,
+                "matricule": claim.student.registration_num or "",
+                "status": status,
+                "claimId": claim.id,
+            })
+        else:
+            items.append({
+                "id": f"tx-{tx.id}",
+                "date": tx.payment_date.date(),
+                "reference": tx.transaction_reference,
+                "bankCode": tx.bank_account.bank.code,
+                "bankName": tx.bank_account.bank.name,
+                "bankAmount": tx.amount,
+                "systemAmount": ZERO,
+                "difference": tx.amount,
+                "student": "",
+                "matricule": "",
+                "status": "bank_only",
+                "claimId": None,
+            })
+
+    for claim in claims:
+        if not claim.bank_transaction_id:
+            items.append({
+                "id": f"claim-{claim.id}",
+                "date": claim.payment_date.date(),
+                "reference": claim.submitted_reference,
+                "bankCode": claim.bank.code,
+                "bankName": claim.bank.name,
+                "bankAmount": ZERO,
+                "systemAmount": claim.amount,
+                "difference": claim.amount,
+                "student": claim.student.full_congolese_name,
+                "matricule": claim.student.registration_num or "",
+                "status": "system_only",
+                "claimId": claim.id,
+            })
+
+    items.sort(key=lambda item: item["date"], reverse=True)
+
+    return items
+
+
+def serialize_reconciliation_item(item):
+    return {
+        "id": item["id"],
+        "date": item["date"].isoformat(),
+        "reference": item["reference"],
+        "bank": {"code": item["bankCode"], "name": item["bankName"]},
+        "bankAmount": str(item["bankAmount"]),
+        "systemAmount": str(item["systemAmount"]),
+        "difference": str(item["difference"]),
+        "student": item["student"],
+        "matricule": item["matricule"],
+        "status": item["status"],
+        "statusLabel": RECONCILIATION_STATUS_LABELS.get(
+            item["status"], item["status"]
+        ),
+        "claimId": item["claimId"],
+    }
+
+
+def build_reconciliation_bank_summary(items, banks):
+    """
+    Agrège les items de rapprochement par banque : montant banque,
+    montant système, écart, taux de couverture, nb transactions,
+    nb anomalies (tout ce qui n'est pas "matched").
+    """
+    by_code = {
+        bank.code: {
+            "code": bank.code,
+            "name": bank.name,
+            "bankAmount": ZERO,
+            "systemAmount": ZERO,
+            "transactions": 0,
+            "anomalies": 0,
+        }
+        for bank in banks
+    }
+
+    for item in items:
+        code = item["bankCode"]
+
+        if code not in by_code:
+            by_code[code] = {
+                "code": code,
+                "name": item["bankName"],
+                "bankAmount": ZERO,
+                "systemAmount": ZERO,
+                "transactions": 0,
+                "anomalies": 0,
+            }
+
+        entry = by_code[code]
+        entry["bankAmount"] += item["bankAmount"]
+        entry["systemAmount"] += item["systemAmount"]
+        entry["transactions"] += 1
+
+        if item["status"] != "matched":
+            entry["anomalies"] += 1
+
+    summary = []
+
+    for entry in by_code.values():
+        difference = abs(entry["bankAmount"] - entry["systemAmount"])
+        coverage = (
+            (entry["systemAmount"] / entry["bankAmount"] * Decimal("100"))
+            if entry["bankAmount"] > ZERO
+            else ZERO
+        )
+
+        summary.append({
+            "code": entry["code"],
+            "name": entry["name"],
+            "bankAmount": str(entry["bankAmount"]),
+            "systemAmount": str(entry["systemAmount"]),
+            "difference": str(difference),
+            "coverage": str(coverage.quantize(Decimal("0.1"))),
+            "transactions": entry["transactions"],
+            "anomalies": entry["anomalies"],
+        })
+
+    summary.sort(key=lambda entry: entry["name"])
+
+    return summary
+
+
+def _reconciliation_bootstrap_payload(academic_year):
+    items = build_reconciliation_items(academic_year)
+    items_json = [serialize_reconciliation_item(item) for item in items]
+
+    banks = list(Bank.objects.filter(is_active=True).order_by("name"))
+    bank_summary = build_reconciliation_bank_summary(items, banks)
+
+    total_bank_amount = sum((item["bankAmount"] for item in items), ZERO)
+    total_system_amount = sum((item["systemAmount"] for item in items), ZERO)
+    total_difference = abs(total_bank_amount - total_system_amount)
+
+    coverage_rate = (
+        (total_system_amount / total_bank_amount * Decimal("100"))
+        if total_bank_amount > ZERO
+        else ZERO
+    )
+
+    matched_count = sum(1 for item in items if item["status"] == "matched")
+    anomaly_count = sum(1 for item in items if item["status"] != "matched")
+
+    return {
+        "academicYear": academic_year,
+        "items": items_json,
+        "banks": [{"code": b.code, "name": b.name} for b in banks],
+        "bankSummary": bank_summary,
+        "kpi": {
+            "totalBankAmount": str(total_bank_amount),
+            "totalSystemAmount": str(total_system_amount),
+            "totalDifference": str(total_difference),
+            "coverageRate": str(coverage_rate.quantize(Decimal("0.1"))),
+            "matchedCount": matched_count,
+            "anomalyCount": anomaly_count,
+            "bankCount": len(banks),
+        },
+    }, banks
+
+
+# ============================================================
+# VUE — RAPPROCHEMENT GLOBAL
 # ============================================================
 
 @login_required
 @finance_required
 def finance_reconciliation(request):
-    """
-    View for global bank reconciliation.
-    Compares bank transactions with payment claims.
-    """
+    academic_year = request.GET.get("academic_year") or ACADEMIC_YEAR
 
-    user = request.user
-
-    # ========================================================
-    # GET FILTERS
-    # ========================================================
-
-    academic_year = request.GET.get('academic_year', ACADEMIC_YEAR)
-    search_query = request.GET.get('search', '').strip()
-    bank_filter = request.GET.get('bank', '')
-    period_filter = request.GET.get('period', '')
-    status_filter = request.GET.get('status', '')
-
-    # ========================================================
-    # GET BANK TRANSACTIONS
-    # ========================================================
-
-    bank_transactions = BankTransaction.objects.select_related(
-        'bank_account',
-        'bank_account__bank'
-    ).filter(
-        bank_account__is_active=True
-    )
-
-    if academic_year:
-        start_year, end_year = academic_year.split('-')
-        start_date = datetime(int(start_year), 7, 1)
-        end_date = datetime(int(end_year), 6, 30)
-        bank_transactions = bank_transactions.filter(
-            payment_date__range=[start_date, end_date]
-        )
-
-    # ========================================================
-    # GET PAYMENT CLAIMS
-    # ========================================================
-
-    claims = PaymentClaim.objects.select_related(
-        'student',
-        'bank',
-        'bank_transaction'
-    ).filter(
-        academic_year=academic_year,
-        status=PaymentClaim.ClaimStatus.APPROVED,
-        is_verified=True
-    )
-
-    # ========================================================
-    # BUILD RECONCILIATION DATA
-    # ========================================================
-
-    reconciliation_items = []
-
-    bank_totals = {}
-    system_totals = {}
-    bank_anomalies = {}
-
-    for tx in bank_transactions:
-        bank_code = tx.bank_account.bank.code
-        if bank_code not in bank_totals:
-            bank_totals[bank_code] = Decimal('0')
-            system_totals[bank_code] = Decimal('0')
-            bank_anomalies[bank_code] = 0
-
-        bank_totals[bank_code] += tx.amount
-
-    for claim in claims:
-        bank_code = claim.bank.code
-        if bank_code not in system_totals:
-            system_totals[bank_code] = Decimal('0')
-
-        if claim.bank_transaction:
-            system_totals[bank_code] += claim.amount
-
-    for tx in bank_transactions:
-        claim = claims.filter(bank_transaction=tx).first()
-
-        if claim:
-            if claim.amount != tx.amount:
-                status = 'amount_mismatch'
-                diff = abs(claim.amount - tx.amount)
-            else:
-                status = 'matched'
-                diff = Decimal('0')
-
-            reconciliation_items.append({
-                'id': tx.id,
-                'date': tx.payment_date.strftime('%d/%m/%Y'),
-                'reference': tx.transaction_reference,
-                'bank': tx.bank_account.bank.code,
-                'bank_name': tx.bank_account.bank.name,
-                'bank_amount': tx.amount,
-                'system_amount': claim.amount,
-                'difference': diff,
-                'student': claim.student.full_congolese_name,
-                'matricule': claim.student.registration_num or 'Sans ID',
-                'status': status,
-                'claim_id': claim.id,
-                'has_anomaly': status == 'amount_mismatch',
-            })
-        else:
-            reconciliation_items.append({
-                'id': tx.id,
-                'date': tx.payment_date.strftime('%d/%m/%Y'),
-                'reference': tx.transaction_reference,
-                'bank': tx.bank_account.bank.code,
-                'bank_name': tx.bank_account.bank.name,
-                'bank_amount': tx.amount,
-                'system_amount': Decimal('0'),
-                'difference': tx.amount,
-                'student': '',
-                'matricule': '',
-                'status': 'bank_only',
-                'claim_id': None,
-                'has_anomaly': True,
-            })
-            bank_anomalies[tx.bank_account.bank.code] = bank_anomalies.get(tx.bank_account.bank.code, 0) + 1
-
-    for claim in claims:
-        if not claim.bank_transaction:
-            reconciliation_items.append({
-                'id': claim.id,
-                'date': claim.created_at.strftime('%d/%m/%Y'),
-                'reference': claim.submitted_reference,
-                'bank': claim.bank.code,
-                'bank_name': claim.bank.name,
-                'bank_amount': Decimal('0'),
-                'system_amount': claim.amount,
-                'difference': claim.amount,
-                'student': claim.student.full_congolese_name,
-                'matricule': claim.student.registration_num or 'Sans ID',
-                'status': 'system_only',
-                'claim_id': claim.id,
-                'has_anomaly': True,
-            })
-            bank_anomalies[claim.bank.code] = bank_anomalies.get(claim.bank.code, 0) + 1
-
-    reconciliation_items.sort(key=lambda x: datetime.strptime(x['date'], '%d/%m/%Y'), reverse=True)
-
-    # ========================================================
-    # APPLY FILTERS
-    # ========================================================
-
-    if search_query:
-        reconciliation_items = [
-            item for item in reconciliation_items
-            if (search_query.lower() in item['reference'].lower()) or
-               (search_query.lower() in item['student'].lower()) or
-               (search_query.lower() in item['matricule'].lower())
-        ]
-
-    if bank_filter:
-        reconciliation_items = [
-            item for item in reconciliation_items
-            if item['bank'] == bank_filter
-        ]
-
-    if status_filter:
-        reconciliation_items = [
-            item for item in reconciliation_items
-            if item['status'] == status_filter
-        ]
-
-    if period_filter:
-        today_filter = timezone.now().date()
-        if period_filter == 'today':
-            reconciliation_items = [
-                item for item in reconciliation_items
-                if datetime.strptime(item['date'], '%d/%m/%Y').date() == today_filter
-            ]
-        elif period_filter == '7days':
-            week_ago = today_filter - timedelta(days=7)
-            reconciliation_items = [
-                item for item in reconciliation_items
-                if datetime.strptime(item['date'], '%d/%m/%Y').date() >= week_ago
-            ]
-        elif period_filter == '30days':
-            month_ago = today_filter - timedelta(days=30)
-            reconciliation_items = [
-                item for item in reconciliation_items
-                if datetime.strptime(item['date'], '%d/%m/%Y').date() >= month_ago
-            ]
-        elif period_filter == 'semester':
-            if today_filter.month >= 7:
-                semester_start = datetime(today_filter.year, 7, 1).date()
-            else:
-                semester_start = datetime(today_filter.year, 1, 1).date()
-            reconciliation_items = [
-                item for item in reconciliation_items
-                if datetime.strptime(item['date'], '%d/%m/%Y').date() >= semester_start
-            ]
-
-    # ========================================================
-    # CALCULATE STATISTICS
-    # ========================================================
-
-    total_bank_amount = Decimal('0')
-    total_system_amount = Decimal('0')
-    total_difference = Decimal('0')
-    matched_count = 0
-    anomaly_count = 0
-
-    for item in reconciliation_items:
-        total_bank_amount += item['bank_amount']
-        total_system_amount += item['system_amount']
-        total_difference += item['difference']
-        if item['status'] == 'matched':
-            matched_count += 1
-        if item['has_anomaly']:
-            anomaly_count += 1
-
-    coverage_rate = 0
-    if total_bank_amount > 0:
-        coverage_rate = (total_system_amount / total_bank_amount) * 100
-
-    # ========================================================
-    # BANK SUMMARY
-    # ========================================================
-
-    bank_summary = []
-    banks = Bank.objects.filter(is_active=True)
-
-    for bank in banks:
-        bank_items = [item for item in reconciliation_items if item['bank'] == bank.code]
-        if bank_items:
-            bank_bank_total = sum(item['bank_amount'] for item in bank_items)
-            bank_system_total = sum(item['system_amount'] for item in bank_items)
-            bank_diff = bank_bank_total - bank_system_total
-            bank_coverage = 0
-            if bank_bank_total > 0:
-                bank_coverage = (bank_system_total / bank_bank_total) * 100
-            bank_anomaly_count = sum(1 for item in bank_items if item['has_anomaly'])
-
-            bank_summary.append({
-                'code': bank.code,
-                'name': bank.name,
-                'statement_amount': bank_bank_total,
-                'system_amount': bank_system_total,
-                'difference': bank_diff,
-                'coverage': bank_coverage,
-                'transactions': len(bank_items),
-                'anomalies': bank_anomaly_count,
-            })
-
-    # ========================================================
-    # GET ACADEMIC YEARS
-    # ========================================================
-
-    academic_years = [
-        ('2023-2024', '2023-2024'),
-        ('2024-2025', '2024-2025'),
-        ('2025-2026', '2025-2026'),
-        ('2026-2027', '2026-2027'),
-    ]
-
-    pending_anomalies = PaymentAnomaly.objects.filter(
-        status=PaymentAnomaly.Status.OPEN
-    ).count()
-
-    # ========================================================
-    # AJAX RESPONSE
-    # ========================================================
-
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        return JsonResponse({
-            'reconciliation_items': [
-                {
-                    'id': item['id'],
-                    'date': item['date'],
-                    'reference': item['reference'],
-                    'bank': item['bank'],
-                    'bank_name': item['bank_name'],
-                    'bank_amount': float(item['bank_amount']),
-                    'system_amount': float(item['system_amount']),
-                    'difference': float(item['difference']),
-                    'student': item['student'],
-                    'matricule': item['matricule'],
-                    'status': item['status'],
-                    'claim_id': item['claim_id'],
-                }
-                for item in reconciliation_items
-            ],
-            'total_bank_amount': float(total_bank_amount),
-            'total_system_amount': float(total_system_amount),
-            'total_difference': float(total_difference),
-            'coverage_rate': float(coverage_rate),
-            'matched_count': matched_count,
-            'anomaly_count': anomaly_count,
-            'bank_summary': bank_summary,
-            'result_count': len(reconciliation_items),
-        })
-
-    # ========================================================
-    # CONTEXT
-    # ========================================================
+    payload, banks = _reconciliation_bootstrap_payload(academic_year)
 
     context = {
-        'user': user,
-        'reconciliation_items': reconciliation_items,
-        'bank_summary': bank_summary,
-        'total_bank_amount': total_bank_amount,
-        'total_system_amount': total_system_amount,
-        'total_difference': total_difference,
-        'coverage_rate': coverage_rate,
-        'matched_count': matched_count,
-        'anomaly_count': anomaly_count,
-        'academic_year': academic_year,
-        'academic_years': academic_years,
-        'search_query': search_query,
-        'bank_filter': bank_filter,
-        'period_filter': period_filter,
-        'status_filter': status_filter,
-        'pending_anomalies': pending_anomalies,
-        'current_academic_year': ACADEMIC_YEAR,
-        'banks': banks,
-        'result_count': len(reconciliation_items),
+        "academic_year": academic_year,
+        "academic_year_choices": RECONCILIATION_ACADEMIC_YEAR_CHOICES,
+        "banks": banks,
+        "bootstrap_data": _reconciliation_safe_json(payload),
+        "pending_anomalies": PaymentAnomaly.objects.filter(
+            status=PaymentAnomaly.Status.OPEN
+        ).count(),
+        "current_academic_year": ACADEMIC_YEAR,
     }
 
-    return render(request, 'espace_finance/finance-reconciliation.html', context)
-
-
+    return render(request, "espace_finance/finance-reconciliation.html", context)
 # ============================================================
 # FINANCE ANOMALIES
 # ============================================================
@@ -2801,261 +2988,129 @@ ANOMALY_TYPE_FILTER_MAP = {
 def finance_anomalies(request):
     """
     View for anomalies management.
-    Lists all anomalies with filters and handles CRUD operations.
+    Charge toutes les anomalies de l'année académique active et les
+    injecte en JSON dans le template (filtrage/recherche entièrement
+    côté client, comme les autres pages finance).
     """
 
-    user = request.user
+    academic_year = request.GET.get("academic_year") or ACADEMIC_YEAR
 
-    # ========================================================
-    # GET FILTERS
-    # ========================================================
-
-    search_query = request.GET.get('search', '').strip()
-    bank_filter = request.GET.get('bank', 'all')
-    type_filter = request.GET.get('type', 'all')
-    status_filter = request.GET.get('status', 'all')
-    priority_filter = request.GET.get('priority', 'all')
-    page = request.GET.get('page', 1)
-
-    # ========================================================
-    # BASE QUERY
-    # ========================================================
-
-    anomalies = PaymentAnomaly.objects.select_related(
-        'claim',
-        'claim__student',
-        'claim__bank'
-    ).prefetch_related(
-        'claim__student__academic_program',
-        'claim__student__academic_program__program',
-        'claim__student__academic_program__program__department',
-        'claim__student__academic_program__program__department__faculty'
-    ).filter(
-        claim__academic_year=ACADEMIC_YEAR
+    anomalies = (
+        PaymentAnomaly.objects.select_related(
+            "claim",
+            "claim__student",
+            "claim__bank",
+            "claim__bank_transaction",
+        )
+        .filter(claim__academic_year=academic_year)
+        .order_by("-created_at")
     )
 
-    # ========================================================
-    # APPLY FILTERS
-    # ========================================================
-
-    if search_query:
-        anomalies = anomalies.filter(
-            Q(claim__student__first_name__icontains=search_query) |
-            Q(claim__student__last_name__icontains=search_query) |
-            Q(claim__student__post_name__icontains=search_query) |
-            Q(claim__student__registration_num__icontains=search_query) |
-            Q(claim__submitted_reference__icontains=search_query)
-        )
-
-    if bank_filter != 'all':
-        anomalies = anomalies.filter(claim__bank__code=bank_filter)
-
-    if type_filter != 'all' and type_filter in ANOMALY_TYPE_FILTER_MAP:
-        anomalies = anomalies.filter(anomaly_type=ANOMALY_TYPE_FILTER_MAP[type_filter])
-
-    if status_filter != 'all':
-        status_mapping = {
-            'pending': PaymentAnomaly.Status.OPEN,
-            'processing': PaymentAnomaly.Status.OPEN,
-            'resolved': PaymentAnomaly.Status.RESOLVED,
-        }
-        if status_filter in status_mapping:
-            if status_filter == 'processing':
-                anomalies = anomalies.filter(
-                    status=PaymentAnomaly.Status.OPEN,
-                    description__icontains='en cours'
-                )
-            else:
-                anomalies = anomalies.filter(status=status_mapping[status_filter])
-
-    if priority_filter == 'high':
-        anomalies = anomalies.filter(anomaly_type__in=ANOMALY_HIGH_PRIORITY_TYPES)
-    elif priority_filter == 'medium':
-        anomalies = anomalies.filter(anomaly_type__in=ANOMALY_MEDIUM_PRIORITY_TYPES)
-    elif priority_filter == 'low':
-        anomalies = anomalies.filter(anomaly_type__in=ANOMALY_LOW_PRIORITY_TYPES)
-
-    # ========================================================
-    # ORDERING + PAGINATION
-    # ========================================================
-
-    anomalies = anomalies.order_by('-created_at')
-
-    paginator = Paginator(anomalies, 20)
-
-    try:
-        anomalies_page = paginator.page(page)
-    except PageNotAnInteger:
-        anomalies_page = paginator.page(1)
-    except EmptyPage:
-        anomalies_page = paginator.page(paginator.num_pages)
-
-    # ========================================================
-    # STATS
-    # ========================================================
-
-    total_anomalies = PaymentAnomaly.objects.filter(
-        claim__academic_year=ACADEMIC_YEAR
-    ).count()
-
-    pending_anomalies = PaymentAnomaly.objects.filter(
-        claim__academic_year=ACADEMIC_YEAR,
-        status=PaymentAnomaly.Status.OPEN
-    ).count()
-
-    processing_anomalies = PaymentAnomaly.objects.filter(
-        claim__academic_year=ACADEMIC_YEAR,
-        status=PaymentAnomaly.Status.OPEN,
-        description__icontains='en cours'
-    ).count()
-
-    resolved_anomalies = PaymentAnomaly.objects.filter(
-        claim__academic_year=ACADEMIC_YEAR,
-        status=PaymentAnomaly.Status.RESOLVED
-    ).count()
-
-    difference_count = PaymentAnomaly.objects.filter(
-        claim__academic_year=ACADEMIC_YEAR,
-        anomaly_type=PaymentAnomaly.Type.AMOUNT_MISMATCH,
-        status=PaymentAnomaly.Status.OPEN
-    ).count()
-
-    unassigned_count = PaymentAnomaly.objects.filter(
-        claim__academic_year=ACADEMIC_YEAR,
-        anomaly_type=PaymentAnomaly.Type.REFERENCE_NOT_FOUND,
-        status=PaymentAnomaly.Status.OPEN
-    ).count()
-
-    missing_count = unassigned_count
-
-    duplicate_count = PaymentAnomaly.objects.filter(
-        claim__academic_year=ACADEMIC_YEAR,
-        anomaly_type=PaymentAnomaly.Type.REFERENCE_ALREADY_USED,
-        status=PaymentAnomaly.Status.OPEN
-    ).count()
-
-    banks = Bank.objects.filter(is_active=True)
-
-    # ========================================================
-    # BUILD ANOMALIES DATA
-    # ========================================================
+    banks = Bank.objects.filter(is_active=True).order_by("name")
 
     anomalies_data = []
-    for anomaly in anomalies_page:
+
+    for anomaly in anomalies:
 
         if anomaly.anomaly_type in ANOMALY_HIGH_PRIORITY_TYPES:
-            priority = 'high'
-            priority_label = 'Élevée'
+            priority = "high"
+            priority_label = "Élevée"
         elif anomaly.anomaly_type in ANOMALY_MEDIUM_PRIORITY_TYPES:
-            priority = 'medium'
-            priority_label = 'Moyenne'
+            priority = "medium"
+            priority_label = "Moyenne"
         else:
-            priority = 'low'
-            priority_label = 'Faible'
+            priority = "low"
+            priority_label = "Faible"
 
         if anomaly.anomaly_type == PaymentAnomaly.Type.REFERENCE_NOT_FOUND:
-            type_value = 'missing'
-            type_badge_class = 'danger'
-            type_label = 'Référence introuvable'
+            type_value = "missing"
+            type_label = "Référence introuvable"
         elif anomaly.anomaly_type == PaymentAnomaly.Type.AMOUNT_MISMATCH:
-            type_value = 'difference'
-            type_badge_class = 'warning'
-            type_label = 'Montant incohérent'
+            type_value = "difference"
+            type_label = "Montant incohérent"
         elif anomaly.anomaly_type == PaymentAnomaly.Type.REFERENCE_ALREADY_USED:
-            type_value = 'duplicate'
-            type_badge_class = 'accent'
-            type_label = 'Doublon détecté'
+            type_value = "duplicate"
+            type_label = "Doublon détecté"
         else:
-            type_value = 'other'
-            type_badge_class = 'info'
+            type_value = "other"
             type_label = anomaly.get_anomaly_type_display()
 
-        status_display = anomaly.get_status_display()
-        if status_display == 'Ouverte' and anomaly.description and 'en cours' in anomaly.description.lower():
-            status_display = 'En cours'
+        if anomaly.status == PaymentAnomaly.Status.RESOLVED:
+            status_value = "resolved"
+        elif anomaly.description and "en cours" in anomaly.description.lower():
+            status_value = "processing"
+        else:
+            status_value = "pending"
 
-        bank_name = anomaly.claim.bank.name if anomaly.claim.bank else '—'
-        bank_code = anomaly.claim.bank.code if anomaly.claim.bank else ''
+        claim = anomaly.claim
+        student = claim.student
+        bank = claim.bank
+        bank_transaction = claim.bank_transaction
 
         anomalies_data.append({
-            'id': anomaly.id,
-            'student_name': anomaly.claim.student.full_congolese_name,
-            'student_registration': anomaly.claim.student.registration_num or 'Sans ID',
-            'reference': anomaly.claim.submitted_reference,
-            'bank': bank_code,
-            'bank_name': bank_name,
-            'type': type_value,
-            'type_label': type_label,
-            'type_badge_class': type_badge_class,
-            'amount': anomaly.claim.amount,
-            'priority': priority,
-            'priority_label': priority_label,
-            'status': anomaly.status,
-            'status_display': status_display,
-            'date': anomaly.created_at.strftime('%d/%m/%Y'),
-            'time': anomaly.created_at.strftime('%H:%M'),
-            'description': anomaly.description or 'Aucune description fournie.',
-            'claim_id': anomaly.claim.id,
-            'bank_reference': anomaly.claim.bank_transaction.transaction_reference if anomaly.claim.bank_transaction else '—',
-            'bank_amount': anomaly.claim.bank_transaction.amount if anomaly.claim.bank_transaction else None,
+            "id": anomaly.id,
+            "student": student.full_congolese_name,
+            "matricule": student.registration_num or "Sans ID",
+            "reference": claim.submitted_reference,
+            "bank": {
+                "code": bank.code if bank else "",
+                "name": bank.name if bank else "—",
+            },
+            "type": type_value,
+            "typeLabel": type_label,
+            "amount": str(claim.amount),
+            "priority": priority,
+            "priorityLabel": priority_label,
+            "status": status_value,
+            "date": anomaly.created_at.strftime("%d/%m/%Y"),
+            "time": anomaly.created_at.strftime("%H:%M"),
+            "description": anomaly.description or "Aucune description fournie.",
+            "note": anomaly.description or "",
+            "claimId": claim.id,
+            "bankReference": (
+                bank_transaction.transaction_reference
+                if bank_transaction
+                else "—"
+            ),
+            "bankAmount": (
+                str(bank_transaction.amount) if bank_transaction else None
+            ),
         })
 
-    # ========================================================
-    # AJAX RESPONSE
-    # ========================================================
-
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        return JsonResponse({
-            'anomalies': anomalies_data,
-            'total': paginator.count,
-            'page': anomalies_page.number,
-            'num_pages': paginator.num_pages,
-            'has_next': anomalies_page.has_next(),
-            'has_previous': anomalies_page.has_previous(),
-            'total_anomalies': total_anomalies,
-            'pending_anomalies': pending_anomalies,
-            'processing_anomalies': processing_anomalies,
-            'resolved_anomalies': resolved_anomalies,
-            'difference_count': difference_count,
-            'unassigned_count': unassigned_count,
-            'missing_count': missing_count,
-            'duplicate_count': duplicate_count,
-            'result_count': paginator.count,
-        })
-
-    # ========================================================
-    # CONTEXT
-    # ========================================================
-
-    context = {
-        'user': user,
-        'anomalies': anomalies_data,
-        'anomalies_page': anomalies_page,
-        'paginator': paginator,
-        'banks': banks,
-        'search_query': search_query,
-        'bank_filter': bank_filter,
-        'type_filter': type_filter,
-        'status_filter': status_filter,
-        'priority_filter': priority_filter,
-        'total_anomalies': total_anomalies,
-        'pending_anomalies': pending_anomalies,
-        'processing_anomalies': processing_anomalies,
-        'resolved_anomalies': resolved_anomalies,
-        'difference_count': difference_count,
-        'unassigned_count': unassigned_count,
-        'missing_count': missing_count,
-        'duplicate_count': duplicate_count,
-        'current_academic_year': ACADEMIC_YEAR,
-        'result_count': paginator.count,
-        'high_priority_types': ANOMALY_HIGH_PRIORITY_TYPES,
-        'medium_priority_types': ANOMALY_MEDIUM_PRIORITY_TYPES,
-        'low_priority_types': ANOMALY_LOW_PRIORITY_TYPES,
+    type_counts = {
+        "difference": sum(1 for a in anomalies_data if a["type"] == "difference" and a["status"] != "resolved"),
+        "unassigned": sum(1 for a in anomalies_data if a["type"] == "missing" and a["status"] != "resolved"),
+        "missing": sum(1 for a in anomalies_data if a["type"] == "missing" and a["status"] != "resolved"),
+        "duplicate": sum(1 for a in anomalies_data if a["type"] == "duplicate" and a["status"] != "resolved"),
     }
 
-    return render(request, 'espace_finance/finance-anomalies.html', context)
+    kpi = {
+        "total": len(anomalies_data),
+        "pending": sum(1 for a in anomalies_data if a["status"] == "pending"),
+        "processing": sum(1 for a in anomalies_data if a["status"] == "processing"),
+        "resolved": sum(1 for a in anomalies_data if a["status"] == "resolved"),
+    }
 
+    bootstrap_payload = {
+        "academicYear": academic_year,
+        "anomalies": anomalies_data,
+        "banks": [{"code": b.code, "name": b.name} for b in banks],
+        "typeCounts": type_counts,
+        "kpi": kpi,
+    }
 
+    context = {
+        "academic_year": academic_year,
+        "academic_year_choices": [year for year, _ in ACADEMIC_YEAR_CHOICES],
+        "banks": banks,
+        "bootstrap_data": json.dumps(
+            bootstrap_payload, cls=DjangoJSONEncoder
+        ).replace("</", "<\\/"),
+        "pending_anomalies": kpi["pending"] + kpi["processing"],
+        "current_academic_year": ACADEMIC_YEAR,
+    }
+
+    return render(request, "espace_finance/finance-anomalies.html", context)
 # ============================================================
 # UPDATE ANOMALY (AJAX)
 # ============================================================
@@ -3145,419 +3200,284 @@ def finance_anomaly_update(request):
 # FINANCE REPORTS
 # ============================================================
 
+REPORTS_ACADEMIC_YEAR_CHOICES = [year for year, _ in ACADEMIC_YEAR_CHOICES]
+
+
+def _reports_safe_json(data):
+    """
+    Sérialise en JSON pour injection directe dans un tag <script>.
+    Échappe les séquences "</" pour éviter toute fermeture prématurée
+    du tag si une valeur textuelle en contient.
+    """
+    return json.dumps(data, cls=DjangoJSONEncoder).replace("</", "<\\/")
+
+
+def build_reports_revenue_series(academic_year):
+    """
+    Montants encaissés (Payment validés) et attendus (FeeSchedule,
+    répartis sur 12 mois) pour les 11 derniers mois glissants,
+    pour le graphique "Évolution des recettes".
+    """
+    today = timezone.now().date()
+
+    total_expected = FeeSchedule.objects.filter(
+        academic_year=academic_year,
+        status=FeeSchedule.Status.ACTIF,
+    ).aggregate(total=Sum("total_amount"))["total"] or ZERO
+
+    monthly_expected = (total_expected / 12) if total_expected > 0 else ZERO
+
+    labels = []
+    collected_values = []
+    expected_values = []
+
+    for i in range(10, -1, -1):
+
+        month_date = today.replace(day=1) - timedelta(days=i * 30)
+        month_start = month_date.replace(day=1)
+
+        if month_date.month == 12:
+            month_end = month_date.replace(year=month_date.year + 1, month=1, day=1) - timedelta(days=1)
+        else:
+            month_end = month_date.replace(month=month_date.month + 1, day=1) - timedelta(days=1)
+
+        monthly_collected = (
+            Payment.objects.filter(
+                academic_year=academic_year,
+                status=Payment.Status.PAID,
+                payment_date__date__gte=month_start,
+                payment_date__date__lte=month_end,
+            ).aggregate(total=Sum("amount"))["total"]
+            or ZERO
+        )
+
+        labels.append(month_start.strftime("%b"))
+        collected_values.append(float(monthly_collected))
+        expected_values.append(float(monthly_expected))
+
+    return {
+        "labels": labels,
+        "collected": collected_values,
+        "expected": expected_values,
+    }
+
+
+def build_reports_bank_data(academic_year):
+    """
+    Un enregistrement par banque : encaissé (Payment), montant
+    système (PaymentClaim), attendu (part de l'échéancier total,
+    répartie au prorata des transactions bancaires), nombre de
+    transactions, anomalies ouvertes, taux de rapprochement.
+    """
+    banks = Bank.objects.filter(is_active=True).order_by("name")
+
+    payments = Payment.objects.filter(
+        academic_year=academic_year, status=Payment.Status.PAID
+    )
+    claims = PaymentClaim.objects.filter(academic_year=academic_year)
+
+    total_expected = FeeSchedule.objects.filter(
+        academic_year=academic_year,
+        status=FeeSchedule.Status.ACTIF,
+    ).aggregate(total=Sum("total_amount"))["total"] or ZERO
+
+    bank_data = {}
+    total_transactions_all_banks = 0
+
+    bank_transaction_counts = {}
+
+    for bank in banks:
+
+        bank_payments = payments.filter(claim__bank=bank)
+        bank_claims = claims.filter(bank=bank)
+
+        collected = bank_payments.aggregate(total=Sum("amount"))["total"] or ZERO
+        system_amount = bank_claims.aggregate(total=Sum("amount"))["total"] or ZERO
+
+        transaction_count = BankTransaction.objects.filter(
+            bank_account__bank=bank,
+        ).count()
+
+        matched_count = bank_claims.filter(bank_transaction__isnull=False).count()
+
+        reconciliation_rate = (
+            (Decimal(matched_count) / Decimal(transaction_count) * Decimal("100"))
+            if transaction_count > 0
+            else ZERO
+        )
+
+        open_anomalies = PaymentAnomaly.objects.filter(
+            claim__bank=bank,
+            claim__academic_year=academic_year,
+            status=PaymentAnomaly.Status.OPEN,
+        ).count()
+
+        bank_transaction_counts[bank.code] = transaction_count
+        total_transactions_all_banks += transaction_count
+
+        bank_data[bank.code] = {
+            "name": bank.name,
+            "collected": collected,
+            "system": system_amount,
+            "expected": ZERO,  # complété ci-dessous, au prorata
+            "transactions": transaction_count,
+            "anomalies": open_anomalies,
+            "reconciliation": reconciliation_rate.quantize(Decimal("0.1")),
+        }
+
+    if total_transactions_all_banks > 0 and total_expected > 0:
+        for code, data in bank_data.items():
+            share = Decimal(bank_transaction_counts[code]) / Decimal(total_transactions_all_banks)
+            data["expected"] = (total_expected * share).quantize(Decimal("0.01"))
+
+    return bank_data
+
+
+def build_reports_faculty_data(academic_year):
+    """
+    Un enregistrement par faculté (clé = id de la faculté, pour
+    rester cohérent avec le filtre "Faculté" alimenté par
+    serialize_student_academic_structure) : nb étudiants, montant
+    attendu (FeeSchedule des programmes de la faculté), montant
+    payé.
+    """
+    faculties = Faculty.objects.filter(is_active=True).order_by("name")
+
+    fee_schedules = FeeSchedule.objects.filter(
+        academic_year=academic_year,
+        status=FeeSchedule.Status.ACTIF,
+    )
+
+    payments = Payment.objects.filter(
+        academic_year=academic_year, status=Payment.Status.PAID
+    )
+
+    faculty_data = {}
+
+    for faculty in faculties:
+
+        faculty_students = User.objects.filter(
+            role=User.Role.STUDENT,
+            is_active=True,
+            academic_program__program__department__faculty=faculty,
+        )
+
+        faculty_payments = payments.filter(student__in=faculty_students)
+        collected = faculty_payments.aggregate(total=Sum("amount"))["total"] or ZERO
+
+        expected = fee_schedules.filter(
+            academic_program__program__department__faculty=faculty
+        ).aggregate(total=Sum("total_amount"))["total"] or ZERO
+
+        faculty_data[str(faculty.id)] = {
+            "name": faculty.name,
+            "students": faculty_students.count(),
+            "expected": expected,
+            "collected": collected,
+        }
+
+    return faculty_data
+
+
+def _reports_bootstrap_payload(academic_year):
+
+    bank_data = build_reports_bank_data(academic_year)
+    faculty_data = build_reports_faculty_data(academic_year)
+    revenue = build_reports_revenue_series(academic_year)
+
+    total_collected = sum((b["collected"] for b in bank_data.values()), ZERO)
+    total_expected = sum((b["expected"] for b in bank_data.values()), ZERO)
+
+    total_transactions = sum(b["transactions"] for b in bank_data.values())
+    total_matched = sum(
+        round(b["transactions"] * float(b["reconciliation"]) / 100)
+        for b in bank_data.values()
+    )
+
+    open_anomalies = PaymentAnomaly.objects.filter(
+        claim__academic_year=academic_year,
+        status=PaymentAnomaly.Status.OPEN,
+    ).count()
+
+    missing_references = PaymentAnomaly.objects.filter(
+        claim__academic_year=academic_year,
+        anomaly_type=PaymentAnomaly.Type.REFERENCE_NOT_FOUND,
+        status=PaymentAnomaly.Status.OPEN,
+    ).count()
+
+    amount_mismatches = PaymentAnomaly.objects.filter(
+        claim__academic_year=academic_year,
+        anomaly_type=PaymentAnomaly.Type.AMOUNT_MISMATCH,
+        status=PaymentAnomaly.Status.OPEN,
+    ).count()
+
+    return {
+        "academicYear": academic_year,
+        "banks": {
+            code: {
+                "name": data["name"],
+                "collected": str(data["collected"]),
+                "system": str(data["system"]),
+                "expected": str(data["expected"]),
+                "transactions": data["transactions"],
+                "anomalies": data["anomalies"],
+                "reconciliation": str(data["reconciliation"]),
+            }
+            for code, data in bank_data.items()
+        },
+        "faculties": {
+            code: {
+                "name": data["name"],
+                "students": data["students"],
+                "expected": str(data["expected"]),
+                "collected": str(data["collected"]),
+            }
+            for code, data in faculty_data.items()
+        },
+        "revenue": revenue,
+        "kpi": {
+            "totalCollected": str(total_collected),
+            "totalExpected": str(total_expected),
+            "totalTransactions": total_transactions,
+            "totalMatched": total_matched,
+            "openAnomalies": open_anomalies,
+            "missingReferences": missing_references,
+            "amountMismatches": amount_mismatches,
+        },
+    }
+
+
 @login_required
 @finance_required
 def finance_reports(request):
     """
-    View for financial reports.
-    Shows analytics, charts, and financial summaries.
+    View for financial reports. Charge l'intégralité des données de
+    l'année académique active (banques, facultés, courbe de
+    recettes) en une fois ; les filtres banque/faculté/période
+    s'appliquent ensuite entièrement côté client, sur les données
+    déjà chargées.
     """
+    academic_year = request.GET.get("academic_year") or ACADEMIC_YEAR
 
-    user = request.user
-    today = timezone.now().date()
-
-    # ========================================================
-    # GET FILTERS
-    # ========================================================
-
-    academic_year = request.GET.get('academic_year', ACADEMIC_YEAR)
-    period_filter = request.GET.get('period', 'year')
-    bank_filter = request.GET.get('bank', '')
-    faculty_filter = request.GET.get('faculty', '')
-    department_filter = request.GET.get('department', '')
-    program_filter = request.GET.get('program', '')
-    level_filter = request.GET.get('level', '')
-
-    # ========================================================
-    # GET ACADEMIC YEAR RANGE
-    # ========================================================
-
-    start_year, end_year = academic_year.split('-')
-    year_start = datetime(int(start_year), 7, 1)
-    year_end = datetime(int(end_year), 6, 30)
-
-    period_start = year_start
-    period_end = year_end
-
-    if period_filter == 'semester1':
-        period_start = datetime(int(start_year), 7, 1)
-        period_end = datetime(int(start_year), 12, 31)
-    elif period_filter == 'semester2':
-        period_start = datetime(int(end_year), 1, 1)
-        period_end = datetime(int(end_year), 6, 30)
-    elif period_filter == 'month':
-        period_start = datetime(today.year, today.month, 1)
-        if today.month == 12:
-            period_end = datetime(today.year + 1, 1, 1) - timedelta(days=1)
-        else:
-            period_end = datetime(today.year, today.month + 1, 1) - timedelta(days=1)
-
-    # ========================================================
-    # BASE QUERIES
-    # ========================================================
-
-    payments = Payment.objects.filter(
-        academic_year=academic_year,
-        status=Payment.Status.PAID,
-        created_at__range=[period_start, period_end]
-    )
-
-    fee_schedules = FeeSchedule.objects.filter(
-        academic_year=academic_year,
-        status=FeeSchedule.Status.ACTIF
-    )
-
-    claims = PaymentClaim.objects.filter(
-        academic_year=academic_year,
-        created_at__range=[period_start, period_end]
-    )
-
-    bank_transactions = BankTransaction.objects.filter(
-        payment_date__range=[period_start, period_end]
-    )
-
-    anomalies = PaymentAnomaly.objects.filter(
-        claim__academic_year=academic_year,
-        created_at__range=[period_start, period_end]
-    )
-
-    # ========================================================
-    # APPLY ADDITIONAL FILTERS
-    # ========================================================
-
-    if bank_filter:
-        payments = payments.filter(claim__bank__code=bank_filter)
-        claims = claims.filter(bank__code=bank_filter)
-        bank_transactions = bank_transactions.filter(bank_account__bank__code=bank_filter)
-
-    if faculty_filter:
-        payments = payments.filter(
-            student__academic_program__program__department__faculty__code=faculty_filter
-        )
-        claims = claims.filter(
-            student__academic_program__program__department__faculty__code=faculty_filter
-        )
-        fee_schedules = fee_schedules.filter(
-            academic_program__program__department__faculty__code=faculty_filter
-        )
-
-    if department_filter:
-        payments = payments.filter(
-            student__academic_program__program__department__code=department_filter
-        )
-        claims = claims.filter(
-            student__academic_program__program__department__code=department_filter
-        )
-        fee_schedules = fee_schedules.filter(
-            academic_program__program__department__code=department_filter
-        )
-
-    if program_filter:
-        payments = payments.filter(
-            student__academic_program__program__code=program_filter
-        )
-        claims = claims.filter(
-            student__academic_program__program__code=program_filter
-        )
-        fee_schedules = fee_schedules.filter(
-            academic_program__program__code=program_filter
-        )
-
-    if level_filter:
-        payments = payments.filter(
-            student__academic_program__level=level_filter
-        )
-        claims = claims.filter(
-            student__academic_program__level=level_filter
-        )
-        fee_schedules = fee_schedules.filter(
-            academic_program__level=level_filter
-        )
-
-    # ========================================================
-    # KPI CALCULATIONS
-    # ========================================================
-
-    total_collected = payments.aggregate(total=Sum('amount'))['total'] or Decimal('0')
-    total_expected = fee_schedules.aggregate(total=Sum('total_amount'))['total'] or Decimal('0')
-
-    recovery_rate = 0
-    if total_expected > 0:
-        recovery_rate = (total_collected / total_expected) * 100
-
-    total_bank_transactions = bank_transactions.count()
-    matched_transactions = claims.filter(bank_transaction__isnull=False).count()
-    reconciliation_rate = 0
-    if total_bank_transactions > 0:
-        reconciliation_rate = (matched_transactions / total_bank_transactions) * 100
-
-    open_anomalies = anomalies.filter(status=PaymentAnomaly.Status.OPEN).count()
-
-    # ========================================================
-    # REVENUE CHART DATA
-    # ========================================================
-
-    chart_labels = []
-    chart_collected = []
-    chart_expected = []
-
-    for i in range(10, -1, -1):
-        chart_date = today.replace(day=1) - timedelta(days=i * 30)
-        month_start = chart_date.replace(day=1)
-
-        if chart_date.month == 12:
-            month_end = chart_date.replace(year=chart_date.year + 1, month=1, day=1) - timedelta(days=1)
-        else:
-            month_end = chart_date.replace(month=chart_date.month + 1, day=1) - timedelta(days=1)
-
-        monthly_payments = Payment.objects.filter(
-            academic_year=academic_year,
-            status=Payment.Status.PAID,
-            created_at__range=[month_start, month_end]
-        )
-        monthly_collected = monthly_payments.aggregate(total=Sum('amount'))['total'] or Decimal('0')
-
-        monthly_expected = total_expected / 12 if total_expected > 0 else 0
-
-        chart_labels.append(month_start.strftime('%b'))
-        chart_collected.append(float(monthly_collected))
-        chart_expected.append(float(monthly_expected))
-
-    # ========================================================
-    # BANK DISTRIBUTION
-    # ========================================================
-
-    bank_distribution = []
-    banks = Bank.objects.filter(is_active=True)
-
-    for bank in banks:
-        bank_payments = payments.filter(claim__bank=bank)
-        bank_total = bank_payments.aggregate(total=Sum('amount'))['total'] or Decimal('0')
-
-        if bank_total > 0 or bank_filter == bank.code:
-            bank_distribution.append({
-                'code': bank.code,
-                'name': bank.name,
-                'collected': float(bank_total),
-                'percentage': float((bank_total / total_collected) * 100) if total_collected > 0 else 0,
-            })
-
-    # ========================================================
-    # FACULTY RECOVERY
-    # ========================================================
-
-    faculty_recovery = []
-    faculties = Faculty.objects.filter(is_active=True)
-
-    for faculty in faculties:
-        faculty_students = User.objects.filter(
-            role=User.Role.STUDENT,
-            academic_program__program__department__faculty=faculty,
-            is_active=True
-        )
-
-        faculty_payments = payments.filter(student__in=faculty_students)
-        faculty_collected = faculty_payments.aggregate(total=Sum('amount'))['total'] or Decimal('0')
-
-        faculty_expected = fee_schedules.filter(
-            academic_program__program__department__faculty=faculty
-        ).aggregate(total=Sum('total_amount'))['total'] or Decimal('0')
-
-        faculty_rate = 0
-        if faculty_expected > 0:
-            faculty_rate = (faculty_collected / faculty_expected) * 100
-
-        faculty_recovery.append({
-            'code': faculty.code,
-            'name': faculty.name,
-            'students': faculty_students.count(),
-            'expected': float(faculty_expected),
-            'collected': float(faculty_collected),
-            'remaining': float(faculty_expected - faculty_collected),
-            'recovery_rate': float(faculty_rate),
-        })
-
-    faculty_recovery.sort(key=lambda x: x['recovery_rate'], reverse=True)
-
-    # ========================================================
-    # BANK PERFORMANCE TABLE
-    # ========================================================
-
-    bank_performance = []
-
-    for bank in banks:
-        bank_claims = claims.filter(bank=bank)
-        bank_payments = payments.filter(claim__bank=bank)
-        bank_transactions_filtered = bank_transactions.filter(bank_account__bank=bank)
-
-        bank_collected = bank_payments.aggregate(total=Sum('amount'))['total'] or Decimal('0')
-        bank_system_total = bank_claims.aggregate(total=Sum('amount'))['total'] or Decimal('0')
-
-        bank_total_tx = bank_transactions_filtered.count()
-        bank_matched = bank_claims.filter(bank_transaction__isnull=False).count()
-
-        bank_reconciliation = 0
-        if bank_total_tx > 0:
-            bank_reconciliation = (bank_matched / bank_total_tx) * 100
-
-        bank_anomalies_count = PaymentAnomaly.objects.filter(
-            claim__bank=bank,
-            claim__academic_year=academic_year,
-            status=PaymentAnomaly.Status.OPEN
-        ).count()
-
-        if bank_collected > 0 or bank_filter == bank.code:
-            bank_performance.append({
-                'code': bank.code,
-                'name': bank.name,
-                'statement_amount': float(bank_collected),
-                'system_amount': float(bank_system_total),
-                'difference': float(bank_collected - bank_system_total),
-                'transactions': bank_total_tx,
-                'anomalies': bank_anomalies_count,
-                'reconciliation': float(bank_reconciliation),
-            })
-
-    # ========================================================
-    # RECONCILIATION STATS
-    # ========================================================
-
-    total_claims = claims.count()
-    matched_claims = claims.filter(bank_transaction__isnull=False).count()
-    unassigned_claims = claims.filter(bank_transaction__isnull=True).count()
-
-    missing_references = anomalies.filter(
-        anomaly_type=PaymentAnomaly.Type.REFERENCE_NOT_FOUND,
-        status=PaymentAnomaly.Status.OPEN
-    ).count()
-
-    amount_mismatches = anomalies.filter(
-        anomaly_type=PaymentAnomaly.Type.AMOUNT_MISMATCH,
-        status=PaymentAnomaly.Status.OPEN
-    ).count()
-
-    duplicate_refs = anomalies.filter(
-        anomaly_type=PaymentAnomaly.Type.REFERENCE_ALREADY_USED,
-        status=PaymentAnomaly.Status.OPEN
-    ).count()
-
-    academic_years = [
-        ('2023-2024', '2023-2024'),
-        ('2024-2025', '2024-2025'),
-        ('2025-2026', '2025-2026'),
-        ('2026-2027', '2026-2027'),
-    ]
-
-    departments = Department.objects.filter(is_active=True)
-    programs = Program.objects.filter(is_active=True)
-    levels = [choice[0] for choice in AcademicLevel.choices]
-
-    pending_anomalies = PaymentAnomaly.objects.filter(
-        status=PaymentAnomaly.Status.OPEN
-    ).count()
-
-    # ========================================================
-    # BUILD REPORT DATA FOR JSON
-    # ========================================================
-
-    report_data = {
-        'banks': {},
-        'faculties': {},
-        'revenue': {
-            'labels': chart_labels,
-            'collected': chart_collected,
-            'expected': chart_expected,
-        }
-    }
-
-    for bank in bank_performance:
-        report_data['banks'][bank['code']] = {
-            'name': bank['name'],
-            'collected': bank['statement_amount'],
-            'system': bank['system_amount'],
-            'expected': 0,
-            'transactions': bank['transactions'],
-            'anomalies': bank['anomalies'],
-            'reconciliation': bank['reconciliation'],
-        }
-
-    for faculty in faculty_recovery:
-        report_data['faculties'][faculty['code']] = {
-            'name': faculty['name'],
-            'students': faculty['students'],
-            'expected': faculty['expected'],
-            'collected': faculty['collected'],
-        }
-
-    # ========================================================
-    # AJAX RESPONSE
-    # ========================================================
-
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        return JsonResponse({
-            'total_collected': float(total_collected),
-            'recovery_rate': float(recovery_rate),
-            'reconciliation_rate': float(reconciliation_rate),
-            'open_anomalies': open_anomalies,
-            'chart_labels': chart_labels,
-            'chart_collected': chart_collected,
-            'chart_expected': chart_expected,
-            'bank_distribution': bank_distribution,
-            'faculty_recovery': faculty_recovery,
-            'bank_performance': bank_performance,
-            'total_claims': total_claims,
-            'matched_claims': matched_claims,
-            'unassigned_claims': unassigned_claims,
-            'missing_references': missing_references,
-            'amount_mismatches': amount_mismatches,
-            'duplicate_refs': duplicate_refs,
-            'report_data': report_data,
-        })
-
-    # ========================================================
-    # CONTEXT
-    # ========================================================
+    payload = _reports_bootstrap_payload(academic_year)
+    academic_structure = serialize_student_academic_structure()
 
     context = {
-        'user': user,
-        'total_collected': total_collected,
-        'total_expected': total_expected,
-        'recovery_rate': recovery_rate,
-        'reconciliation_rate': reconciliation_rate,
-        'open_anomalies': open_anomalies,
-        'chart_labels': chart_labels,
-        'chart_collected': chart_collected,
-        'chart_expected': chart_expected,
-        'bank_distribution': bank_distribution,
-        'faculty_recovery': faculty_recovery,
-        'bank_performance': bank_performance,
-        'total_claims': total_claims,
-        'matched_claims': matched_claims,
-        'unassigned_claims': unassigned_claims,
-        'missing_references': missing_references,
-        'amount_mismatches': amount_mismatches,
-        'duplicate_refs': duplicate_refs,
-        'academic_year': academic_year,
-        'academic_years': academic_years,
-        'period_filter': period_filter,
-        'bank_filter': bank_filter,
-        'faculty_filter': faculty_filter,
-        'department_filter': department_filter,
-        'program_filter': program_filter,
-        'level_filter': level_filter,
-        'faculties': faculties,
-        'departments': departments,
-        'programs': programs,
-        'levels': levels,
-        'pending_anomalies': pending_anomalies,
-        'current_academic_year': ACADEMIC_YEAR,
-        'banks': banks,
-        'report_data_json': json.dumps(report_data),
+        "academic_year": academic_year,
+        "academic_year_choices": REPORTS_ACADEMIC_YEAR_CHOICES,
+        "banks": Bank.objects.filter(is_active=True).order_by("name"),
+        "faculties": Faculty.objects.filter(is_active=True).order_by("name"),
+        "bootstrap_data": _reports_safe_json({
+            "report": payload,
+            "academicStructure": academic_structure,
+        }),
+        "pending_anomalies": PaymentAnomaly.objects.filter(
+            status=PaymentAnomaly.Status.OPEN
+        ).count(),
+        "current_academic_year": ACADEMIC_YEAR,
     }
 
-    return render(request, 'espace_finance/finance-reports.html', context)
-
-
+    return render(request, "espace_finance/finance-reports.html", context)
 # ============================================================
 # EXPORT REPORT CSV
 # ============================================================
@@ -3658,38 +3578,30 @@ def finance_export_report(request):
 # FINANCE HISTORY
 # ============================================================
 
-@login_required
-@finance_required
-def finance_history(request):
+def _history_safe_json(data):
     """
-    View for finance history/audit log.
-    Shows all financial operations with filters.
+    Sérialise en JSON pour injection directe dans un tag <script>.
+    Échappe les séquences "</" pour éviter toute fermeture prématurée
+    du tag si une valeur textuelle en contient.
     """
+    return json.dumps(data, cls=DjangoJSONEncoder).replace("</", "<\\/")
 
-    user = request.user
 
-    # ========================================================
-    # GET FILTERS
-    # ========================================================
-
-    search_query = request.GET.get('search', '').strip()
-    period_filter = request.GET.get('period', '')
-    module_filter = request.GET.get('module', '')
-    action_filter = request.GET.get('action', '')
-    status_filter = request.GET.get('status', '')
-    actor_filter = request.GET.get('actor', '')
-    page = request.GET.get('page', 1)
-
-    # ========================================================
-    # BUILD HISTORY ENTRIES FROM DIFFERENT MODELS
-    # ========================================================
-
+def build_history_entries(academic_year):
+    """
+    Construit le journal d'audit à partir de plusieurs modèles :
+    déclarations soumises, paiements auto-approuvés (rapprochement
+    automatique), extraits importés, échéanciers créés, anomalies
+    (ouvertes ou résolues), vérifications de situation. Reproduit
+    exactement la logique déjà en place dans l'ancienne vue
+    finance_history.
+    """
     history_entries = []
 
     claims = PaymentClaim.objects.select_related(
         'student', 'bank'
     ).filter(
-        academic_year=ACADEMIC_YEAR
+        academic_year=academic_year
     ).order_by('-created_at')
 
     for claim in claims:
@@ -3713,7 +3625,7 @@ def finance_history(request):
     approved_claims = PaymentClaim.objects.select_related(
         'student', 'bank', 'bank_transaction'
     ).filter(
-        academic_year=ACADEMIC_YEAR,
+        academic_year=academic_year,
         status=PaymentClaim.ClaimStatus.APPROVED,
         is_verified=True
     ).order_by('-created_at')
@@ -3736,7 +3648,9 @@ def finance_history(request):
             'module_class': 'payment',
         })
 
-    statements = BankStatement.objects.select_related(
+    statements = BankStatement.objects.filter(
+        academic_year=academic_year
+    ).select_related(
         'bank_account', 'bank_account__bank', 'imported_by'
     ).order_by('-imported_at')
 
@@ -3758,7 +3672,9 @@ def finance_history(request):
             'module_class': 'statement',
         })
 
-    schedules = FeeSchedule.objects.select_related(
+    schedules = FeeSchedule.objects.filter(
+        academic_year=academic_year
+    ).select_related(
         'created_by', 'academic_program'
     ).order_by('-created_at')
 
@@ -3783,7 +3699,7 @@ def finance_history(request):
     anomalies = PaymentAnomaly.objects.select_related(
         'claim', 'claim__student'
     ).filter(
-        claim__academic_year=ACADEMIC_YEAR
+        claim__academic_year=academic_year
     ).order_by('-created_at')
 
     for anomaly in anomalies:
@@ -3837,148 +3753,66 @@ def finance_history(request):
             'module_class': 'student',
         })
 
-    # ========================================================
-    # APPLY FILTERS
-    # ========================================================
+    history_entries.sort(key=lambda entry: entry['date'], reverse=True)
 
-    if search_query:
-        search_lower = search_query.lower()
-        history_entries = [
-            entry for entry in history_entries
-            if (search_lower in entry['reference'].lower()) or
-               (search_lower in entry['description'].lower()) or
-               (search_lower in entry['actor_display'].lower())
-        ]
+    return history_entries
 
-    if module_filter:
-        history_entries = [
-            entry for entry in history_entries
-            if entry['module'] == module_filter
-        ]
 
-    if action_filter:
-        history_entries = [
-            entry for entry in history_entries
-            if entry['action'] == action_filter
-        ]
+def serialize_history_entry(entry):
+    return {
+        'id': entry['id'],
+        'date': entry['date'].isoformat(),
+        'actor': entry['actor'],
+        'actorDisplay': entry['actor_display'],
+        'module': entry['module'],
+        'moduleDisplay': entry['module_display'],
+        'action': entry['action'],
+        'actionDisplay': entry['action_display'],
+        'reference': entry['reference'],
+        'description': entry['description'],
+        'status': entry['status'],
+        'statusDisplay': entry['status_display'],
+        'icon': entry['icon'],
+        'moduleClass': entry['module_class'],
+    }
 
-    if status_filter:
-        history_entries = [
-            entry for entry in history_entries
-            if entry['status'] == status_filter
-        ]
 
-    if actor_filter:
-        history_entries = [
-            entry for entry in history_entries
-            if entry['actor'] == actor_filter
-        ]
+@login_required
+@finance_required
+def finance_history(request):
+    """
+    View for finance history/audit log. Charge l'intégralité du
+    journal d'audit de l'année académique active en une fois ;
+    recherche et filtres s'appliquent ensuite entièrement côté
+    client (comme les autres pages finance).
+    """
+    academic_year = request.GET.get('academic_year') or ACADEMIC_YEAR
 
-    if period_filter:
-        today_filter = timezone.now()
-        if period_filter == 'today':
-            start = today_filter.replace(hour=0, minute=0, second=0, microsecond=0)
-            history_entries = [entry for entry in history_entries if entry['date'] >= start]
-        elif period_filter == 'week':
-            start = today_filter - timedelta(days=7)
-            history_entries = [entry for entry in history_entries if entry['date'] >= start]
-        elif period_filter == 'month':
-            start = today_filter - timedelta(days=30)
-            history_entries = [entry for entry in history_entries if entry['date'] >= start]
+    history_entries = build_history_entries(academic_year)
+    entries_json = [serialize_history_entry(entry) for entry in history_entries]
 
-    # ========================================================
-    # SORT + STATS
-    # ========================================================
-
-    history_entries.sort(key=lambda x: x['date'], reverse=True)
-
-    total_operations = len(history_entries)
-    successful_ops = len([e for e in history_entries if e['status'] == 'success'])
-    warning_ops = len([e for e in history_entries if e['status'] == 'warning'])
-    failed_ops = len([e for e in history_entries if e['status'] == 'failed'])
-
-    # ========================================================
-    # PAGINATION
-    # ========================================================
-
-    paginator = Paginator(history_entries, 20)
-
-    try:
-        entries_page = paginator.page(page)
-    except PageNotAnInteger:
-        entries_page = paginator.page(1)
-    except EmptyPage:
-        entries_page = paginator.page(paginator.num_pages)
-
-    # ========================================================
-    # AJAX RESPONSE
-    # ========================================================
-
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        entries_data = []
-        for entry in entries_page:
-            entries_data.append({
-                'id': entry['id'],
-                'date': entry['date'].isoformat(),
-                'date_display': entry['date'].strftime('%d/%m/%Y %H:%M'),
-                'actor': entry['actor'],
-                'actor_display': entry['actor_display'],
-                'module': entry['module'],
-                'module_display': entry['module_display'],
-                'action': entry['action'],
-                'action_display': entry['action_display'],
-                'reference': entry['reference'],
-                'description': entry['description'],
-                'status': entry['status'],
-                'status_display': entry['status_display'],
-                'icon': entry['icon'],
-                'module_class': entry['module_class'],
-            })
-
-        return JsonResponse({
-            'entries': entries_data,
-            'total': paginator.count,
-            'page': entries_page.number,
-            'num_pages': paginator.num_pages,
-            'has_next': entries_page.has_next(),
-            'has_previous': entries_page.has_previous(),
-            'total_operations': total_operations,
-            'successful_ops': successful_ops,
-            'warning_ops': warning_ops,
-            'failed_ops': failed_ops,
-            'result_count': paginator.count,
-        })
-
-    # ========================================================
-    # CONTEXT
-    # ========================================================
-
-    pending_anomalies = PaymentAnomaly.objects.filter(
-        status=PaymentAnomaly.Status.OPEN
-    ).count()
+    kpi = {
+        'total': len(history_entries),
+        'successful': sum(1 for e in history_entries if e['status'] == 'success'),
+        'warning': sum(1 for e in history_entries if e['status'] == 'warning'),
+        'failed': sum(1 for e in history_entries if e['status'] == 'failed'),
+    }
 
     context = {
-        'user': user,
-        'history_entries': entries_page,
-        'paginator': paginator,
-        'total_operations': total_operations,
-        'successful_ops': successful_ops,
-        'warning_ops': warning_ops,
-        'failed_ops': failed_ops,
-        'search_query': search_query,
-        'period_filter': period_filter,
-        'module_filter': module_filter,
-        'action_filter': action_filter,
-        'status_filter': status_filter,
-        'actor_filter': actor_filter,
-        'pending_anomalies': pending_anomalies,
+        'academic_year': academic_year,
+        'academic_year_choices': [year for year, _ in ACADEMIC_YEAR_CHOICES],
+        'bootstrap_data': _history_safe_json({
+            'academicYear': academic_year,
+            'entries': entries_json,
+            'kpi': kpi,
+        }),
+        'pending_anomalies': PaymentAnomaly.objects.filter(
+            status=PaymentAnomaly.Status.OPEN
+        ).count(),
         'current_academic_year': ACADEMIC_YEAR,
-        'result_count': paginator.count,
     }
 
     return render(request, 'espace_finance/finance-history.html', context)
-
-
 # ============================================================
 # EXPORT HISTORY CSV
 # ============================================================

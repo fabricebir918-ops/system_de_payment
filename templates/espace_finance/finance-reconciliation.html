@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="fr" data-theme="dark">
 
@@ -38,7 +37,10 @@
 </head>
 
 
-<body>
+<body
+    data-reconciliation-list-url="{% url 'finance_reconciliation' %}"
+    data-anomalies-url="{% url 'finance_anomalies' %}"
+>
 
 <div class="finance-layout">
 
@@ -187,19 +189,17 @@
             >
 
                 <div class="user-avatar">
-                    {% with initials=user.full_congolese_name|slice:":2" %}
-                        {{ initials|upper }}
-                    {% endwith %}
+                    RF
                 </div>
 
                 <div class="user-information">
 
                     <strong>
-                        {{ user.full_congolese_name }}
+                        Responsable financier
                     </strong>
 
                     <span>
-                        {{ user.get_staff_role_display|default:"Responsable financier" }}
+                        Chef du service financier
                     </span>
 
                 </div>
@@ -327,11 +327,16 @@
                         class="academic-year-select"
                         aria-label="Année académique"
                     >
-                        {% for year_value, year_label in academic_years %}
-                        <option value="{{ year_value }}" {% if academic_year == year_value %}selected{% endif %}>
-                            {{ year_label }}
+
+                        {% for year in academic_year_choices %}
+                        <option
+                            value="{{ year }}"
+                            {% if year == academic_year %}selected{% endif %}
+                        >
+                            {{ year }}
                         </option>
                         {% endfor %}
+
                     </select>
 
 
@@ -421,7 +426,7 @@
                     </span>
 
                     <strong id="totalBankAmount">
-                        {{ total_bank_amount|floatformat:2 }} $
+                        1 350 700 $
                     </strong>
 
                     <small>
@@ -448,7 +453,7 @@
                     </span>
 
                     <strong id="totalSystemAmount">
-                        {{ total_system_amount|floatformat:2 }} $
+                        1 318 300 $
                     </strong>
 
                     <small>
@@ -475,7 +480,7 @@
                     </span>
 
                     <strong id="totalDifference">
-                        {{ total_difference|floatformat:2 }} $
+                        32 400 $
                     </strong>
 
                     <small>
@@ -502,7 +507,7 @@
                     </span>
 
                     <strong id="coverageRate">
-                        {{ coverage_rate|floatformat:1 }} %
+                        97,6 %
                     </strong>
 
                     <small>
@@ -596,7 +601,7 @@
                         <div class="health-circle">
 
                             <strong id="globalCoverage">
-                                {{ coverage_rate|floatformat:1 }}
+                                97,6
                             </strong>
 
                             <span>%</span>
@@ -631,7 +636,7 @@
                             </span>
 
                             <strong id="matchedCount">
-                                {{ matched_count }}
+                                2 965
                             </strong>
 
                         </div>
@@ -645,7 +650,7 @@
                             </span>
 
                             <strong id="anomalyCount">
-                                {{ anomaly_count }}
+                                24
                             </strong>
 
                         </div>
@@ -659,7 +664,7 @@
                             </span>
 
                             <strong id="bankCount">
-                                {{ bank_summary|length }}
+                                3
                             </strong>
 
                         </div>
@@ -705,7 +710,7 @@
                     <div class="reconciliation-result-count">
 
                         <span id="bankResultCount">
-                            {{ bank_summary|length }}
+                            3
                         </span>
 
                         banque(s)
@@ -728,83 +733,13 @@
             </div>
 
 
-            <div class="bank-reconciliation-list">
-
-                {% for bank in bank_summary %}
-                <article
-                    class="bank-reconciliation-item"
-                    data-bank-card="{{ bank.code|lower }}"
-                >
-
-                    <div class="bank-cell-info">
-
-                        <div class="bank-logo">
-                            {{ bank.code|slice:":2"|upper }}
-                        </div>
-
-                        <div>
-                            <strong>{{ bank.name }}</strong>
-                            <span>Banque partenaire</span>
-                        </div>
-
-                    </div>
-
-
-                    <div class="bank-reconciliation-metric">
-                        <span>Extraits bancaires</span>
-                        <strong>{{ bank.statement_amount|floatformat:2 }} $</strong>
-                    </div>
-
-
-                    <div class="bank-reconciliation-metric">
-                        <span>AcademicPay</span>
-                        <strong>{{ bank.system_amount|floatformat:2 }} $</strong>
-                    </div>
-
-
-                    <div class="bank-reconciliation-metric">
-                        <span>Écart</span>
-                        <strong>{{ bank.difference|floatformat:2 }} $</strong>
-                    </div>
-
-
-                    <div class="coverage-cell">
-
-                        <div class="coverage-cell-header">
-                            <span>Couverture</span>
-                            <strong>{{ bank.coverage|floatformat:1 }} %</strong>
-                        </div>
-
-                        <div class="coverage-progress">
-                            <span style="width: {{ bank.coverage|floatformat:0 }}%;"></span>
-                        </div>
-
-                    </div>
-
-
-                    <div class="bank-reconciliation-status">
-
-                        <span class="reconciliation-status {% if bank.anomalies > 10 %}danger{% else %}warning{% endif %}">
-                            <i class="bi {% if bank.anomalies > 10 %}bi-exclamation-triangle{% else %}bi-exclamation-circle{% endif %}"></i>
-                            {{ bank.anomalies }} anomalies
-                        </span>
-
-                    </div>
-
-
-                    <button
-                        type="button"
-                        class="bank-view-button"
-                        data-bank-view="{{ bank.code|lower }}"
-                        title="Voir le détail {{ bank.name }}"
-                        aria-label="Voir le détail {{ bank.name }}"
-                    >
-                        <i class="bi bi-eye"></i>
-                    </button>
-
-                </article>
-                {% endfor %}
-
+            <div
+                class="bank-reconciliation-list"
+                id="bankReconciliationList"
+            >
+                <!-- Une carte par banque, générée dynamiquement par
+                     finance-reconciliation.js à partir des données
+                     bootstrap (bankSummary). -->
             </div>
 
         </section>
@@ -839,7 +774,7 @@
                 <div class="reconciliation-result-count">
 
                     <span id="transactionResultCount">
-                        {{ result_count }}
+                        0
                     </span>
 
                     résultat(s)
@@ -865,7 +800,6 @@
                         id="reconciliationSearch"
                         placeholder="Référence, étudiant, matricule..."
                         autocomplete="off"
-                        value="{{ search_query }}"
                     >
 
                     <button
@@ -895,7 +829,7 @@
                         </option>
 
                         {% for bank in banks %}
-                        <option value="{{ bank.code|lower }}" {% if bank_filter == bank.code|lower %}selected{% endif %}>
+                        <option value="{{ bank.code }}">
                             {{ bank.name }}
                         </option>
                         {% endfor %}
@@ -915,23 +849,23 @@
 
                     <select id="periodFilter">
 
-                        <option value="" {% if not period_filter %}selected{% endif %}>
+                        <option value="">
                             Toutes les périodes
                         </option>
 
-                        <option value="today" {% if period_filter == 'today' %}selected{% endif %}>
+                        <option value="today">
                             Aujourd'hui
                         </option>
 
-                        <option value="7days" {% if period_filter == '7days' %}selected{% endif %}>
+                        <option value="7days">
                             7 derniers jours
                         </option>
 
-                        <option value="30days" {% if period_filter == '30days' %}selected{% endif %}>
+                        <option value="30days">
                             30 derniers jours
                         </option>
 
-                        <option value="semester" {% if period_filter == 'semester' %}selected{% endif %}>
+                        <option value="semester">
                             Semestre
                         </option>
 
@@ -950,23 +884,23 @@
 
                     <select id="reconciliationStatusFilter">
 
-                        <option value="" {% if not status_filter %}selected{% endif %}>
+                        <option value="">
                             Tous les états
                         </option>
 
-                        <option value="amount_mismatch" {% if status_filter == 'amount_mismatch' %}selected{% endif %}>
+                        <option value="amount_mismatch">
                             Écart de montant
                         </option>
 
-                        <option value="bank_only" {% if status_filter == 'bank_only' %}selected{% endif %}>
+                        <option value="bank_only">
                             Banque uniquement
                         </option>
 
-                        <option value="system_only" {% if status_filter == 'system_only' %}selected{% endif %}>
+                        <option value="system_only">
                             AcademicPay uniquement
                         </option>
 
-                        <option value="duplicate" {% if status_filter == 'duplicate' %}selected{% endif %}>
+                        <option value="duplicate">
                             Doublon
                         </option>
 
@@ -1017,105 +951,7 @@
 
                     <tbody id="reconciliationTableBody">
 
-                    {% for item in reconciliation_items %}
-                    <tr
-                        data-id="{{ item.id }}"
-                        data-date="{{ item.date }}"
-                        data-reference="{{ item.reference }}"
-                        data-bank="{{ item.bank }}"
-                        data-bank-amount="{{ item.bank_amount }}"
-                        data-system-amount="{{ item.system_amount }}"
-                        data-student="{{ item.student }}"
-                        data-matricule="{{ item.matricule }}"
-                        data-status="{{ item.status }}"
-                    >
-
-                        <td>{{ item.date }}</td>
-
-                        <td>
-                            <span class="transaction-reference">
-                                {{ item.reference }}
-                            </span>
-                        </td>
-
-                        <td>{{ item.bank_name }}</td>
-
-                        <td class="reconciliation-money">
-                            {% if item.bank_amount > 0 %}
-                                {{ item.bank_amount|floatformat:2 }} $
-                            {% else %}
-                                <span class="muted-value">—</span>
-                            {% endif %}
-                        </td>
-
-                        <td>
-                            {% if item.student %}
-                            <div class="reconciliation-student-info">
-                                <strong>{{ item.student }}</strong>
-                                <span>{{ item.matricule }}</span>
-                            </div>
-                            {% else %}
-                            <span class="muted-value">Non identifié</span>
-                            {% endif %}
-                        </td>
-
-                        <td class="reconciliation-money">
-                            {% if item.system_amount > 0 %}
-                                {{ item.system_amount|floatformat:2 }} $
-                            {% else %}
-                                <span class="muted-value">—</span>
-                            {% endif %}
-                        </td>
-
-                        <td class="reconciliation-money {% if item.difference > 0 %}difference{% endif %}">
-                            {{ item.difference|floatformat:2 }} $
-                        </td>
-
-                        <td>
-
-                            <span class="diagnostic-badge 
-                                {% if item.status == 'amount_mismatch' %}warning
-                                {% elif item.status == 'bank_only' or item.status == 'system_only' %}danger
-                                {% elif item.status == 'duplicate' %}warning
-                                {% else %}success{% endif %}
-                            ">
-                                {% if item.status == 'amount_mismatch' %}
-                                    Écart de montant
-                                {% elif item.status == 'bank_only' %}
-                                    Banque uniquement
-                                {% elif item.status == 'system_only' %}
-                                    AcademicPay uniquement
-                                {% elif item.status == 'duplicate' %}
-                                    Doublon
-                                {% else %}
-                                    Rapproché
-                                {% endif %}
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <button
-                                type="button"
-                                class="reconciliation-view-button"
-                                title="Examiner"
-                                aria-label="Examiner {{ item.reference }}"
-                            >
-                                <i class="bi bi-eye"></i>
-                            </button>
-
-                        </td>
-
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="9" class="text-center py-4 text-muted">
-                            <i class="bi bi-inbox fs-2 d-block mb-2"></i>
-                            Aucune transaction à examiner
-                        </td>
-                    </tr>
-                    {% endfor %}
+                    <!-- Lignes générées dynamiquement par finance-reconciliation.js -->
 
                     </tbody>
 
@@ -1724,6 +1560,18 @@
     </div>
 
 </div>
+
+
+<!-- =========================================================
+     DONNÉES SERVEUR (calculées dans finance_reconciliation,
+     injectées une seule fois au chargement — aucun appel
+     fetch() supplémentaire requis)
+========================================================= -->
+
+<script
+    id="finance-reconciliation-bootstrap"
+    type="application/json"
+>{{ bootstrap_data|safe }}</script>
 
 
 <!-- =========================================================
