@@ -20,8 +20,9 @@ from reportlab.lib.enums import TA_CENTER, TA_RIGHT
 import io
 from ..models import (
     User, Payment, PaymentClaim, FeeSchedule, 
-    FeeInstallment, PaymentAnomaly,Bank,
+    FeeInstallment, PaymentAnomaly, Bank, BankTransaction,
 )
+from .espace_finance import auto_reconcile_transactions
 
 
 ACADEMIC_YEAR = "2026-2027"
@@ -645,15 +646,64 @@ def student_declare_payment(request):
                         status=PaymentAnomaly.Status.OPEN,
                     )
 
-                success_message = (
-                    "Votre déclaration a été enregistrée avec succès."
-                    if not reference_already_used
-                    else (
+                # ----------------------------------------------------
+                # Rapprochement immédiat si l'extrait bancaire a déjà
+                # été importé AVANT cette déclaration.
+                #
+                # auto_reconcile_transactions() n'était jusqu'ici
+                # déclenché qu'à l'import d'un extrait : si l'étudiant
+                # déclare sa référence après coup, sa déclaration
+                # restait PENDING jusqu'au prochain import, même si
+                # la transaction bancaire correspondante existait déjà.
+                #
+                # On cherche donc ici une BankTransaction existante,
+                # non encore liée à une autre déclaration, portant
+                # cette référence. Si elle existe, on relance le même
+                # rapprochement que celui utilisé à l'import — sans
+                # dupliquer sa logique — pour que le résultat
+                # (APPROVED, ou anomalie précise) soit strictement
+                # identique dans les deux sens.
+                existing_transaction = (
+                    BankTransaction.objects.filter(
+                        transaction_reference=reference,
+                    )
+                    .exclude(
+                        claim__isnull=False,
+                    )
+                    .first()
+                )
+
+                if existing_transaction and not reference_already_used:
+                    auto_reconcile_transactions(
+                        [existing_transaction], academic_year
+                    )
+                    claim.refresh_from_db()
+
+                if claim.status == PaymentClaim.ClaimStatus.APPROVED:
+                    success_message = (
+                        "Votre déclaration a été enregistrée et validée "
+                        "automatiquement : la transaction correspondante "
+                        "avait déjà été reçue de la banque."
+                    )
+                elif reference_already_used:
+                    success_message = (
                         "Votre déclaration a été enregistrée, mais cette "
                         "référence a déjà été utilisée par ailleurs. "
                         "Elle sera examinée par le responsable financier."
                     )
-                )
+                elif claim.anomalies.filter(
+                    status=PaymentAnomaly.Status.OPEN
+                ).exists():
+                    success_message = (
+                        "Votre déclaration a été enregistrée, mais un "
+                        "écart a été détecté avec la transaction bancaire "
+                        "reçue pour cette référence. Elle sera examinée "
+                        "par le responsable financier."
+                    )
+                else:
+                    success_message = (
+                        "Votre déclaration a été enregistrée avec succès."
+                    )
 
                 if is_ajax:
                     return JsonResponse({

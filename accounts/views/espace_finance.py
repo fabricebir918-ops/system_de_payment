@@ -2223,6 +2223,8 @@ def finance_schedule(request):
     context = {
         'academic_structure': json.dumps(serialize_academic_structure_flat()),
         'schedules': json.dumps(schedules_data),
+        'pending_anomalies': get_pending_anomalies_count(ACADEMIC_YEAR),
+        'current_academic_year': ACADEMIC_YEAR,
     }
     return render(request, 'espace_finance/finance-schedule.html', context)
 
